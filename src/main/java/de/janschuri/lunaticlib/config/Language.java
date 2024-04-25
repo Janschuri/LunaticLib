@@ -6,13 +6,15 @@ import java.nio.file.Path;
 import java.util.*;
 
 public abstract class Language extends Config {
+    private static Language instance;
     private static Map<String, String> messages = new HashMap<>();
-    public static String prefix;
+    private static String prefix;
     private static final List<String> commands = new ArrayList<>();
     private static final Map<String, Map<String, List<String>>> aliases = new HashMap<>();
 
     public Language(Path dataDirectory, List<String> commands, String language) {
         super(dataDirectory, "lang.yml", "lang/" + language + ".yml");
+        Language.instance = this;
         this.load();
     }
 
@@ -31,7 +33,11 @@ public abstract class Language extends Config {
         }
     }
 
-    public static String getMessage(String key) {
+    public static Language getInstance() {
+        return instance;
+    }
+
+    public String getMessage(String key) {
 
         if (messages.containsKey(key.toLowerCase())) {
             Logger.debugLog(translateAlternateColorCodes('&', messages.get(key)));
@@ -41,7 +47,7 @@ public abstract class Language extends Config {
         }
     }
 
-    public static List<String> getAliases(String command, String subcommand) {
+    public List<String> getAliases(String command, String subcommand) {
         Map<String, List<String>> commandAliases = aliases.getOrDefault(command, new HashMap<>());
 
         List<String> subcommandsList = new ArrayList<>();
@@ -56,7 +62,15 @@ public abstract class Language extends Config {
         return subcommandsList;
     }
 
-    public static List<String> getAliases(String command) {
+    public List<String> getAliases(String command) {
         return getAliases(command, "basecommand");
+    }
+
+    public boolean checkIsSubcommand(final String command, final String subcommand, final String arg) {
+        return subcommand.equalsIgnoreCase(arg) || getAliases(command, subcommand).stream().anyMatch(element -> arg.equalsIgnoreCase(element));
+    }
+
+    public String getPrefix() {
+        return prefix;
     }
 }

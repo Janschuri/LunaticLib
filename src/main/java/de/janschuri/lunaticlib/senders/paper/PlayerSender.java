@@ -81,7 +81,7 @@ public class PlayerSender extends AbstractPlayerSender {
     public boolean sendMessage(ClickableDecisionMessage message) {
         if (Bukkit.getPlayer(uuid) != null) {
             Bukkit.getPlayer(uuid).sendMessage(
-                    LegacyComponentSerializer.legacy('§').deserialize(Language.prefix + message.getText())
+                    LegacyComponentSerializer.legacy('§').deserialize(message.getText())
                     .append(Component.text(" ✓", NamedTextColor.GREEN, TextDecoration.BOLD).clickEvent(ClickEvent.runCommand(
                             message.getConfirmCommand()
                     )))
@@ -104,7 +104,7 @@ public class PlayerSender extends AbstractPlayerSender {
     public boolean sendMessage(ClickableMessage message) {
         if (Bukkit.getPlayer(uuid) != null) {
             Bukkit.getPlayer(uuid).sendMessage(
-                    LegacyComponentSerializer.legacy('§').deserialize(Language.prefix + message.getText())
+                    LegacyComponentSerializer.legacy('§').deserialize(message.getText())
                     .clickEvent(ClickEvent.runCommand(message.getCommand()))
                     .hoverEvent(HoverEvent.showText(
                             LegacyComponentSerializer.legacy('§').deserialize(message.getHoverText())
@@ -118,7 +118,7 @@ public class PlayerSender extends AbstractPlayerSender {
     @Override
     public boolean sendMessage(List<ClickableMessage> msg) {
         if (Bukkit.getPlayer(uuid) != null) {
-            Component component = LegacyComponentSerializer.legacy('§').deserialize(Language.prefix);
+            Component component = Component.empty();
             for (ClickableMessage message : msg) {
                 Component text = Component.text(message.getText());
                 if (message.getCommand() != null) {

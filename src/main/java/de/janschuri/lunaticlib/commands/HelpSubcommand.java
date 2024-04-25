@@ -13,25 +13,27 @@ import java.util.List;
 public class HelpSubcommand extends Subcommand {
 
     private final Class<?> commandClass;
+    private final Language language;
 
-    public HelpSubcommand(String mainCommand, String name, String permission, Class<?> commandClass) {
-        super(mainCommand, name, permission);
+    public HelpSubcommand(Language language, String mainCommand, String name, String permission, Class<?> commandClass) {
+        super(language, mainCommand, name, permission);
+        this.language = language;
         this.commandClass = commandClass;
     }
     @Override
     public boolean execute(AbstractSender sender, String[] args) {
         if (!(sender instanceof AbstractPlayerSender)) {
-            sender.sendMessage(Language.prefix + Language.getMessage("no_console_command"));
+            sender.sendMessage(language.getPrefix() + language.getMessage("no_console_command"));
             return true;
         }
         if (!sender.hasPermission(permission)) {
-            sender.sendMessage(Language.prefix + Language.getMessage("no_permission"));
+            sender.sendMessage(language.getPrefix() + language.getMessage("no_permission"));
             return true;
         }
 
         AbstractPlayerSender playerCommandSender = (AbstractPlayerSender) sender;
         List<ClickableMessage> msg = new ArrayList<>();
-        msg.add(new ClickableMessage(Language.prefix + Language.getMessage(mainCommand + "_help") + "\n"));
+        msg.add(new ClickableMessage(language.getPrefix() + language.getMessage(mainCommand + "_help") + "\n"));
 
         try {
             Subcommand command = (Subcommand) commandClass.getDeclaredConstructor().newInstance();

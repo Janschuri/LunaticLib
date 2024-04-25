@@ -41,7 +41,7 @@ public class Sender extends AbstractSender {
     @Override
     public boolean sendMessage(ClickableDecisionMessage message) {
         sender.sendMessage(
-                LegacyComponentSerializer.legacy('§').deserialize(Language.prefix + message.getText())
+                LegacyComponentSerializer.legacy('§').deserialize(message.getText())
                         .append(Component.text(" ✓", NamedTextColor.GREEN, TextDecoration.BOLD).clickEvent(ClickEvent.runCommand(
                                 message.getConfirmCommand()
                         )))
@@ -61,7 +61,7 @@ public class Sender extends AbstractSender {
     @Override
     public boolean sendMessage(ClickableMessage message) {
         sender.sendMessage(
-                LegacyComponentSerializer.legacy('§').deserialize(Language.prefix + message.getText())
+                LegacyComponentSerializer.legacy('§').deserialize(message.getText())
                         .clickEvent(ClickEvent.runCommand(message.getCommand()))
                         .hoverEvent(HoverEvent.showText(
                                 LegacyComponentSerializer.legacy('§').deserialize(message.getHoverText())

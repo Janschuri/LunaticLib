@@ -20,9 +20,6 @@ public class Utils {
         return timer;
     }
 
-    public static boolean checkIsSubcommand(final String command, final String subcommand, final String arg) {
-        return subcommand.equalsIgnoreCase(arg) || Language.getAliases(command, subcommand).stream().anyMatch(element -> arg.equalsIgnoreCase(element));
-    }
     public static boolean isUUID(String input) {
         Pattern UUID_PATTERN = Pattern.compile(
                 "^([0-9a-fA-F]){8}-([0-9a-fA-F]){4}-([0-9a-fA-F]){4}-([0-9a-fA-F]){4}-([0-9a-fA-F]){12}$");

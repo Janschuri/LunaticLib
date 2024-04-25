@@ -16,28 +16,32 @@ public abstract class Subcommand {
     protected final String mainCommand;
     protected List<String> params;
     protected Subcommand[] subcommands;
+    protected final Language language;
 
 
-    protected Subcommand(String mainCommand, String name, String permission) {
+    protected Subcommand(Language language, String mainCommand, String name, String permission) {
         this.mainCommand = mainCommand;
         this.name = name;
         this.permission = permission;
-        this.aliases = Language.getAliases(mainCommand, name);
+        this.language = language;
+        this.aliases = language.getAliases(mainCommand, name);
     }
 
-    protected Subcommand(String mainCommand, String name, String permission, List<String> params) {
+    protected Subcommand(Language language, String mainCommand, String name, String permission, List<String> params) {
         this.mainCommand = mainCommand;
         this.name = name;
         this.permission = permission;
-        this.aliases = Language.getAliases(mainCommand, name);
+        this.language = language;
+        this.aliases = language.getAliases(mainCommand, name);
         this.params = params;
     }
 
-    protected Subcommand(String mainCommand, String name, String permission, Subcommand[] subcommands) {
+    protected Subcommand(Language language, String mainCommand, String name, String permission, Subcommand[] subcommands) {
         this.mainCommand = mainCommand;
         this.name = name;
         this.permission = permission;
-        this.aliases = Language.getAliases(mainCommand, name);
+        this.language = language;
+        this.aliases = language.getAliases(mainCommand, name);
         this.subcommands = subcommands;
     }
 
@@ -53,7 +57,7 @@ public abstract class Subcommand {
                     }
                 }
             } else {
-                if (Utils.checkIsSubcommand(mainCommand, name, args[0])) {
+                if (language.checkIsSubcommand(mainCommand, name, args[0])) {
                     if (args[1].equalsIgnoreCase("")) {
                         if (params != null && args.length == 2) {
                             list.addAll(params);
@@ -91,9 +95,9 @@ public abstract class Subcommand {
     public ClickableMessage getHelp(AbstractSender sender) {
         if (sender.hasPermission(permission)) {
             if (subcommands != null) {
-                return new ClickableMessage(Language.getMessage(mainCommand + "_" + name + "_help") + "\n", Language.getMessage(name + "_help"), mainCommand + " " + name + " help");
+                return new ClickableMessage(language.getMessage(mainCommand + "_" + name + "_help") + "\n", language.getMessage(name + "_help"), mainCommand + " " + name + " help");
             } else {
-                return new ClickableMessage(Language.getMessage(mainCommand + "_" + name + "_help") + "\n");
+                return new ClickableMessage(language.getMessage(mainCommand + "_" + name + "_help") + "\n");
             }
         } else {
           return ClickableMessage.empty();
