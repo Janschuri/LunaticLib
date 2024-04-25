@@ -3,23 +3,22 @@ package de.janschuri.lunaticlib.commands;
 import de.janschuri.lunaticlib.config.Language;
 import de.janschuri.lunaticlib.senders.AbstractSender;
 import de.janschuri.lunaticlib.utils.ClickableMessage;
-import de.janschuri.lunaticlib.utils.Utils;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-public abstract class Subcommand {
+public abstract class AbstractSubcommand {
     protected final String permission;
     protected final List<String> aliases;
     protected final String name;
     protected final String mainCommand;
     protected List<String> params;
-    protected Subcommand[] subcommands;
+    protected AbstractSubcommand[] subcommands;
     protected final Language language;
 
 
-    protected Subcommand(Language language, String mainCommand, String name, String permission) {
+    protected AbstractSubcommand(Language language, String mainCommand, String name, String permission) {
         this.mainCommand = mainCommand;
         this.name = name;
         this.permission = permission;
@@ -27,7 +26,7 @@ public abstract class Subcommand {
         this.aliases = language.getAliases(mainCommand, name);
     }
 
-    protected Subcommand(Language language, String mainCommand, String name, String permission, List<String> params) {
+    protected AbstractSubcommand(Language language, String mainCommand, String name, String permission, List<String> params) {
         this.mainCommand = mainCommand;
         this.name = name;
         this.permission = permission;
@@ -36,7 +35,7 @@ public abstract class Subcommand {
         this.params = params;
     }
 
-    protected Subcommand(Language language, String mainCommand, String name, String permission, Subcommand[] subcommands) {
+    protected AbstractSubcommand(Language language, String mainCommand, String name, String permission, AbstractSubcommand[] subcommands) {
         this.mainCommand = mainCommand;
         this.name = name;
         this.permission = permission;
@@ -65,7 +64,7 @@ public abstract class Subcommand {
                         if (subcommands != null) {
                             String[] newArgs = new String[args.length - 1];
                             System.arraycopy(args, 1, newArgs, 0, args.length - 1);
-                            for (Subcommand subcommand : subcommands) {
+                            for (AbstractSubcommand subcommand : subcommands) {
                                 list.addAll(subcommand.tabComplete(sender, newArgs));
                             }
                         }
@@ -80,7 +79,7 @@ public abstract class Subcommand {
                         if (subcommands != null) {
                             String[] newArgs = new String[args.length - 1];
                             System.arraycopy(args, 1, newArgs, 0, args.length - 1);
-                            for (Subcommand subcommand : subcommands) {
+                            for (AbstractSubcommand subcommand : subcommands) {
                                 list.addAll(subcommand.tabComplete(sender, newArgs));
                             }
                         }

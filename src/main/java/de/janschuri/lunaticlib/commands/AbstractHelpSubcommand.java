@@ -10,12 +10,12 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.List;
 
-public class HelpSubcommand extends Subcommand {
+public abstract class AbstractHelpSubcommand extends AbstractSubcommand {
 
     private final Class<?> commandClass;
     private final Language language;
 
-    public HelpSubcommand(Language language, String mainCommand, String name, String permission, Class<?> commandClass) {
+    public AbstractHelpSubcommand(Language language, String mainCommand, String name, String permission, Class<?> commandClass) {
         super(language, mainCommand, name, permission);
         this.language = language;
         this.commandClass = commandClass;
@@ -36,9 +36,9 @@ public class HelpSubcommand extends Subcommand {
         msg.add(new ClickableMessage(language.getPrefix() + language.getMessage(mainCommand + "_help") + "\n"));
 
         try {
-            Subcommand command = (Subcommand) commandClass.getDeclaredConstructor().newInstance();
-            for (Subcommand subcommand : command.subcommands) {
-                if (!(subcommand instanceof HelpSubcommand)) {
+            AbstractSubcommand command = (AbstractSubcommand) commandClass.getDeclaredConstructor().newInstance();
+            for (AbstractSubcommand subcommand : command.subcommands) {
+                if (!(subcommand instanceof AbstractHelpSubcommand)) {
                     msg.add(subcommand.getHelp(sender));
                 }
             }
