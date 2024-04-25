@@ -1,0 +1,4 @@
+name: LunaticLib
+version: '${project.version}'
+main: de.janschuri.lunaticlib.LunaticLib
+api-version: '1.20'
