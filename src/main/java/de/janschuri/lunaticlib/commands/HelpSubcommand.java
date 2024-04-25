@@ -1,11 +1,10 @@
-package de.janschuri.lunaticFamily.commands.subcommands;
+package de.janschuri.lunaticlib.commands;
 
-import de.janschuri.lunaticFamily.utils.ClickableMessage;
-import de.janschuri.lunaticFamily.senders.CommandSender;
-import de.janschuri.lunaticFamily.senders.PlayerCommandSender;
-import de.janschuri.lunaticFamily.config.Language;
-//import net.kyori.adventure.text.Component;
-//import org.bukkit.entity.Player;
+
+import de.janschuri.lunaticlib.config.Language;
+import de.janschuri.lunaticlib.senders.AbstractSender;
+import de.janschuri.lunaticlib.senders.AbstractPlayerSender;
+import de.janschuri.lunaticlib.utils.ClickableMessage;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
@@ -20,8 +19,8 @@ public class HelpSubcommand extends Subcommand {
         this.commandClass = commandClass;
     }
     @Override
-    public boolean execute(CommandSender sender, String[] args) {
-        if (!(sender instanceof PlayerCommandSender)) {
+    public boolean execute(AbstractSender sender, String[] args) {
+        if (!(sender instanceof AbstractPlayerSender)) {
             sender.sendMessage(Language.prefix + Language.getMessage("no_console_command"));
             return true;
         }
@@ -30,7 +29,7 @@ public class HelpSubcommand extends Subcommand {
             return true;
         }
 
-        PlayerCommandSender playerCommandSender = (PlayerCommandSender) sender;
+        AbstractPlayerSender playerCommandSender = (AbstractPlayerSender) sender;
         List<ClickableMessage> msg = new ArrayList<>();
         msg.add(new ClickableMessage(Language.prefix + Language.getMessage(mainCommand + "_help") + "\n"));
 

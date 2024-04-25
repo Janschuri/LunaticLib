@@ -2,10 +2,10 @@ package de.janschuri.lunaticlib.senders;
 
 import java.util.UUID;
 
-public abstract class PlayerCommandSender extends CommandSender {
+public abstract class AbstractPlayerSender extends AbstractSender {
     private final UUID uuid;
 
-    protected PlayerCommandSender(UUID uuid) {
+    protected AbstractPlayerSender(UUID uuid) {
         this.uuid = uuid;
     }
 
@@ -26,8 +26,8 @@ public abstract class PlayerCommandSender extends CommandSender {
     public abstract boolean isOnline();
     public abstract boolean isInRange(UUID playerUUID, double range);
     public abstract boolean exists();
-    public abstract PlayerCommandSender getPlayerCommandSender(UUID uuid);
-    public abstract PlayerCommandSender getPlayerCommandSender(String name);
+    public abstract AbstractPlayerSender getPlayerCommandSender(UUID uuid);
+    public abstract AbstractPlayerSender getPlayerCommandSender(String name);
 
     public abstract boolean isSameServer(UUID uuid);
 

@@ -1,4 +1,4 @@
-package de.janschuri.lunaticFamily.utils;
+package de.janschuri.lunaticlib.utils;
 
 public class ClickableDecisionMessage {
 

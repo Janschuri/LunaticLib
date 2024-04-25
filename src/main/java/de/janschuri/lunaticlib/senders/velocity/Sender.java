@@ -2,6 +2,8 @@ package de.janschuri.lunaticlib.senders.velocity;
 
 import com.velocitypowered.api.command.CommandSource;
 import de.janschuri.lunaticlib.config.Language;
+import de.janschuri.lunaticlib.senders.AbstractPlayerSender;
+import de.janschuri.lunaticlib.senders.AbstractSender;
 import de.janschuri.lunaticlib.utils.ClickableDecisionMessage;
 import de.janschuri.lunaticlib.utils.ClickableMessage;
 import net.kyori.adventure.text.Component;
@@ -16,11 +18,11 @@ import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 import java.util.List;
 import java.util.UUID;
 
-public class CommandSender extends de.janschuri.lunaticlib.senders.CommandSender {
+public class Sender extends AbstractSender {
 
     CommandSource sender;
 
-    public CommandSender(CommandSource source) {
+    public Sender(CommandSource source) {
         this.sender = source;
     }
 
@@ -91,12 +93,12 @@ public class CommandSender extends de.janschuri.lunaticlib.senders.CommandSender
     }
 
     @Override
-    public de.janschuri.lunaticlib.senders.PlayerCommandSender getPlayerCommandSender(UUID uuid) {
-        return new PlayerCommandSender(uuid);
+    public AbstractPlayerSender getPlayerCommandSender(UUID uuid) {
+        return new PlayerSender(uuid);
     }
 
     @Override
-    public de.janschuri.lunaticlib.senders.PlayerCommandSender getPlayerCommandSender(String name) {
-        return new PlayerCommandSender(name);
+    public AbstractPlayerSender getPlayerCommandSender(String name) {
+        return new PlayerSender(name);
     }
 }

@@ -1,4 +1,4 @@
-package de.janschuri.lunaticlib.utils.logger;
+package de.janschuri.lunaticlib.utils;
 
 
 public abstract class Logger {

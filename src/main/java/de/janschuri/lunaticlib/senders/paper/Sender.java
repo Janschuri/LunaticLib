@@ -1,6 +1,8 @@
 package de.janschuri.lunaticlib.senders.paper;
 
 import de.janschuri.lunaticlib.config.Language;
+import de.janschuri.lunaticlib.senders.AbstractPlayerSender;
+import de.janschuri.lunaticlib.senders.AbstractSender;
 import de.janschuri.lunaticlib.utils.ClickableDecisionMessage;
 import de.janschuri.lunaticlib.utils.ClickableMessage;
 import net.kyori.adventure.text.Component;
@@ -15,11 +17,11 @@ import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 import java.util.List;
 import java.util.UUID;
 
-public class CommandSender extends de.janschuri.lunaticlib.senders.CommandSender {
+public class Sender extends AbstractSender {
 
     private final org.bukkit.command.CommandSender sender;
 
-    public CommandSender(org.bukkit.command.CommandSender sender) {
+    public Sender(org.bukkit.command.CommandSender sender) {
         this.sender = sender;
     }
 
@@ -36,13 +38,13 @@ public class CommandSender extends de.janschuri.lunaticlib.senders.CommandSender
     }
 
     @Override
-    public PlayerCommandSender getPlayerCommandSender(String name) {
-        return new PlayerCommandSender(name);
+    public PlayerSender getPlayerCommandSender(String name) {
+        return new PlayerSender(name);
     }
 
     @Override
-    public de.janschuri.lunaticlib.senders.PlayerCommandSender getPlayerCommandSender(UUID uuid) {
-        return new PlayerCommandSender(uuid);
+    public AbstractPlayerSender getPlayerCommandSender(UUID uuid) {
+        return new PlayerSender(uuid);
     }
 
     @Override

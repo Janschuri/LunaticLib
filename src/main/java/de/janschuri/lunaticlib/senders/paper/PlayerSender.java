@@ -1,6 +1,7 @@
 package de.janschuri.lunaticlib.senders.paper;
 
 import de.janschuri.lunaticlib.config.Language;
+import de.janschuri.lunaticlib.senders.AbstractPlayerSender;
 import de.janschuri.lunaticlib.utils.ClickableDecisionMessage;
 import de.janschuri.lunaticlib.utils.ClickableMessage;
 import de.janschuri.lunaticlib.utils.Utils;
@@ -16,26 +17,25 @@ import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.command.CommandSender;
-import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.List;
 import java.util.TimerTask;
 import java.util.UUID;
 
-public class PlayerCommandSender extends de.janschuri.lunaticlib.senders.PlayerCommandSender {
+public class PlayerSender extends AbstractPlayerSender {
     private final UUID uuid;
-    public PlayerCommandSender(CommandSender sender) {
+    public PlayerSender(CommandSender sender) {
         super(((OfflinePlayer) sender).getUniqueId());
         this.uuid = ((OfflinePlayer) sender).getUniqueId();
     }
 
-    public PlayerCommandSender(UUID uuid) {
+    public PlayerSender(UUID uuid) {
         super(uuid);
         this.uuid = uuid;
     }
 
-    public PlayerCommandSender(String name) {
+    public PlayerSender(String name) {
         super(Bukkit.getOfflinePlayer(name).getUniqueId());
         this.uuid = getUniqueId(name);
     }
@@ -69,12 +69,12 @@ public class PlayerCommandSender extends de.janschuri.lunaticlib.senders.PlayerC
         };
     }
 
-    public de.janschuri.lunaticlib.senders.PlayerCommandSender getPlayerCommandSender(UUID uuid) {
-        return new PlayerCommandSender(uuid);
+    public AbstractPlayerSender getPlayerCommandSender(UUID uuid) {
+        return new PlayerSender(uuid);
     }
 
-    public de.janschuri.lunaticlib.senders.PlayerCommandSender getPlayerCommandSender(String name) {
-        return new PlayerCommandSender(name);
+    public AbstractPlayerSender getPlayerCommandSender(String name) {
+        return new PlayerSender(name);
     }
 
     @Override
@@ -208,7 +208,7 @@ public class PlayerCommandSender extends de.janschuri.lunaticlib.senders.PlayerC
         if (range < 0) {
             return true;
         }
-        Player player = Bukkit.getPlayer(playerUUID);
+        org.bukkit.entity.Player player = Bukkit.getPlayer(playerUUID);
         return Bukkit.getPlayer(uuid).getLocation().distance(player.getLocation()) <= range;
     }
 

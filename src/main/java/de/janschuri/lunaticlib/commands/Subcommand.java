@@ -1,15 +1,9 @@
-package de.janschuri.lunaticFamily.commands.subcommands;
+package de.janschuri.lunaticlib.commands;
 
-import de.janschuri.lunaticFamily.utils.ClickableMessage;
-import de.janschuri.lunaticFamily.senders.CommandSender;
-import de.janschuri.lunaticFamily.config.Language;
-import de.janschuri.lunaticFamily.utils.Utils;
-//import net.kyori.adventure.text.Component;
-//import net.kyori.adventure.text.event.ClickEvent;
-//import net.kyori.adventure.text.event.HoverEvent;
-//import net.kyori.adventure.text.Component;
-//import net.kyori.adventure.text.event.ClickEvent;
-//import net.kyori.adventure.text.event.HoverEvent;
+import de.janschuri.lunaticlib.config.Language;
+import de.janschuri.lunaticlib.senders.AbstractSender;
+import de.janschuri.lunaticlib.utils.ClickableMessage;
+import de.janschuri.lunaticlib.utils.Utils;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -47,7 +41,7 @@ public abstract class Subcommand {
         this.subcommands = subcommands;
     }
 
-    public List<String> tabComplete(CommandSender sender, String[] args) {
+    public List<String> tabComplete(AbstractSender sender, String[] args) {
         List<String> list = new ArrayList<>();
         if (sender.hasPermission(permission)) {
             if (args.length == 0) {
@@ -94,7 +88,7 @@ public abstract class Subcommand {
         return list;
     }
 
-    public ClickableMessage getHelp(CommandSender sender) {
+    public ClickableMessage getHelp(AbstractSender sender) {
         if (sender.hasPermission(permission)) {
             if (subcommands != null) {
                 return new ClickableMessage(Language.getMessage(mainCommand + "_" + name + "_help") + "\n", Language.getMessage(name + "_help"), mainCommand + " " + name + " help");
@@ -106,6 +100,6 @@ public abstract class Subcommand {
         }
     }
 
-    public abstract boolean execute(CommandSender sender, String[] args);
+    public abstract boolean execute(AbstractSender sender, String[] args);
 
 }

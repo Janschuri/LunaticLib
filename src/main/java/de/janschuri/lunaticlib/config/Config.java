@@ -1,4 +1,4 @@
-package de.janschuri.lunaticFamily.config;
+package de.janschuri.lunaticlib.config;
 
 import com.google.common.base.Preconditions;
 import org.yaml.snakeyaml.DumperOptions;

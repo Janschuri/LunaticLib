@@ -1,8 +1,8 @@
 package de.janschuri.lunaticlib.senders.velocity;
 
 import com.velocitypowered.api.command.CommandSource;
-import com.velocitypowered.api.proxy.Player;
 import de.janschuri.lunaticlib.VelocityLunaticLib;
+import de.janschuri.lunaticlib.senders.AbstractPlayerSender;
 import de.janschuri.lunaticlib.utils.ClickableDecisionMessage;
 import de.janschuri.lunaticlib.utils.ClickableMessage;
 import de.janschuri.lunaticlib.utils.FutureRequests;
@@ -17,20 +17,20 @@ import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 
 import java.util.*;
 
-public class PlayerCommandSender extends de.janschuri.lunaticlib.senders.PlayerCommandSender {
+public class PlayerSender extends AbstractPlayerSender {
 
     private final UUID uuid;
-    public PlayerCommandSender(CommandSource sender) {
-        super(((Player) sender).getUniqueId());
-        this.uuid = ((Player) sender).getUniqueId();
+    public PlayerSender(CommandSource sender) {
+        super(((com.velocitypowered.api.proxy.Player) sender).getUniqueId());
+        this.uuid = ((com.velocitypowered.api.proxy.Player) sender).getUniqueId();
     }
 
-    public PlayerCommandSender(UUID uuid) {
+    public PlayerSender(UUID uuid) {
         super(uuid);
         this.uuid = uuid;
     }
 
-    public PlayerCommandSender(String name) {
+    public PlayerSender(String name) {
         super(FutureRequests.getUniqueId(name));
         this.uuid = FutureRequests.getUniqueId(name);
     }
@@ -38,7 +38,7 @@ public class PlayerCommandSender extends de.janschuri.lunaticlib.senders.PlayerC
 
     @Override
     public boolean sendMessage(String message) {
-        Optional<Player> player = VelocityLunaticLib.getProxy().getPlayer(uuid);
+        Optional<com.velocitypowered.api.proxy.Player> player = VelocityLunaticLib.getProxy().getPlayer(uuid);
         player.ifPresent(value -> value.sendMessage(
                 Component.text(message)
         ));
@@ -47,7 +47,7 @@ public class PlayerCommandSender extends de.janschuri.lunaticlib.senders.PlayerC
 
     @Override
     public boolean sendMessage(ClickableMessage message) {
-        Optional<Player> player = VelocityLunaticLib.getProxy().getPlayer(uuid);
+        Optional<com.velocitypowered.api.proxy.Player> player = VelocityLunaticLib.getProxy().getPlayer(uuid);
         player.ifPresent(value -> value.sendMessage(
                         LegacyComponentSerializer.legacy('§').deserialize(message.getText())
                                 .clickEvent(ClickEvent.runCommand(message.getCommand()))
@@ -61,7 +61,7 @@ public class PlayerCommandSender extends de.janschuri.lunaticlib.senders.PlayerC
 
     @Override
     public boolean sendMessage(ClickableDecisionMessage message) {
-        Optional<Player> player = VelocityLunaticLib.getProxy().getPlayer(uuid);
+        Optional<com.velocitypowered.api.proxy.Player> player = VelocityLunaticLib.getProxy().getPlayer(uuid);
         player.ifPresent(value -> value.sendMessage(
                 LegacyComponentSerializer.legacy('§').deserialize(message.getText())
                         .append(Component.text(" ✓", NamedTextColor.GREEN, TextDecoration.BOLD).clickEvent(ClickEvent.runCommand(
@@ -83,7 +83,7 @@ public class PlayerCommandSender extends de.janschuri.lunaticlib.senders.PlayerC
 
     @Override
     public boolean sendMessage(List<ClickableMessage> msg) {
-        Optional<Player> player = VelocityLunaticLib.getProxy().getPlayer(uuid);
+        Optional<com.velocitypowered.api.proxy.Player> player = VelocityLunaticLib.getProxy().getPlayer(uuid);
         if (player.isPresent()) {
             Component component = Component.empty();
             for (ClickableMessage message : msg) {
@@ -116,7 +116,7 @@ public class PlayerCommandSender extends de.janschuri.lunaticlib.senders.PlayerC
 
     @Override
     public boolean chat(String message) {
-        Optional<Player> playerOptional = VelocityLunaticLib.getProxy().getPlayer(uuid);
+        Optional<com.velocitypowered.api.proxy.Player> playerOptional = VelocityLunaticLib.getProxy().getPlayer(uuid);
         if (playerOptional.isPresent()) {
             playerOptional.get().sendMessage(
                 LegacyComponentSerializer.legacy('§').deserialize(message)
@@ -128,7 +128,7 @@ public class PlayerCommandSender extends de.janschuri.lunaticlib.senders.PlayerC
 
     @Override
     public boolean chat(String message, int delay) {
-        Optional<Player> playerOptional = VelocityLunaticLib.getProxy().getPlayer(uuid);
+        Optional<com.velocitypowered.api.proxy.Player> playerOptional = VelocityLunaticLib.getProxy().getPlayer(uuid);
 
         TimerTask task = new TimerTask() {
             @Override
@@ -165,13 +165,13 @@ public class PlayerCommandSender extends de.janschuri.lunaticlib.senders.PlayerC
 
     @Override
     public boolean hasPermission(String permission) {
-        Optional<Player> playerOptional = VelocityLunaticLib.getProxy().getPlayer(uuid);
+        Optional<com.velocitypowered.api.proxy.Player> playerOptional = VelocityLunaticLib.getProxy().getPlayer(uuid);
         return playerOptional.map(player -> player.hasPermission(permission)).orElse(false);
     }
 
     @Override
     public String getServerName() {
-        Optional<Player> playerOptional = VelocityLunaticLib.getProxy().getPlayer(uuid);
+        Optional<com.velocitypowered.api.proxy.Player> playerOptional = VelocityLunaticLib.getProxy().getPlayer(uuid);
         return playerOptional.map(player -> player.getCurrentServer().get().getServerInfo().getName()).orElse(null);
     }
 
@@ -182,8 +182,8 @@ public class PlayerCommandSender extends de.janschuri.lunaticlib.senders.PlayerC
 
     @Override
     public boolean isOnline() {
-        Collection<Player> players = VelocityLunaticLib.getProxy().getAllPlayers();
-        for (Player player : players) {
+        Collection<com.velocitypowered.api.proxy.Player> players = VelocityLunaticLib.getProxy().getAllPlayers();
+        for (com.velocitypowered.api.proxy.Player player : players) {
             if (player.getUniqueId().equals(uuid)) {
                 return true;
             }
@@ -202,19 +202,19 @@ public class PlayerCommandSender extends de.janschuri.lunaticlib.senders.PlayerC
     }
 
     @Override
-    public de.janschuri.lunaticlib.senders.PlayerCommandSender getPlayerCommandSender(UUID uuid) {
-        return new PlayerCommandSender(uuid);
+    public AbstractPlayerSender getPlayerCommandSender(UUID uuid) {
+        return new PlayerSender(uuid);
     }
 
     @Override
-    public de.janschuri.lunaticlib.senders.PlayerCommandSender getPlayerCommandSender(String name) {
-        return new PlayerCommandSender(name);
+    public AbstractPlayerSender getPlayerCommandSender(String name) {
+        return new PlayerSender(name);
     }
 
     @Override
     public boolean isSameServer(UUID player1UUID) {
-        Optional<Player> player1 = VelocityLunaticLib.getProxy().getPlayer(player1UUID);
-        Optional<Player> player = VelocityLunaticLib.getProxy().getPlayer(uuid);
+        Optional<com.velocitypowered.api.proxy.Player> player1 = VelocityLunaticLib.getProxy().getPlayer(player1UUID);
+        Optional<com.velocitypowered.api.proxy.Player> player = VelocityLunaticLib.getProxy().getPlayer(uuid);
 
         return player1.isPresent() && player.isPresent() && player1.get().getCurrentServer().get().getServerInfo().getName().equals(player.get().getCurrentServer().get().getServerInfo().getName());
 
