@@ -87,14 +87,13 @@ public abstract class AbstractSubcommand {
                 }
             }
         }
-        System.out.println(Arrays.toString(args) + " || " + list);
         return list;
     }
 
     public ClickableMessage getHelp(AbstractSender sender) {
         if (sender.hasPermission(permission)) {
             if (subcommands != null) {
-                return new ClickableMessage(language.getMessage(mainCommand + "_" + name + "_help") + "\n", language.getMessage(name + "_help"), mainCommand + " " + name + " help");
+                return new ClickableMessage(language.getMessage(mainCommand + "_" + name + "_help") + "\n", language.getMessage(name + "_help"), "/" + mainCommand + " " + name + " help");
             } else {
                 return new ClickableMessage(language.getMessage(mainCommand + "_" + name + "_help") + "\n");
             }

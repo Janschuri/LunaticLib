@@ -5,7 +5,7 @@ import com.google.common.io.ByteArrayDataOutput;
 import com.google.common.io.ByteStreams;
 import de.janschuri.lunaticlib.LunaticLib;
 import de.janschuri.lunaticlib.senders.paper.PlayerSender;
-import de.janschuri.lunaticlib.utils.Logger;
+import de.janschuri.lunaticlib.utils.logger.Logger;
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.messaging.PluginMessageListener;
 
@@ -16,9 +16,14 @@ public class MessageListener implements PluginMessageListener {
     @Override
     public void onPluginMessageReceived(String channel, org.bukkit.entity.Player p, byte[] message) {
 
+        if (!channel.equals("lunaticlib:proxy")) {
+            return;
+        }
+
+
         ByteArrayDataInput in = ByteStreams.newDataInput(message);
         String subchannel = in.readUTF();
-        Logger.debugLog("ProxyListener: " + subchannel);
+        Logger.debugLog("plugin message received: " + subchannel);
 
         if (subchannel.equals("IsInRangeRequest")) {
             int requestId = in.readInt();
@@ -145,6 +150,36 @@ public class MessageListener implements PluginMessageListener {
             out.writeDouble(position[0]);
             out.writeDouble(position[1]);
             out.writeDouble(position[2]);
+
+            LunaticLib.sendPluginMessage(out.toByteArray());
+        }
+
+        if (subchannel.equals("GetUniqueIdRequest")) {
+            int requestId = in.readInt();
+            String name = in.readUTF();
+
+            PlayerSender player = new PlayerSender(name);
+            UUID uuid = player.getUniqueId();
+
+            ByteArrayDataOutput out = ByteStreams.newDataOutput();
+            out.writeUTF("GetUniqueIdResponse");
+            out.writeInt(requestId);
+            out.writeUTF(uuid.toString());
+
+            LunaticLib.sendPluginMessage(out.toByteArray());
+        }
+
+        if (subchannel.equals("GetNameRequest")) {
+            int requestId = in.readInt();
+            UUID uuid = UUID.fromString(in.readUTF());
+
+            PlayerSender player = new PlayerSender(uuid);
+            String name = player.getName();
+
+            ByteArrayDataOutput out = ByteStreams.newDataOutput();
+            out.writeUTF("GetNameResponse");
+            out.writeInt(requestId);
+            out.writeUTF(name);
 
             LunaticLib.sendPluginMessage(out.toByteArray());
         }

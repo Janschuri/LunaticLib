@@ -127,23 +127,6 @@ public class PlayerSender extends AbstractPlayerSender {
     }
 
     @Override
-    public boolean chat(String message, int delay) {
-        Optional<com.velocitypowered.api.proxy.Player> playerOptional = VelocityLunaticLib.getProxy().getPlayer(uuid);
-
-        TimerTask task = new TimerTask() {
-            @Override
-            public void run() {
-                playerOptional.ifPresent(player -> player.spoofChatInput(
-                        message
-                ));
-            }
-        };
-
-        Utils.getTimer().schedule(task, delay);
-        return true;
-    }
-
-    @Override
     public boolean hasItemInMainHand() {
         return FutureRequests.hasItemInMainHand(uuid);
     }

@@ -2,8 +2,8 @@ package de.janschuri.lunaticlib.utils;
 
 public class ClickableMessage {
     private String text;
-    private final String hoverText;
-    private final String command;
+    private String hoverText;
+    private String command;
     private String color;
 
     public ClickableMessage(String text, String hoverText, String command) {
@@ -50,11 +50,11 @@ public class ClickableMessage {
     }
 
     public void setHoverText(String hoverText) {
-        this.text = hoverText;
+        this.hoverText = hoverText;
     }
 
     public void setCommand(String command) {
-        this.text = command;
+        this.command = command;
     }
 
     public static ClickableMessage empty() {

@@ -10,14 +10,24 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.Timer;
 import java.util.UUID;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class Utils {
 
-    private static Timer timer = new Timer();
-    public static Timer getTimer() {
-        return timer;
+    private static final ScheduledExecutorService executor = Executors.newScheduledThreadPool(1);
+
+    public static boolean scheduleTask(Runnable task, long delay, TimeUnit unit) {
+        try {
+            executor.schedule(task, delay, unit);
+            return true;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return false;
+        }
     }
 
     public static boolean isUUID(String input) {

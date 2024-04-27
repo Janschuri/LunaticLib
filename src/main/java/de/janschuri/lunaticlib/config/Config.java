@@ -1,6 +1,8 @@
 package de.janschuri.lunaticlib.config;
 
 import com.google.common.base.Preconditions;
+import de.janschuri.lunaticlib.utils.logger.Logger;
+import org.bukkit.Bukkit;
 import org.yaml.snakeyaml.DumperOptions;
 import org.yaml.snakeyaml.LoaderOptions;
 import org.yaml.snakeyaml.Yaml;
@@ -35,6 +37,9 @@ public abstract class Config {
     protected void load() {
 
         File file = new File(dataDirectory.toFile(), filePath);
+
+        Logger.infoLog("Loading config file: " + file.getAbsolutePath());
+        Logger.infoLog("Default config file: " + defaultFilePath);
 
         if (!dataDirectory.toFile().exists()) {
             try {
@@ -82,7 +87,13 @@ public abstract class Config {
                 }
             }
 
-            Node newNode = mergeNodes(root, defaultRoot);
+            Node newNode;
+
+            if (root == null) {
+                newNode = defaultRoot;
+            } else {
+                newNode = mergeNodes(root, defaultRoot);
+            }
 
             try (FileOutputStream fos = new FileOutputStream(file);
                  OutputStreamWriter osw = new OutputStreamWriter(fos, StandardCharsets.UTF_8);

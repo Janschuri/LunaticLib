@@ -15,7 +15,6 @@ public abstract class AbstractPlayerSender extends AbstractSender {
     public abstract UUID getUniqueId(String name);
     public abstract String getName();
     public abstract boolean chat(String message);
-    public abstract boolean chat(String message, int delay);
     public abstract boolean hasItemInMainHand();
     public abstract byte[] getItemInMainHand();
     public abstract boolean removeItemInMainHand();

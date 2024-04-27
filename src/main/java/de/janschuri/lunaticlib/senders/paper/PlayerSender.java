@@ -20,8 +20,11 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.List;
+import java.util.Timer;
 import java.util.TimerTask;
 import java.util.UUID;
+import java.util.concurrent.Executor;
+import java.util.concurrent.ScheduledExecutorService;
 
 public class PlayerSender extends AbstractPlayerSender {
     private final UUID uuid;
@@ -142,23 +145,6 @@ public class PlayerSender extends AbstractPlayerSender {
     public boolean chat(String message) {
         if (Bukkit.getPlayer(uuid) != null) {
             Bukkit.getPlayer(uuid).chat(message);
-            return true;
-        }
-        return false;
-    }
-
-    @Override
-    public boolean chat(String message, int delay) {
-        if (Bukkit.getPlayer(uuid) != null) {
-
-            TimerTask task = new TimerTask() {
-                @Override
-                public void run() {
-                    Bukkit.getPlayer(uuid).chat(message);
-                }
-            };
-
-            Utils.getTimer().schedule(task, delay);
             return true;
         }
         return false;
