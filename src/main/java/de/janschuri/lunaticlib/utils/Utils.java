@@ -22,7 +22,6 @@ public class Utils {
     private static final ScheduledExecutorService executor = Executors.newScheduledThreadPool(1);
 
     public static boolean scheduleTask(Runnable task, long delay, TimeUnit unit) {
-        Logger.debugLog("Scheduling task with delay of " + delay + " " + unit.toString());
         try {
             executor.schedule(task, delay, unit);
             return true;

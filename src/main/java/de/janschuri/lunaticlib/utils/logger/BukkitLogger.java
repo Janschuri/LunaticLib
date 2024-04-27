@@ -15,11 +15,11 @@ public class BukkitLogger extends AbstractLogger {
 
     @Override
     public void debug(String msg) {
-        Bukkit.getLogger().info( "[" +plugin.getName() + "] " + "[DEBUG] " + msg + ChatColor.AQUA);
+        Bukkit.getLogger().info(  ANSI_BLUE + "[" + plugin.getName() + "] " + ANSI_AQUA + "[DEBUG] " + msg + ANSI_RESET);
     }
     @Override
     public void info(String msg) {
-        Bukkit.getLogger().info("[" + plugin.getName() + "] " + msg);
+        Bukkit.getLogger().info(ANSI_BLUE + "[" + plugin.getName() + "] " + ANSI_RESET + msg);
     }
     @Override
     public void warn(String msg) {

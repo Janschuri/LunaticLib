@@ -11,7 +11,7 @@ public class VelocityLogger extends AbstractLogger {
     }
 
     public void debug(String msg) {
-        logger.info("[DEBUG] " + msg);
+        logger.info(ANSI_AQUA + "[DEBUG] " + msg + ANSI_RESET);
     }
 
     public void info(String msg) {
