@@ -1,4 +1,4 @@
-package de.janschuri.lunaticlib;
+package de.janschuri.lunaticlib.utils;
 
 public enum Mode {
 

@@ -1,6 +1,7 @@
 package de.janschuri.lunaticlib;
 
 import de.janschuri.lunaticlib.listener.paper.MessageListener;
+import de.janschuri.lunaticlib.utils.Mode;
 import de.janschuri.lunaticlib.utils.logger.BukkitLogger;
 import de.janschuri.lunaticlib.utils.logger.Logger;
 import org.bukkit.plugin.java.JavaPlugin;

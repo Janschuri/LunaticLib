@@ -8,6 +8,7 @@ import com.velocitypowered.api.plugin.annotation.DataDirectory;
 import com.velocitypowered.api.proxy.ProxyServer;
 import com.velocitypowered.api.proxy.messages.MinecraftChannelIdentifier;
 import de.janschuri.lunaticlib.listener.velocity.MessageListener;
+import de.janschuri.lunaticlib.utils.Mode;
 import de.janschuri.lunaticlib.utils.logger.VelocityLogger;
 import org.slf4j.Logger;
 
