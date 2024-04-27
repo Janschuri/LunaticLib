@@ -11,7 +11,7 @@ public class VelocityLogger extends AbstractLogger {
     }
 
     public void debug(String msg) {
-        logger.debug(msg);
+        logger.info("[DEBUG] " + msg);
     }
 
     public void info(String msg) {

@@ -1,6 +1,7 @@
 package de.janschuri.lunaticlib.utils;
 
 import de.janschuri.lunaticlib.config.Language;
+import de.janschuri.lunaticlib.utils.logger.Logger;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.util.io.BukkitObjectInputStream;
 import org.bukkit.util.io.BukkitObjectOutputStream;
@@ -21,6 +22,7 @@ public class Utils {
     private static final ScheduledExecutorService executor = Executors.newScheduledThreadPool(1);
 
     public static boolean scheduleTask(Runnable task, long delay, TimeUnit unit) {
+        Logger.debugLog("Scheduling task with delay of " + delay + " " + unit.toString());
         try {
             executor.schedule(task, delay, unit);
             return true;
