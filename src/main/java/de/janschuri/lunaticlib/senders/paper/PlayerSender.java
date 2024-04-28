@@ -1,18 +1,9 @@
 package de.janschuri.lunaticlib.senders.paper;
 
-import de.janschuri.lunaticlib.config.Language;
 import de.janschuri.lunaticlib.senders.AbstractPlayerSender;
 import de.janschuri.lunaticlib.utils.ClickableDecisionMessage;
 import de.janschuri.lunaticlib.utils.ClickableMessage;
 import de.janschuri.lunaticlib.utils.Utils;
-import net.kyori.adventure.text.Component;
-import net.kyori.adventure.text.TextComponent;
-import net.kyori.adventure.text.event.ClickEvent;
-import net.kyori.adventure.text.event.HoverEvent;
-import net.kyori.adventure.text.format.NamedTextColor;
-import net.kyori.adventure.text.format.TextColor;
-import net.kyori.adventure.text.format.TextDecoration;
-import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.OfflinePlayer;
@@ -20,35 +11,25 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.List;
-import java.util.Timer;
-import java.util.TimerTask;
 import java.util.UUID;
-import java.util.concurrent.Executor;
-import java.util.concurrent.ScheduledExecutorService;
 
 public class PlayerSender extends AbstractPlayerSender {
-    private final UUID uuid;
     public PlayerSender(CommandSender sender) {
         super(((OfflinePlayer) sender).getUniqueId());
-        this.uuid = ((OfflinePlayer) sender).getUniqueId();
     }
 
     public PlayerSender(UUID uuid) {
         super(uuid);
-        this.uuid = uuid;
     }
 
     public PlayerSender(String name) {
         super(Bukkit.getOfflinePlayer(name).getUniqueId());
-        this.uuid = getUniqueId(name);
     }
 
     @Override
     public boolean sendMessage(String message) {
         if (Bukkit.getPlayer(uuid) != null) {
-            TextComponent msg = LegacyComponentSerializer.legacy('§').deserialize(message);
-            Bukkit.getPlayer(uuid).sendMessage(msg);
-            return true;
+            return new Sender(Bukkit.getPlayer(uuid)).sendMessage(message);
         }
         return false;
     }
@@ -72,33 +53,10 @@ public class PlayerSender extends AbstractPlayerSender {
         };
     }
 
-    public AbstractPlayerSender getPlayerCommandSender(UUID uuid) {
-        return new PlayerSender(uuid);
-    }
-
-    public AbstractPlayerSender getPlayerCommandSender(String name) {
-        return new PlayerSender(name);
-    }
-
     @Override
     public boolean sendMessage(ClickableDecisionMessage message) {
         if (Bukkit.getPlayer(uuid) != null) {
-            Bukkit.getPlayer(uuid).sendMessage(
-                    LegacyComponentSerializer.legacy('§').deserialize(message.getText())
-                    .append(Component.text(" ✓", NamedTextColor.GREEN, TextDecoration.BOLD).clickEvent(ClickEvent.runCommand(
-                            message.getConfirmCommand()
-                    )))
-                    .hoverEvent(HoverEvent.showText(
-                            LegacyComponentSerializer.legacy('§').deserialize(message.getConfirmHoverText())
-                    ))
-                    .append(Component.text(" ❌", NamedTextColor.RED, TextDecoration.BOLD).clickEvent(ClickEvent.runCommand(
-                            message.getCancelCommand()
-                    )))
-                    .hoverEvent(HoverEvent.showText(
-                            LegacyComponentSerializer.legacy('§').deserialize(message.getCancelHoverText())
-                    ))
-                    .toBuilder().build());
-            return true;
+            return new Sender(Bukkit.getPlayer(uuid)).sendMessage(message);
         }
         return false;
     }
@@ -106,14 +64,7 @@ public class PlayerSender extends AbstractPlayerSender {
     @Override
     public boolean sendMessage(ClickableMessage message) {
         if (Bukkit.getPlayer(uuid) != null) {
-            Bukkit.getPlayer(uuid).sendMessage(
-                    LegacyComponentSerializer.legacy('§').deserialize(message.getText())
-                    .clickEvent(ClickEvent.runCommand(message.getCommand()))
-                    .hoverEvent(HoverEvent.showText(
-                            LegacyComponentSerializer.legacy('§').deserialize(message.getHoverText())
-                    ))
-                    .toBuilder().build());
-            return true;
+            return new Sender(Bukkit.getPlayer(uuid)).sendMessage(message);
         }
         return false;
     }
@@ -121,22 +72,7 @@ public class PlayerSender extends AbstractPlayerSender {
     @Override
     public boolean sendMessage(List<ClickableMessage> msg) {
         if (Bukkit.getPlayer(uuid) != null) {
-            Component component = Component.empty();
-            for (ClickableMessage message : msg) {
-                Component text = Component.text(message.getText());
-                if (message.getCommand() != null) {
-                    text = text.clickEvent(ClickEvent.runCommand(message.getCommand()));
-                }
-                if (message.getHoverText() != null) {
-                    text = text.hoverEvent(HoverEvent.showText(Component.text(message.getHoverText())));
-                }
-                if (message.getColor() != null) {
-                    text = text.color(TextColor.fromHexString(message.getColor()));
-                }
-                component = component.append(text);
-            }
-            Bukkit.getPlayer(uuid).sendMessage(component);
-            return true;
+            return new Sender(Bukkit.getPlayer(uuid)).sendMessage(msg);
         }
         return false;
     }

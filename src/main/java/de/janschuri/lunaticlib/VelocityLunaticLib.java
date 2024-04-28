@@ -9,6 +9,7 @@ import com.velocitypowered.api.proxy.ProxyServer;
 import com.velocitypowered.api.proxy.messages.MinecraftChannelIdentifier;
 import de.janschuri.lunaticlib.listener.velocity.MessageListener;
 import de.janschuri.lunaticlib.utils.Mode;
+import de.janschuri.lunaticlib.utils.Platform;
 import de.janschuri.lunaticlib.utils.logger.VelocityLogger;
 import org.slf4j.Logger;
 
@@ -39,6 +40,7 @@ public class VelocityLunaticLib {
     @Subscribe
     public void onProxyInitialization(ProxyInitializeEvent event) {
         LunaticLib.mode = Mode.PROXY;
+        LunaticLib.platform = Platform.VELOCITY;
         new de.janschuri.lunaticlib.utils.logger.Logger(new VelocityLogger(logger));
         proxy.getChannelRegistrar().register(IDENTIFIER);
         proxy.getEventManager().register(this, new MessageListener());

@@ -6,6 +6,7 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.util.io.BukkitObjectInputStream;
 import org.bukkit.util.io.BukkitObjectOutputStream;
 
+import java.awt.*;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -51,6 +52,38 @@ public class Utils {
         return matcher.matches();
     }
 
+    public static Color hexToColor(String hexCode) {
+        // Check if the hex string is in a valid format
+        if (!isValidHexCode(hexCode)) {
+            throw new IllegalArgumentException("Invalid hex color code");
+        }
+
+        // Remove '#' if present and extract RGB values
+        String hexDigits = hexCode.substring(1); // Remove '#'
+        int r, g, b;
+
+        try {
+            if (hexDigits.length() == 3) {
+                // Handle short format (e.g., #RGB)
+                r = Integer.parseInt(hexDigits.substring(0, 1), 16) * 17; // Convert and expand to full range
+                g = Integer.parseInt(hexDigits.substring(1, 2), 16) * 17;
+                b = Integer.parseInt(hexDigits.substring(2, 3), 16) * 17;
+            } else if (hexDigits.length() == 6) {
+                // Handle long format (e.g., #RRGGBB)
+                r = Integer.parseInt(hexDigits.substring(0, 2), 16);
+                g = Integer.parseInt(hexDigits.substring(2, 4), 16);
+                b = Integer.parseInt(hexDigits.substring(4, 6), 16);
+            } else {
+                throw new IllegalArgumentException("Invalid hex color code");
+            }
+
+            // Create and return the Color object
+            return new Color(r, g, b);
+        } catch (NumberFormatException e) {
+            throw new IllegalArgumentException("Invalid hex color code", e);
+        }
+    }
+
     public static byte[] serializeItemStack(ItemStack item) {
         try {
             ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
@@ -74,6 +107,15 @@ public class Utils {
         } catch (IOException | ClassNotFoundException e) {
             e.printStackTrace();
             return null;
+        }
+    }
+
+    public static boolean classExists(String path) {
+        try {
+            Class.forName(path);
+            return true;
+        } catch (ClassNotFoundException|NullPointerException e) {
+            return false;
         }
     }
 }

@@ -91,14 +91,4 @@ public class Sender extends AbstractSender {
         sender.sendMessage(component);
         return true;
     }
-
-    @Override
-    public AbstractPlayerSender getPlayerCommandSender(UUID uuid) {
-        return new PlayerSender(uuid);
-    }
-
-    @Override
-    public AbstractPlayerSender getPlayerCommandSender(String name) {
-        return new PlayerSender(name);
-    }
 }
