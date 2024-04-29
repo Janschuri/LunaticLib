@@ -2,7 +2,7 @@ package de.janschuri.lunaticlib.utils;
 
 import com.google.common.io.ByteArrayDataOutput;
 import com.google.common.io.ByteStreams;
-import de.janschuri.lunaticlib.VelocityLunaticLib;
+import de.janschuri.lunaticlib.LunaticLib;
 
 import java.util.UUID;
 import java.util.concurrent.*;
@@ -20,6 +20,15 @@ public class FutureRequests {
     public static final ConcurrentHashMap<Integer, CompletableFuture<UUID>> uuidRequestMap = new ConcurrentHashMap<>();
     public static final ConcurrentHashMap<Integer, CompletableFuture<String>> stringRequestMap = new ConcurrentHashMap<>();
 
+    public static void sendFutureRequest(String subchannel, byte[] data) {
+        ByteArrayDataOutput out = ByteStreams.newDataOutput();
+        int requestId = requestIdGenerator.incrementAndGet();
+        out.writeInt(requestId);
+        out.writeUTF(subchannel);
+        out.write(data);
+
+        LunaticLib.sendPluginMessage(out.toByteArray());
+    }
 
     public static UUID getUniqueId(String name) {
         int requestId = requestIdGenerator.incrementAndGet();
@@ -31,7 +40,7 @@ public class FutureRequests {
         out.writeUTF("GetUniqueIdRequest");
         out.writeInt(requestId);
         out.writeUTF(name);
-        VelocityLunaticLib.sendPluginMessage(out.toByteArray());
+        LunaticLib.sendPluginMessage(out.toByteArray());
 
         try {
             // Wait for the response with a timeout
@@ -52,7 +61,7 @@ public class FutureRequests {
         out.writeUTF("GetNameRequest");
         out.writeInt(requestId);
         out.writeUTF(uuid.toString());
-        VelocityLunaticLib.sendPluginMessage(out.toByteArray());
+        LunaticLib.sendPluginMessage(out.toByteArray());
 
         try {
             // Wait for the response with a timeout
@@ -73,7 +82,7 @@ public class FutureRequests {
         out.writeUTF("HasItemInMainHandRequest");
         out.writeInt(requestId);
         out.writeUTF(uuid.toString());
-        VelocityLunaticLib.sendPluginMessage(out.toByteArray());
+        LunaticLib.sendPluginMessage(out.toByteArray());
 
         try {
             // Wait for the response with a timeout
@@ -94,7 +103,7 @@ public class FutureRequests {
         out.writeUTF("GetItemInMainHandRequest");
         out.writeInt(requestId);
         out.writeUTF(uuid.toString());
-        VelocityLunaticLib.sendPluginMessage(out.toByteArray());
+        LunaticLib.sendPluginMessage(out.toByteArray());
 
         try {
             // Wait for the response with a timeout
@@ -115,7 +124,7 @@ public class FutureRequests {
         out.writeUTF("RemoveItemInMainHandRequest");
         out.writeInt(requestId);
         out.writeUTF(uuid.toString());
-        VelocityLunaticLib.sendPluginMessage(out.toByteArray());
+        LunaticLib.sendPluginMessage(out.toByteArray());
 
         try {
             // Wait for the response with a timeout
@@ -138,7 +147,7 @@ public class FutureRequests {
         out.writeUTF(uuid.toString());
         out.writeInt(item.length);
         out.write(item);
-        VelocityLunaticLib.sendPluginMessage(out.toByteArray());
+        LunaticLib.sendPluginMessage(out.toByteArray());
 
         try {
             // Wait for the response with a timeout
@@ -159,7 +168,7 @@ public class FutureRequests {
         out.writeUTF("GetPositionRequest");
         out.writeInt(requestId);
         out.writeUTF(uuid.toString());
-        VelocityLunaticLib.sendPluginMessage(out.toByteArray());
+        LunaticLib.sendPluginMessage(out.toByteArray());
 
         try {
             // Wait for the response with a timeout
@@ -182,7 +191,7 @@ public class FutureRequests {
         out.writeUTF(uuid.toString());
         out.writeUTF(playerUUID.toString());
         out.writeDouble(range);
-        VelocityLunaticLib.sendPluginMessage(out.toByteArray());
+        LunaticLib.sendPluginMessage(out.toByteArray());
 
         try {
             // Wait for the response with a timeout

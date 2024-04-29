@@ -139,10 +139,6 @@ public class PlayerSender extends AbstractPlayerSender {
         return Bukkit.getOfflinePlayer(uuid).hasPlayedBefore();
     }
 
-    @Override
-    public UUID getUniqueId(String name) {
-        return Bukkit.getOfflinePlayer(name).getUniqueId();
-    }
 
     public String getName() {
         return Bukkit.getOfflinePlayer(uuid).getName();

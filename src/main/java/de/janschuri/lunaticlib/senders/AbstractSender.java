@@ -45,6 +45,19 @@ public abstract class AbstractSender {
         }
     }
 
+    public static AbstractSender getSender(net.md_5.bungee.api.CommandSender sender) {
+        switch (LunaticLib.getPlatform()) {
+            case BUNGEE:
+                if (sender instanceof org.bukkit.entity.Player) {
+                    return new de.janschuri.lunaticlib.senders.bungee.PlayerSender(sender);
+                } else {
+                    return new de.janschuri.lunaticlib.senders.bungee.Sender(sender);
+                }
+            default:
+                return null;
+        }
+    }
+
     public static AbstractPlayerSender getPlayerSender(UUID uuid) {
         switch (LunaticLib.getPlatform()) {
             case PAPER:

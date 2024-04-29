@@ -54,7 +54,7 @@ public class VelocityLunaticLib {
         return instance;
     }
 
-    public static void sendPluginMessage(byte[] message) {
+    static void sendPluginMessage(byte[] message) {
         de.janschuri.lunaticlib.utils.logger.Logger.debugLog("sending plugin message");
         proxy.getAllServers().forEach(serverConnection -> serverConnection.sendPluginMessage(IDENTIFIER, message));
     }

@@ -1,7 +1,5 @@
 package de.janschuri.lunaticlib.senders;
 
-import de.janschuri.lunaticlib.LunaticLib;
-
 import java.util.UUID;
 
 public abstract class AbstractPlayerSender extends AbstractSender {
@@ -14,7 +12,6 @@ public abstract class AbstractPlayerSender extends AbstractSender {
     public UUID getUniqueId() {
         return uuid;
     }
-    public abstract UUID getUniqueId(String name);
     public abstract String getName();
     public abstract boolean chat(String message);
     public abstract boolean hasItemInMainHand();

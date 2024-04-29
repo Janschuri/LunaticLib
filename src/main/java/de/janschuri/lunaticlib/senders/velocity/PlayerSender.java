@@ -6,7 +6,6 @@ import de.janschuri.lunaticlib.senders.AbstractPlayerSender;
 import de.janschuri.lunaticlib.utils.ClickableDecisionMessage;
 import de.janschuri.lunaticlib.utils.ClickableMessage;
 import de.janschuri.lunaticlib.utils.FutureRequests;
-import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 
 import java.util.*;
 
@@ -61,11 +60,6 @@ public class PlayerSender extends AbstractPlayerSender {
             return new Sender(player.get()).sendMessage(msg);
         }
         return false;
-    }
-
-    @Override
-    public UUID getUniqueId(String name) {
-        return FutureRequests.getUniqueId(name);
     }
 
     @Override
@@ -149,6 +143,5 @@ public class PlayerSender extends AbstractPlayerSender {
         Optional<com.velocitypowered.api.proxy.Player> player = VelocityLunaticLib.getProxy().getPlayer(uuid);
 
         return player1.isPresent() && player.isPresent() && player1.get().getCurrentServer().get().getServerInfo().getName().equals(player.get().getCurrentServer().get().getServerInfo().getName());
-
     }
 }

@@ -1,9 +1,6 @@
 package de.janschuri.lunaticlib.utils.logger;
 
-import com.velocitypowered.api.command.CommandMeta;
-import de.janschuri.lunaticlib.LunaticLib;
 import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
 import org.bukkit.plugin.java.JavaPlugin;
 
 public class BukkitLogger extends AbstractLogger {
