@@ -64,6 +64,8 @@ public abstract class AbstractSender {
                 return new de.janschuri.lunaticlib.senders.paper.PlayerSender(uuid);
             case VELOCITY:
                 return new de.janschuri.lunaticlib.senders.velocity.PlayerSender(uuid);
+            case BUNGEE:
+                return new de.janschuri.lunaticlib.senders.bungee.PlayerSender(uuid);
             default:
                 return null;
         }
@@ -75,6 +77,8 @@ public abstract class AbstractSender {
                 return new de.janschuri.lunaticlib.senders.paper.PlayerSender(name);
             case VELOCITY:
                 return new de.janschuri.lunaticlib.senders.velocity.PlayerSender(name);
+            case BUNGEE:
+                return new de.janschuri.lunaticlib.senders.bungee.PlayerSender(name);
             default:
                 return null;
         }

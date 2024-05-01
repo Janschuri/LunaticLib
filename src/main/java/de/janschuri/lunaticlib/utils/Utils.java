@@ -1,16 +1,17 @@
 package de.janschuri.lunaticlib.utils;
 
-import de.janschuri.lunaticlib.config.Language;
-import de.janschuri.lunaticlib.utils.logger.Logger;
-import org.bukkit.inventory.ItemStack;
-import org.bukkit.util.io.BukkitObjectInputStream;
-import org.bukkit.util.io.BukkitObjectOutputStream;
+import com.destroystokyo.paper.profile.PlayerProfile;
+import de.janschuri.lunaticlib.BungeeLunaticLib;
+import de.janschuri.lunaticlib.LunaticLib;
+import de.janschuri.lunaticlib.PaperLunaticLib;
+import de.janschuri.lunaticlib.VelocityLunaticLib;
 
 import java.awt.*;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.util.Timer;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.UUID;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
@@ -84,38 +85,27 @@ public class Utils {
         }
     }
 
-    public static byte[] serializeItemStack(ItemStack item) {
-        try {
-            ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
-            BukkitObjectOutputStream dataOutput = new BukkitObjectOutputStream(outputStream);
-            dataOutput.writeObject(item);
-            dataOutput.close();
-            return outputStream.toByteArray();
-        } catch (IOException e) {
-            e.printStackTrace();
-            return null;
-        }
-    }
-
-    public static ItemStack deserializeItemStack(byte[] data) {
-        try {
-            ByteArrayInputStream inputStream = new ByteArrayInputStream(data);
-            BukkitObjectInputStream dataInput = new BukkitObjectInputStream(inputStream);
-            ItemStack item = (ItemStack) dataInput.readObject();
-            dataInput.close();
-            return item;
-        } catch (IOException | ClassNotFoundException e) {
-            e.printStackTrace();
-            return null;
-        }
-    }
-
     public static boolean classExists(String path) {
         try {
             Class.forName(path);
             return true;
         } catch (ClassNotFoundException|NullPointerException e) {
             return false;
+        }
+    }
+
+    public static void sendConsoleCommand(String command) {
+
+        switch (LunaticLib.getPlatform()) {
+            case VELOCITY:
+                VelocityLunaticLib.sendConsoleCommand(command);
+                break;
+            case BUNGEE:
+                BungeeLunaticLib.sendConsoleCommand(command);
+                break;
+            case PAPER:
+                PaperLunaticLib.sendConsoleCommand(command);
+                break;
         }
     }
 }

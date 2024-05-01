@@ -1,63 +1,95 @@
 package de.janschuri.lunaticlib;
 
-import de.janschuri.lunaticlib.listener.paper.MessageListener;
+import de.janschuri.lunaticlib.futurerequests.FutureRequest;
+import de.janschuri.lunaticlib.futurerequests.FutureRequestsHandler;
+import de.janschuri.lunaticlib.futurerequests.requests.*;
+import de.janschuri.lunaticlib.senders.AbstractSender;
 import de.janschuri.lunaticlib.utils.Mode;
 import de.janschuri.lunaticlib.utils.Platform;
-import de.janschuri.lunaticlib.utils.logger.BukkitLogger;
 import de.janschuri.lunaticlib.utils.logger.Logger;
-import org.bukkit.Bukkit;
-import org.bukkit.plugin.java.JavaPlugin;
 
-public final class LunaticLib extends JavaPlugin {
+import java.util.HashSet;
+import java.util.Set;
 
-    static final String IDENTIFIER = "lunaticlib:proxy";
+public final class LunaticLib {
+
+    public static final String IDENTIFIER = "lunaticlib:futurerequests";
     static Mode mode = Mode.STANDALONE;
-    static Platform platform = Platform.PAPER;
-    private static LunaticLib instance;
+    public static boolean isDebug = true;
+    static Platform platform;
+    public static boolean installedVault = false;
 
     public static Platform getPlatform() {
         return platform;
     }
 
-    @Override
-        public void onEnable() {
-            instance = this;
-
-            getServer().getMessenger().registerIncomingPluginChannel(this, IDENTIFIER, new MessageListener());
-            getServer().getMessenger().registerOutgoingPluginChannel(this, IDENTIFIER);
-            new Logger (new BukkitLogger(this));
-            Logger.infoLog("LunaticLib enabled");
-        }
-
-        @Override
-        public void onDisable() {
-            // Plugin shutdown logic
-        }
-
-    public static LunaticLib getInstance() {
-        return instance;
+    public static Mode getMode() {
+        return mode;
     }
 
-    public static void sendPluginMessage(byte[] message) {
+    private static final FutureRequest[] requests = {
+            new GetItemInMainHandRequest(),
+            new GetNameRequest(),
+            new GetPositionRequest(),
+            new GetUniqueIdRequest(),
+            new GiveItemDropRequest(),
+            new HasItemInMainHandRequest(),
+            new IsInRangeRequest(),
+            new RemoveItemInMainHandRequest(),
+    };
+
+    public static boolean sendPluginMessage(String serverName, byte[] message) {
         switch (platform) {
             case PAPER:
-                getInstance().getServer().sendPluginMessage(getInstance(), IDENTIFIER, message);
-                break;
+                return PaperLunaticLib.sendPluginMessage(message);
             case VELOCITY:
-                VelocityLunaticLib.sendPluginMessage(message);
-                break;
+                return VelocityLunaticLib.sendPluginMessage(serverName, message);
             case BUNGEE:
-                BungeeLunaticLib.sendPluginMessage(message);
-                break;
+                return BungeeLunaticLib.sendPluginMessage(serverName, message);
             default:
                 Logger.errorLog("Platform not supported");
+                return false;
         }
-
-
     }
 
-    private static void disable() {
-        Logger.errorLog("Disabling LunaticLib...");
-        Bukkit.getServer().getPluginManager().disablePlugin(getInstance());
+    public static boolean sendPluginMessage(byte[] message) {
+        switch (platform) {
+            case PAPER:
+                return PaperLunaticLib.sendPluginMessage(message);
+            case VELOCITY:
+                return VelocityLunaticLib.sendPluginMessage(message);
+            case BUNGEE:
+                return BungeeLunaticLib.sendPluginMessage(message);
+            default:
+                Logger.errorLog("Platform not supported");
+                return false;
+        }
     }
+
+    static void registerRequests() {
+        for (FutureRequest request : requests) {
+            FutureRequestsHandler.registerRequest(request);
+        }
+    }
+
+    static void unregisterRequests() {
+        for (FutureRequest request : requests) {
+            FutureRequestsHandler.unregisterRequest(request.getRequestName());
+        }
+    }
+
+    public static AbstractSender getRandomPlayerSender() {
+        switch (platform) {
+//            case PAPER:
+//                return AbstractSender.getSender(PaperLunaticLib.getRandomPlayer());
+//            case VELOCITY:
+//                return AbstractSender.getSender(VelocityLunaticLib.getRandomPlayer());
+//            case BUNGEE:
+//                return AbstractSender.getSender(BungeeLunaticLib.getRandomPlayer());
+            default:
+                Logger.errorLog("Platform not supported");
+                return null;
+        }
+    }
+
 }

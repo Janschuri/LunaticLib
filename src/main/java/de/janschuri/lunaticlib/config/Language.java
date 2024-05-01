@@ -9,10 +9,10 @@ public abstract class Language extends Config {
     private static Language instance;
     private static Map<String, String> messages = new HashMap<>();
     private static String prefix;
-    private static List<String> commands;
+    private static String[] commands;
     private static final Map<String, Map<String, List<String>>> aliases = new HashMap<>();
 
-    public Language(Path dataDirectory, List<String> commands, String language) {
+    public Language(Path dataDirectory, String[] commands, String language) {
         super(dataDirectory, "lang.yml", "lang/" + language + ".yml");
         Language.instance = this;
         Language.commands = commands;

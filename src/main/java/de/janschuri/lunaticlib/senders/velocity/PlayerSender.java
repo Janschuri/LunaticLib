@@ -2,10 +2,10 @@ package de.janschuri.lunaticlib.senders.velocity;
 
 import com.velocitypowered.api.command.CommandSource;
 import de.janschuri.lunaticlib.VelocityLunaticLib;
+import de.janschuri.lunaticlib.futurerequests.requests.*;
 import de.janschuri.lunaticlib.senders.AbstractPlayerSender;
 import de.janschuri.lunaticlib.utils.ClickableDecisionMessage;
 import de.janschuri.lunaticlib.utils.ClickableMessage;
-import de.janschuri.lunaticlib.utils.FutureRequests;
 
 import java.util.*;
 
@@ -20,7 +20,7 @@ public class PlayerSender extends AbstractPlayerSender {
     }
 
     public PlayerSender(String name) {
-        super(FutureRequests.getUniqueId(name));
+        super(new GetUniqueIdRequest().get(name));
     }
 
 
@@ -64,7 +64,7 @@ public class PlayerSender extends AbstractPlayerSender {
 
     @Override
     public String getName() {
-        return FutureRequests.getName(uuid);
+        return new GetNameRequest().get(uuid);
     }
 
     @Override
@@ -81,22 +81,22 @@ public class PlayerSender extends AbstractPlayerSender {
 
     @Override
     public boolean hasItemInMainHand() {
-        return FutureRequests.hasItemInMainHand(uuid);
+        return new HasItemInMainHandRequest().get(getServerName(), uuid);
     }
 
     @Override
     public byte[] getItemInMainHand() {
-        return FutureRequests.getItemInMainHand(uuid);
+        return new GetItemInMainHandRequest().get(getServerName(), uuid);
     }
 
     @Override
     public boolean removeItemInMainHand() {
-        return FutureRequests.removeItemInMainHand(uuid);
+        return new RemoveItemInMainHandRequest().get(getServerName(), uuid);
     }
 
     @Override
     public boolean giveItemDrop(byte[] item) {
-        return FutureRequests.giveItemDrop(uuid, item);
+        return new GiveItemDropRequest().get(getServerName(), uuid, item);
     }
 
     @Override
@@ -113,7 +113,7 @@ public class PlayerSender extends AbstractPlayerSender {
 
     @Override
     public double[] getPosition() {
-        return FutureRequests.getPosition(uuid);
+        return new GetPositionRequest().get(getServerName(), uuid);
     }
 
     @Override
@@ -129,7 +129,7 @@ public class PlayerSender extends AbstractPlayerSender {
 
     @Override
     public boolean isInRange(UUID playerUUID, double range) {
-        return FutureRequests.isInRange(uuid, playerUUID, range);
+        return new IsInRangeRequest().get(getServerName(), uuid, playerUUID, range);
     }
 
     @Override

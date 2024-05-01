@@ -1,6 +1,8 @@
 package de.janschuri.lunaticlib.utils.logger;
 
 
+import de.janschuri.lunaticlib.LunaticLib;
+
 public class Logger {
 
     private static AbstractLogger logger;
@@ -10,7 +12,7 @@ public class Logger {
     }
 
     public boolean isDebug() {
-        return true;
+        return LunaticLib.isDebug;
     }
 
     public static void debugLog(String msg) {

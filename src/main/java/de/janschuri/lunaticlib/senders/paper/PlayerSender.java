@@ -3,6 +3,7 @@ package de.janschuri.lunaticlib.senders.paper;
 import de.janschuri.lunaticlib.senders.AbstractPlayerSender;
 import de.janschuri.lunaticlib.utils.ClickableDecisionMessage;
 import de.janschuri.lunaticlib.utils.ClickableMessage;
+import de.janschuri.lunaticlib.utils.ItemStackUtils;
 import de.janschuri.lunaticlib.utils.Utils;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
@@ -41,7 +42,7 @@ public class PlayerSender extends AbstractPlayerSender {
 
     @Override
     public String getServerName() {
-        return Bukkit.getServer().getName();
+        return null;
     }
 
     @Override
@@ -96,7 +97,7 @@ public class PlayerSender extends AbstractPlayerSender {
         if (Bukkit.getPlayer(uuid) != null) {
             ItemStack item = Bukkit.getPlayer(uuid).getInventory().getItemInMainHand();
 
-            return Utils.serializeItemStack(item);
+            return ItemStackUtils.serializeItemStack(item);
         }
         return null;
     }
@@ -113,7 +114,7 @@ public class PlayerSender extends AbstractPlayerSender {
     @Override
     public boolean giveItemDrop(byte[] item) {
         if (Bukkit.getPlayer(uuid) != null) {
-            ItemStack itemStack = Utils.deserializeItemStack(item);
+            ItemStack itemStack = ItemStackUtils.deserializeItemStack(item);
             Bukkit.getPlayer(uuid).getWorld().dropItem(Bukkit.getPlayer(uuid).getLocation(), itemStack);
             return true;
         }
