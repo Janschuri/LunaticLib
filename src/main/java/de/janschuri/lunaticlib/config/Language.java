@@ -1,7 +1,5 @@
 package de.janschuri.lunaticlib.config;
 
-import de.janschuri.lunaticlib.utils.logger.Logger;
-
 import java.nio.file.Path;
 import java.util.*;
 

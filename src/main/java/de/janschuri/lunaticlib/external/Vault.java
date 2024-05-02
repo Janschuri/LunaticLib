@@ -1,14 +1,13 @@
 package de.janschuri.lunaticlib.external;
 
 import de.janschuri.lunaticlib.LunaticLib;
-import de.janschuri.lunaticlib.VelocityLunaticLib;
 import de.janschuri.lunaticlib.futurerequests.requests.HasEnoughMoneyRequest;
 import de.janschuri.lunaticlib.futurerequests.requests.WithdrawMoneyRequest;
 import de.janschuri.lunaticlib.senders.AbstractPlayerSender;
 import de.janschuri.lunaticlib.senders.AbstractSender;
 import de.janschuri.lunaticlib.senders.velocity.PlayerSender;
 import de.janschuri.lunaticlib.utils.Mode;
-import de.janschuri.lunaticlib.utils.logger.Logger;
+import de.janschuri.lunaticlib.logger.Logger;
 import net.milkbowl.vault.economy.Economy;
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.RegisteredServiceProvider;

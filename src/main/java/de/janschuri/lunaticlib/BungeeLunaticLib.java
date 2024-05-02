@@ -2,13 +2,10 @@ package de.janschuri.lunaticlib;
 
 import de.janschuri.lunaticlib.utils.Mode;
 import de.janschuri.lunaticlib.utils.Platform;
-import de.janschuri.lunaticlib.utils.logger.BungeeLogger;
-import de.janschuri.lunaticlib.utils.logger.Logger;
+import de.janschuri.lunaticlib.logger.Logger;
 import net.md_5.bungee.api.config.ServerInfo;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
 import net.md_5.bungee.api.plugin.Plugin;
-
-import java.util.Set;
 
 public class BungeeLunaticLib extends Plugin {
     private static BungeeLunaticLib instance;
@@ -22,7 +19,7 @@ public class BungeeLunaticLib extends Plugin {
 
         getProxy().registerChannel(LunaticLib.IDENTIFIER);
 
-        new Logger(new BungeeLogger(this));
+        new Logger();
 
         LunaticLib.registerRequests();
 

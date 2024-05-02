@@ -10,15 +10,11 @@ import com.velocitypowered.api.plugin.annotation.DataDirectory;
 import com.velocitypowered.api.proxy.Player;
 import com.velocitypowered.api.proxy.ProxyServer;
 import com.velocitypowered.api.proxy.messages.MinecraftChannelIdentifier;
-import com.velocitypowered.api.proxy.server.RegisteredServer;
 import de.janschuri.lunaticlib.listener.velocity.MessageListener;
 import de.janschuri.lunaticlib.utils.Mode;
 import de.janschuri.lunaticlib.utils.Platform;
-import de.janschuri.lunaticlib.utils.logger.VelocityLogger;
-import org.slf4j.Logger;
 
 import java.nio.file.Path;
-import java.util.Set;
 
 @Plugin(
         id = "lunaticlib",
@@ -30,14 +26,12 @@ public class VelocityLunaticLib {
 
     private static ProxyServer proxy;
     private static Path dataDirectory;
-    private static Logger logger;
     private static CommandManager commandManager;
-    public static MinecraftChannelIdentifier IDENTIFIER = MinecraftChannelIdentifier.from("lunaticlib:futurerequests");
+    public static MinecraftChannelIdentifier IDENTIFIER = MinecraftChannelIdentifier.from(LunaticLib.IDENTIFIER);
 
     @Inject
-    public VelocityLunaticLib(ProxyServer proxy, Logger logger, @DataDirectory Path dataDirectory) {
+    public VelocityLunaticLib(ProxyServer proxy, @DataDirectory Path dataDirectory) {
         VelocityLunaticLib.proxy = proxy;
-        VelocityLunaticLib.logger = logger;
         VelocityLunaticLib.dataDirectory = dataDirectory;
     }
 
@@ -49,17 +43,15 @@ public class VelocityLunaticLib {
         proxy.getChannelRegistrar().register(IDENTIFIER);
         proxy.getEventManager().register(this, new MessageListener());
 
-        new de.janschuri.lunaticlib.utils.logger.Logger(new VelocityLogger(logger));
-
         LunaticLib.registerRequests();
 
-        de.janschuri.lunaticlib.utils.logger.Logger.infoLog("LunaticLib enabled.");
+        de.janschuri.lunaticlib.logger.Logger.infoLog("LunaticLib enabled.");
     }
 
     @Subscribe
     public void onProxyShutdown(ProxyShutdownEvent event) {
         LunaticLib.unregisterRequests();
-        de.janschuri.lunaticlib.utils.logger.Logger.infoLog("LunaticLib disabled.");
+        de.janschuri.lunaticlib.logger.Logger.infoLog("LunaticLib disabled.");
     }
 
     public static ProxyServer getProxy() {

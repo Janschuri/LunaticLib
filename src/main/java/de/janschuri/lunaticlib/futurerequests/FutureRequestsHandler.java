@@ -1,7 +1,7 @@
 package de.janschuri.lunaticlib.futurerequests;
 
 import com.google.common.io.ByteArrayDataInput;
-import de.janschuri.lunaticlib.utils.logger.Logger;
+import de.janschuri.lunaticlib.logger.Logger;
 
 import java.util.HashMap;
 import java.util.Map;

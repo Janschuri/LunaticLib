@@ -6,10 +6,7 @@ import de.janschuri.lunaticlib.futurerequests.requests.*;
 import de.janschuri.lunaticlib.senders.AbstractSender;
 import de.janschuri.lunaticlib.utils.Mode;
 import de.janschuri.lunaticlib.utils.Platform;
-import de.janschuri.lunaticlib.utils.logger.Logger;
-
-import java.util.HashSet;
-import java.util.Set;
+import de.janschuri.lunaticlib.logger.Logger;
 
 public final class LunaticLib {
 

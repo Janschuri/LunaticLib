@@ -5,8 +5,7 @@ import de.janschuri.lunaticlib.listener.paper.MessageListener;
 import de.janschuri.lunaticlib.utils.Mode;
 import de.janschuri.lunaticlib.utils.Platform;
 import de.janschuri.lunaticlib.utils.Utils;
-import de.janschuri.lunaticlib.utils.logger.BukkitLogger;
-import de.janschuri.lunaticlib.utils.logger.Logger;
+import de.janschuri.lunaticlib.logger.Logger;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -25,7 +24,7 @@ public class PaperLunaticLib  extends JavaPlugin {
         getServer().getMessenger().registerIncomingPluginChannel(this, IDENTIFIER, new MessageListener());
         getServer().getMessenger().registerOutgoingPluginChannel(this, IDENTIFIER);
 
-        new Logger(new BukkitLogger(this));
+        new Logger();
 
         LunaticLib.registerRequests();
 
@@ -44,7 +43,7 @@ public class PaperLunaticLib  extends JavaPlugin {
     @Override
     public void onDisable() {
         LunaticLib.unregisterRequests();
-        de.janschuri.lunaticlib.utils.logger.Logger.infoLog("LunaticLib disabled.");
+        de.janschuri.lunaticlib.logger.Logger.infoLog("LunaticLib disabled.");
     }
 
     public static boolean sendPluginMessage(byte[] message) {
