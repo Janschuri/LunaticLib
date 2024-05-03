@@ -36,6 +36,8 @@ public final class LunaticLib {
     };
 
     public static boolean sendPluginMessage(String serverName, byte[] message) {
+        Logger.debugLog("Sending plugin message to " + serverName);
+
         switch (platform) {
             case PAPER:
                 return PaperLunaticLib.sendPluginMessage(message);
@@ -50,6 +52,8 @@ public final class LunaticLib {
     }
 
     public static boolean sendPluginMessage(byte[] message) {
+        Logger.debugLog("Sending plugin message to all servers.");
+
         switch (platform) {
             case PAPER:
                 return PaperLunaticLib.sendPluginMessage(message);
@@ -87,6 +91,14 @@ public final class LunaticLib {
                 Logger.errorLog("Platform not supported");
                 return null;
         }
+    }
+
+    public static void loadVault() {
+        if (!installedVault) {
+            Logger.errorLog("Vault is not installed! Please install Vault or disable it in plugins config.yml.");
+            return;
+        }
+        Logger.infoLog("Vault enabled.");
     }
 
 }

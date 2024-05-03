@@ -118,6 +118,8 @@ public abstract class FutureRequest<R> {
         out.writeInt(requestId);
         out.write(data);
 
+        Logger.debugLog("Sending response: " + requestName + " with id: " + requestId);
+
         LunaticLib.sendPluginMessage(out.toByteArray());
     }
 

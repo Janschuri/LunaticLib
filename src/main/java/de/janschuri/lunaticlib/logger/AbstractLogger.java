@@ -13,7 +13,7 @@ public abstract class AbstractLogger {
 
 
     protected static void debug(Logger logger, String msg) {
-        logger.debug(ANSI_AQUA + msg + ANSI_RESET);
+        logger.info(ANSI_AQUA + msg + ANSI_RESET);
     }
 
     protected static void info(Logger logger, String msg) {
