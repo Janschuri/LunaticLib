@@ -1,11 +1,13 @@
 package de.janschuri.lunaticlib.senders.velocity;
 
 import com.velocitypowered.api.command.CommandSource;
+import com.velocitypowered.api.util.GameProfile;
 import de.janschuri.lunaticlib.VelocityLunaticLib;
 import de.janschuri.lunaticlib.futurerequests.requests.*;
 import de.janschuri.lunaticlib.senders.AbstractPlayerSender;
 import de.janschuri.lunaticlib.utils.ClickableDecisionMessage;
 import de.janschuri.lunaticlib.utils.ClickableMessage;
+import de.janschuri.lunaticlib.utils.Utils;
 
 import java.util.*;
 
@@ -21,6 +23,7 @@ public class PlayerSender extends AbstractPlayerSender {
 
     public PlayerSender(String name) {
         super(new GetUniqueIdRequest().get(name));
+        this.name = name;
     }
 
 
@@ -64,7 +67,33 @@ public class PlayerSender extends AbstractPlayerSender {
 
     @Override
     public String getName() {
-        return new GetNameRequest().get(uuid);
+        Optional<com.velocitypowered.api.proxy.Player> player = VelocityLunaticLib.getProxy().getPlayer(uuid);
+        if (player.isPresent()) {
+            return player.get().getUsername();
+        }
+
+        String name = new GetNameRequest().get(uuid);
+        if (name == null) {
+            name = this.name;
+        }
+        return name;
+    }
+
+    @Override
+    public String getSkinURL() {
+        Optional<com.velocitypowered.api.proxy.Player> player = VelocityLunaticLib.getProxy().getPlayer(uuid);
+        if (player.isPresent()) {
+            List<GameProfile.Property> properties = player.get().getGameProfile().getProperties();
+            for (GameProfile.Property property : properties) {
+                if (property.getName().equals("textures")) {
+                    String value = property.getValue();
+                    return Utils.getSkinURLFromValue(value);
+                }
+            }
+        } else {
+            return new GetSkinURLRequest().get(uuid);
+        }
+        return null;
     }
 
     @Override

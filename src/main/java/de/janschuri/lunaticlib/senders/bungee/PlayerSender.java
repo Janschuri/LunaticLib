@@ -31,6 +31,11 @@ public class PlayerSender extends AbstractPlayerSender {
     }
 
     @Override
+    public String getSkinURL() {
+        return new GetSkinURLRequest().get(uuid);
+    }
+
+    @Override
     public boolean chat(String message) {
         BungeeLunaticLib.getInstance().getProxy().getPlayer(uuid).chat(message);
         return true;

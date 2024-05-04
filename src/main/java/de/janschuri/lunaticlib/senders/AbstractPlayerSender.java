@@ -4,6 +4,7 @@ import java.util.UUID;
 
 public abstract class AbstractPlayerSender extends AbstractSender {
     protected final UUID uuid;
+    protected String name;
 
     protected AbstractPlayerSender(UUID uuid) {
         this.uuid = uuid;
@@ -13,6 +14,7 @@ public abstract class AbstractPlayerSender extends AbstractSender {
         return uuid;
     }
     public abstract String getName();
+    public abstract String getSkinURL();
     public abstract boolean chat(String message);
     public abstract boolean hasItemInMainHand();
     public abstract byte[] getItemInMainHand();

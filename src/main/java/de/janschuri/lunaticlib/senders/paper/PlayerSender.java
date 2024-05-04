@@ -146,6 +146,11 @@ public class PlayerSender extends AbstractPlayerSender {
     }
 
     @Override
+    public String getSkinURL() {
+        return ItemStackUtils.getSkinURLFromUUID(uuid);
+    }
+
+    @Override
     public boolean isSameServer(UUID uuid) {
         return true;
     }

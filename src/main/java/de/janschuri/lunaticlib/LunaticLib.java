@@ -33,6 +33,7 @@ public final class LunaticLib {
             new HasItemInMainHandRequest(),
             new IsInRangeRequest(),
             new RemoveItemInMainHandRequest(),
+            new GetSkinURLRequest(),
     };
 
     public static boolean sendPluginMessage(String serverName, byte[] message) {
