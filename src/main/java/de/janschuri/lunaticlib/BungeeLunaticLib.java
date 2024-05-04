@@ -19,7 +19,8 @@ public class BungeeLunaticLib extends Plugin {
 
         getProxy().registerChannel(LunaticLib.IDENTIFIER);
 
-        new Logger();
+        LunaticLib.setDataDirectory(getDataFolder().toPath());
+        LunaticLib.loadConfig();
 
         LunaticLib.registerRequests();
 
@@ -59,9 +60,5 @@ public class BungeeLunaticLib extends Plugin {
 
     public static void sendConsoleCommand(String command) {
         getInstance().getProxy().getPluginManager().dispatchCommand(getInstance().getProxy().getConsole(), command);
-    }
-
-    static ProxiedPlayer getRandomPlayer() {
-        return getInstance().getProxy().getPlayers().iterator().next();
     }
 }

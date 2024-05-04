@@ -24,7 +24,8 @@ public class PaperLunaticLib  extends JavaPlugin {
         getServer().getMessenger().registerIncomingPluginChannel(this, IDENTIFIER, new MessageListener());
         getServer().getMessenger().registerOutgoingPluginChannel(this, IDENTIFIER);
 
-        new Logger();
+        LunaticLib.setDataDirectory(getDataFolder().toPath());
+        LunaticLib.loadConfig();
 
         LunaticLib.registerRequests();
 
@@ -58,12 +59,5 @@ public class PaperLunaticLib  extends JavaPlugin {
 
     public static void sendConsoleCommand(String command) {
         Bukkit.getServer().dispatchCommand(Bukkit.getServer().getConsoleSender(), command);
-    }
-
-    static Player getRandomPlayer() {
-        for (Player player : Bukkit.getOnlinePlayers()) {
-            return player;
-        }
-        return null;
     }
 }

@@ -44,6 +44,9 @@ public class VelocityLunaticLib {
         proxy.getChannelRegistrar().register(IDENTIFIER);
         proxy.getEventManager().register(this, new MessageListener());
 
+        LunaticLib.setDataDirectory(dataDirectory);
+        LunaticLib.loadConfig();
+
         LunaticLib.registerRequests();
 
         de.janschuri.lunaticlib.logger.Logger.infoLog("LunaticLib enabled.");
@@ -80,9 +83,5 @@ public class VelocityLunaticLib {
 
     public static void sendConsoleCommand(String command) {
         proxy.getCommandManager().executeAsync(proxy.getConsoleCommandSource(), command);
-    }
-
-    static Player getRandomPlayer() {
-        return proxy.getAllPlayers().iterator().next();
     }
 }

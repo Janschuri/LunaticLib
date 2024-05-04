@@ -37,9 +37,6 @@ public abstract class Config {
 
         File file = new File(dataDirectory.toFile(), filePath);
 
-        Logger.infoLog("Loading config file: " + file.getAbsolutePath());
-        Logger.infoLog("Default config file: " + defaultFilePath);
-
         if (!dataDirectory.toFile().exists()) {
             try {
                 Files.createDirectories(dataDirectory.toFile().toPath());

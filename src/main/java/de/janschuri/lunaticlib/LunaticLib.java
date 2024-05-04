@@ -7,14 +7,23 @@ import de.janschuri.lunaticlib.senders.AbstractSender;
 import de.janschuri.lunaticlib.utils.Mode;
 import de.janschuri.lunaticlib.utils.Platform;
 import de.janschuri.lunaticlib.logger.Logger;
+import org.yaml.snakeyaml.Yaml;
+
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.InputStreamReader;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Path;
+import java.util.Map;
 
 public final class LunaticLib {
 
     public static final String IDENTIFIER = "lunaticlib:futurerequests";
     static Mode mode = Mode.STANDALONE;
-    public static boolean isDebug = true;
+    public static boolean isDebug;
     static Platform platform;
     public static boolean installedVault = false;
+    private static Path dataDirectory;
 
     public static Platform getPlatform() {
         return platform;
@@ -90,4 +99,27 @@ public final class LunaticLib {
         Logger.infoLog("Vault enabled.");
     }
 
+    public static void loadConfig() {
+        File file = new File(dataDirectory.toFile(), "config.yml");
+
+        if (!file.exists()) {
+            return;
+        }
+
+        Yaml yaml = new Yaml();
+        Map<String, Object> config;
+        try {
+            config = yaml.load(new InputStreamReader(new FileInputStream(file), StandardCharsets.UTF_8));
+        } catch (Exception e) {
+            Logger.errorLog("Error loading config.yml");
+            return;
+        }
+
+        LunaticLib.isDebug = (boolean) config.get("debug");
+        Logger.infoLog("Debug mode enabled.");
+    }
+
+    static void setDataDirectory(Path dataDirectory) {
+        LunaticLib.dataDirectory = dataDirectory;
+    }
 }
