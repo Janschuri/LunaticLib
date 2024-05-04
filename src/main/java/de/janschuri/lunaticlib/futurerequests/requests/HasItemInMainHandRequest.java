@@ -5,7 +5,6 @@ import com.google.common.io.ByteArrayDataOutput;
 import com.google.common.io.ByteStreams;
 import de.janschuri.lunaticlib.senders.AbstractPlayerSender;
 import de.janschuri.lunaticlib.senders.AbstractSender;
-import de.janschuri.lunaticlib.senders.velocity.PlayerSender;
 import de.janschuri.lunaticlib.futurerequests.FutureRequest;
 
 import java.util.UUID;

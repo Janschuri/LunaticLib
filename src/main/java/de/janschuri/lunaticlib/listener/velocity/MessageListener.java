@@ -5,7 +5,6 @@ import com.google.common.io.ByteStreams;
 import com.velocitypowered.api.event.Subscribe;
 import com.velocitypowered.api.event.connection.PluginMessageEvent;
 import com.velocitypowered.api.proxy.ServerConnection;
-import de.janschuri.lunaticlib.LunaticLib;
 import de.janschuri.lunaticlib.futurerequests.FutureRequestsHandler;
 
 import static de.janschuri.lunaticlib.VelocityLunaticLib.IDENTIFIER;
@@ -22,7 +21,6 @@ public class MessageListener {
             return;
         }
 
-        String serverName = ((ServerConnection) event.getSource()).getServerInfo().getName();
         byte[] message = event.getData();
         ByteArrayDataInput in = ByteStreams.newDataInput(message);
         String subchannel = in.readUTF();

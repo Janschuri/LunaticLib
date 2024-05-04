@@ -3,7 +3,6 @@ package de.janschuri.lunaticlib.futurerequests.requests;
 import com.google.common.io.ByteArrayDataInput;
 import com.google.common.io.ByteArrayDataOutput;
 import com.google.common.io.ByteStreams;
-import de.janschuri.lunaticlib.VelocityLunaticLib;
 import de.janschuri.lunaticlib.logger.Logger;
 import de.janschuri.lunaticlib.senders.paper.PlayerSender;
 import de.janschuri.lunaticlib.futurerequests.FutureRequest;

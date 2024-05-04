@@ -5,10 +5,10 @@ import de.janschuri.lunaticlib.LunaticLib;
 
 public class Logger extends AbstractLogger {
 
-    private static org.slf4j.Logger logger = AbstractLogger.getLogger("LunaticLib");
+    private static final org.slf4j.Logger logger = AbstractLogger.getLogger("LunaticLib");
 
     public boolean isDebug() {
-        return LunaticLib.isDebug;
+        return LunaticLib.isDebug();
     }
 
     public static void debugLog(String msg) {

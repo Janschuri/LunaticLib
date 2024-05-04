@@ -7,7 +7,6 @@ import de.janschuri.lunaticlib.utils.Platform;
 import de.janschuri.lunaticlib.utils.Utils;
 import de.janschuri.lunaticlib.logger.Logger;
 import org.bukkit.Bukkit;
-import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import static de.janschuri.lunaticlib.LunaticLib.IDENTIFIER;
@@ -24,17 +23,14 @@ public class PaperLunaticLib  extends JavaPlugin {
         getServer().getMessenger().registerIncomingPluginChannel(this, IDENTIFIER, new MessageListener());
         getServer().getMessenger().registerOutgoingPluginChannel(this, IDENTIFIER);
 
-        LunaticLib.setDataDirectory(getDataFolder().toPath());
-        LunaticLib.loadConfig();
-
-        LunaticLib.registerRequests();
+        LunaticLib.dataDirectory = getDataFolder().toPath();
 
         if (Utils.classExists("net.milkbowl.vault.economy.Economy")) {
             LunaticLib.installedVault = true;
             new Vault();
         }
 
-        Logger.infoLog("LunaticLib enabled.");
+        LunaticLib.onEnable();
     }
 
     public static PaperLunaticLib getInstance() {
@@ -43,8 +39,7 @@ public class PaperLunaticLib  extends JavaPlugin {
 
     @Override
     public void onDisable() {
-        LunaticLib.unregisterRequests();
-        de.janschuri.lunaticlib.logger.Logger.infoLog("LunaticLib disabled.");
+        LunaticLib.onDisable();
     }
 
     public static boolean sendPluginMessage(byte[] message) {

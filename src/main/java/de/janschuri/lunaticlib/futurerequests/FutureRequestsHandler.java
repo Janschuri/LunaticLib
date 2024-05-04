@@ -29,6 +29,7 @@ public class FutureRequestsHandler {
     }
 
     public static void unregisterRequest(String requestName) {
+        requests.get(requestName).unregister();
         requests.remove(requestName);
     }
 

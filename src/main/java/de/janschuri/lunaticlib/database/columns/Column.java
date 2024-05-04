@@ -1,10 +1,6 @@
 package de.janschuri.lunaticlib.database.columns;
 
 import de.janschuri.lunaticlib.database.Datatype;
-import de.janschuri.lunaticlib.logger.Logger;
-
-import javax.xml.crypto.Data;
-import java.util.Locale;
 
 public class Column {
 

@@ -3,7 +3,6 @@ package de.janschuri.lunaticlib;
 import de.janschuri.lunaticlib.futurerequests.FutureRequest;
 import de.janschuri.lunaticlib.futurerequests.FutureRequestsHandler;
 import de.janschuri.lunaticlib.futurerequests.requests.*;
-import de.janschuri.lunaticlib.senders.AbstractSender;
 import de.janschuri.lunaticlib.utils.Mode;
 import de.janschuri.lunaticlib.utils.Platform;
 import de.janschuri.lunaticlib.logger.Logger;
@@ -20,10 +19,10 @@ public final class LunaticLib {
 
     public static final String IDENTIFIER = "lunaticlib:futurerequests";
     static Mode mode = Mode.STANDALONE;
-    public static boolean isDebug;
+    private static boolean debug;
     static Platform platform;
-    public static boolean installedVault = false;
-    private static Path dataDirectory;
+    static boolean installedVault = false;
+    static Path dataDirectory;
 
     public static Platform getPlatform() {
         return platform;
@@ -85,12 +84,6 @@ public final class LunaticLib {
         }
     }
 
-    static void unregisterRequests() {
-        for (FutureRequest request : requests) {
-            FutureRequestsHandler.unregisterRequest(request.getRequestName());
-        }
-    }
-
     public static void loadConfig() {
 
         File file = new File(dataDirectory.toFile(), "config.yml");
@@ -108,11 +101,26 @@ public final class LunaticLib {
             return;
         }
 
-        LunaticLib.isDebug = (boolean) config.get("debug");
+        LunaticLib.debug = (boolean) config.get("debug");
         Logger.infoLog("Debug mode enabled.");
     }
 
-    static void setDataDirectory(Path dataDirectory) {
-        LunaticLib.dataDirectory = dataDirectory;
+    static void onEnable() {
+        loadConfig();
+        registerRequests();
+        Logger.infoLog("LunaticLib enabled.");
+    }
+
+    static void onDisable() {
+        FutureRequestsHandler.shutdown();
+        Logger.infoLog("LunaticLib disabled.");
+    }
+
+    public static boolean isDebug() {
+        return debug;
+    }
+
+    public static boolean isInstalledVault() {
+        return installedVault;
     }
 }

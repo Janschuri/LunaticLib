@@ -1,7 +1,6 @@
 package de.janschuri.lunaticlib.config;
 
 import com.google.common.base.Preconditions;
-import de.janschuri.lunaticlib.logger.Logger;
 import org.yaml.snakeyaml.DumperOptions;
 import org.yaml.snakeyaml.LoaderOptions;
 import org.yaml.snakeyaml.Yaml;

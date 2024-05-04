@@ -2,9 +2,7 @@ package de.janschuri.lunaticlib;
 
 import de.janschuri.lunaticlib.utils.Mode;
 import de.janschuri.lunaticlib.utils.Platform;
-import de.janschuri.lunaticlib.logger.Logger;
 import net.md_5.bungee.api.config.ServerInfo;
-import net.md_5.bungee.api.connection.ProxiedPlayer;
 import net.md_5.bungee.api.plugin.Plugin;
 
 public class BungeeLunaticLib extends Plugin {
@@ -16,21 +14,15 @@ public class BungeeLunaticLib extends Plugin {
 
         LunaticLib.mode = Mode.PROXY;
         LunaticLib.platform = Platform.BUNGEE;
-
         getProxy().registerChannel(LunaticLib.IDENTIFIER);
+        LunaticLib.dataDirectory = getDataFolder().toPath();
 
-        LunaticLib.setDataDirectory(getDataFolder().toPath());
-        LunaticLib.loadConfig();
-
-        LunaticLib.registerRequests();
-
-        Logger.infoLog("LunaticLib enabled.");
+        LunaticLib.onEnable();
     }
 
     @Override
     public void onDisable() {
-        LunaticLib.unregisterRequests();
-        Logger.infoLog("LunaticLib disabled.");
+        LunaticLib.onDisable();
     }
 
     public static BungeeLunaticLib getInstance() {

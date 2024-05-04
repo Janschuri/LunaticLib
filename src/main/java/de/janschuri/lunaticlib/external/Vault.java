@@ -3,9 +3,6 @@ package de.janschuri.lunaticlib.external;
 import de.janschuri.lunaticlib.LunaticLib;
 import de.janschuri.lunaticlib.futurerequests.requests.HasEnoughMoneyRequest;
 import de.janschuri.lunaticlib.futurerequests.requests.WithdrawMoneyRequest;
-import de.janschuri.lunaticlib.senders.AbstractPlayerSender;
-import de.janschuri.lunaticlib.senders.AbstractSender;
-import de.janschuri.lunaticlib.senders.velocity.PlayerSender;
 import de.janschuri.lunaticlib.utils.Mode;
 import de.janschuri.lunaticlib.logger.Logger;
 import net.milkbowl.vault.economy.Economy;
@@ -18,7 +15,7 @@ public class Vault {
 
     private static Economy econ = null;
     public Vault() {
-        if (!LunaticLib.installedVault) {
+        if (!LunaticLib.isInstalledVault()) {
             Logger.warnLog("Vault is not installed! Please install Vault or disable it in plugin config.yml.");
         }
 

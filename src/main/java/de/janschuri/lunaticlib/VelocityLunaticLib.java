@@ -7,7 +7,6 @@ import com.velocitypowered.api.event.proxy.ProxyInitializeEvent;
 import com.velocitypowered.api.event.proxy.ProxyShutdownEvent;
 import com.velocitypowered.api.plugin.Plugin;
 import com.velocitypowered.api.plugin.annotation.DataDirectory;
-import com.velocitypowered.api.proxy.Player;
 import com.velocitypowered.api.proxy.ProxyServer;
 import com.velocitypowered.api.proxy.messages.MinecraftChannelIdentifier;
 import de.janschuri.lunaticlib.listener.velocity.MessageListener;
@@ -26,8 +25,7 @@ public class VelocityLunaticLib {
 
     private static ProxyServer proxy;
     private static Path dataDirectory;
-    private static CommandManager commandManager;
-    public static MinecraftChannelIdentifier IDENTIFIER = MinecraftChannelIdentifier.from(LunaticLib.IDENTIFIER);
+    public static final MinecraftChannelIdentifier IDENTIFIER = MinecraftChannelIdentifier.from(LunaticLib.IDENTIFIER);
 
     @Inject
     public VelocityLunaticLib(ProxyServer proxy, @DataDirectory Path dataDirectory) {
@@ -44,18 +42,13 @@ public class VelocityLunaticLib {
         proxy.getChannelRegistrar().register(IDENTIFIER);
         proxy.getEventManager().register(this, new MessageListener());
 
-        LunaticLib.setDataDirectory(dataDirectory);
-        LunaticLib.loadConfig();
-
-        LunaticLib.registerRequests();
-
-        de.janschuri.lunaticlib.logger.Logger.infoLog("LunaticLib enabled.");
+        LunaticLib.dataDirectory = dataDirectory;
+        LunaticLib.onEnable();
     }
 
     @Subscribe
     public void onProxyShutdown(ProxyShutdownEvent event) {
-        LunaticLib.unregisterRequests();
-        de.janschuri.lunaticlib.logger.Logger.infoLog("LunaticLib disabled.");
+        LunaticLib.onDisable();
     }
 
     public static ProxyServer getProxy() {

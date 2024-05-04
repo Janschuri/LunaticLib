@@ -1,19 +1,16 @@
 package de.janschuri.lunaticlib.config;
 
-import de.janschuri.lunaticlib.LunaticLib;
-import de.janschuri.lunaticlib.utils.Mode;
-
 import java.nio.file.Path;
 
 public abstract class AbstractDatabaseConfig extends Config {
 
     private final String NAME;
-    public String host, database, username, password, filename;
-    public int port;
-    public boolean useMySQL;
+    private String host, database, username, password, filename;
+    private int port;
+    private boolean useMySQL;
     private final Path dataDirectory;
 
-    public AbstractDatabaseConfig(String name, Path dataDirectory, String DATABASE_FILE, String DEFAULT_DATABASE_FILE) {
+    protected AbstractDatabaseConfig(String name, Path dataDirectory, String DATABASE_FILE, String DEFAULT_DATABASE_FILE) {
         super(dataDirectory, DATABASE_FILE, DEFAULT_DATABASE_FILE);
         this.NAME = name;
         this.dataDirectory = dataDirectory;
@@ -21,7 +18,7 @@ public abstract class AbstractDatabaseConfig extends Config {
     }
 
     @Override
-    public void load() {
+    protected void load() {
         super.load();
         host = getString("MySQL.host", "localhost");
         port = getInt("MySQL.port", 3306);

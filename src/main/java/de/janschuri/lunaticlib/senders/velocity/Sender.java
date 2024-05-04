@@ -1,8 +1,6 @@
 package de.janschuri.lunaticlib.senders.velocity;
 
 import com.velocitypowered.api.command.CommandSource;
-import de.janschuri.lunaticlib.config.Language;
-import de.janschuri.lunaticlib.senders.AbstractPlayerSender;
 import de.janschuri.lunaticlib.senders.AbstractSender;
 import de.janschuri.lunaticlib.utils.ClickableDecisionMessage;
 import de.janschuri.lunaticlib.utils.ClickableMessage;
@@ -16,7 +14,6 @@ import net.kyori.adventure.text.format.TextDecoration;
 import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 
 import java.util.List;
-import java.util.UUID;
 
 public class Sender extends AbstractSender {
 

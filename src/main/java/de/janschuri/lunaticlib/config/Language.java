@@ -4,16 +4,14 @@ import java.nio.file.Path;
 import java.util.*;
 
 public abstract class Language extends Config {
-    private static Language instance;
-    private static Map<String, String> messages = new HashMap<>();
-    private static String prefix;
-    private static String[] commands;
-    private static final Map<String, Map<String, List<String>>> aliases = new HashMap<>();
+    private Map<String, String> messages = new HashMap<>();
+    private String prefix;
+    private String[] commands;
+    private final Map<String, Map<String, List<String>>> aliases = new HashMap<>();
 
     public Language(Path dataDirectory, String[] commands, String language) {
         super(dataDirectory, "lang.yml", "lang/" + language + ".yml");
-        Language.instance = this;
-        Language.commands = commands;
+        this.commands = commands;
         this.load();
     }
 
@@ -30,10 +28,6 @@ public abstract class Language extends Config {
             Map<String, List<String>> map = getStringListMap("aliases." + command);
             aliases.put(command, map);
         }
-    }
-
-    public static Language getInstance() {
-        return instance;
     }
 
     public String getMessage(String key) {

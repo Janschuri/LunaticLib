@@ -10,7 +10,7 @@ import java.sql.SQLException;
 
 public abstract class Database {
 
-    Connection connection;
+    protected Connection connection;
 
     private final Table[] tables;
 
@@ -59,7 +59,7 @@ public abstract class Database {
 
     public abstract Connection getSQLConnection();
 
-    public abstract void load();
+    protected abstract void load();
     protected abstract String getDatatypeString(Datatype datatype);
 
     public void close(PreparedStatement ps, ResultSet rs) {

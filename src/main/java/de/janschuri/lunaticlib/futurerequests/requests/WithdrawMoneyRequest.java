@@ -23,7 +23,7 @@ public class WithdrawMoneyRequest extends FutureRequest<Boolean> {
     @Override
     protected void handleRequest(int requestId, ByteArrayDataInput in) {
         boolean success = false;
-        if (!LunaticLib.installedVault) {
+        if (!LunaticLib.isInstalledVault()) {
             success = false;
         } else {
             UUID uuid = UUID.fromString(in.readUTF());

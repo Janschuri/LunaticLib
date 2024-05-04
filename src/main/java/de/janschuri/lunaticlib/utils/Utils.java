@@ -1,19 +1,12 @@
 package de.janschuri.lunaticlib.utils;
 
-import com.destroystokyo.paper.profile.PlayerProfile;
 import de.janschuri.lunaticlib.BungeeLunaticLib;
 import de.janschuri.lunaticlib.LunaticLib;
 import de.janschuri.lunaticlib.PaperLunaticLib;
 import de.janschuri.lunaticlib.VelocityLunaticLib;
 
 import java.awt.*;
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.net.MalformedURLException;
-import java.net.URL;
 import java.util.Base64;
-import java.util.UUID;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;

@@ -1,6 +1,5 @@
 package de.janschuri.lunaticlib.senders.bungee;
 
-import de.janschuri.lunaticlib.BungeeLunaticLib;
 import de.janschuri.lunaticlib.senders.AbstractSender;
 import de.janschuri.lunaticlib.utils.ClickableDecisionMessage;
 import de.janschuri.lunaticlib.utils.ClickableMessage;

@@ -2,7 +2,6 @@ package de.janschuri.lunaticlib.listener.paper;
 
 import com.google.common.io.ByteArrayDataInput;
 import com.google.common.io.ByteStreams;
-import de.janschuri.lunaticlib.LunaticLib;
 import de.janschuri.lunaticlib.futurerequests.FutureRequestsHandler;
 import org.bukkit.plugin.messaging.PluginMessageListener;
 

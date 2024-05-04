@@ -19,7 +19,7 @@ import java.sql.Statement;
 public class SQLite extends Database {
     private final String filename;
     private final Path dataDirectory;
-    Table[] tables;
+    private final Table[] tables;
 
     public SQLite(AbstractDatabaseConfig config, Table[] tables) {
         super(tables);

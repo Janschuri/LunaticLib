@@ -23,7 +23,7 @@ public class HasEnoughMoneyRequest extends FutureRequest<Boolean> {
     @Override
     protected void handleRequest(int requestId, ByteArrayDataInput in) {
         boolean hasEnoughMoney = false;
-        if (!LunaticLib.installedVault) {
+        if (!LunaticLib.isInstalledVault()) {
             hasEnoughMoney = false;
         } else {
             UUID uuid = UUID.fromString(in.readUTF());

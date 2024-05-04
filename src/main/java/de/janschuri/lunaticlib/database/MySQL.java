@@ -11,9 +11,9 @@ import java.sql.SQLException;
 import java.sql.Statement;
 
 public class MySQL extends Database {
-    String host, database, username, password;
-    int port;
-    Table[] tables;
+    private final String host, database, username, password;
+    private final int port;
+    private final Table[] tables;
 
     public MySQL(AbstractDatabaseConfig config, Table[] tables) {
         super(tables);
