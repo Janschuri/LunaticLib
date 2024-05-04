@@ -39,6 +39,7 @@ public class VelocityLunaticLib {
     public void onProxyInitialization(ProxyInitializeEvent event) {
         LunaticLib.mode = Mode.PROXY;
         LunaticLib.platform = Platform.VELOCITY;
+        LunaticLib.installedVault = true;
 
         proxy.getChannelRegistrar().register(IDENTIFIER);
         proxy.getEventManager().register(this, new MessageListener());

@@ -40,31 +40,31 @@ public class Vault {
         return econ;
     }
 
-    public static boolean hasEnoughMoney(UUID uuid, double amount) {
+    public static boolean hasEnoughMoney(String serverName, UUID uuid, double amount) {
         if (LunaticLib.getMode() == Mode.PROXY) {
-            AbstractPlayerSender sender = AbstractSender.getPlayerSender(uuid);
-            if (sender.isOnline()) {
-                return new HasEnoughMoneyRequest().get(sender.getServerName(), uuid, amount);
-            } else {
-                PlayerSender randomSender = (PlayerSender) LunaticLib.getRandomPlayerSender();
-                return new HasEnoughMoneyRequest().get(randomSender.getServerName(), uuid, amount);
-            }
+            return new HasEnoughMoneyRequest().get(serverName, uuid, amount);
         }
         return econ.has(Bukkit.getOfflinePlayer(uuid), amount);
     }
 
-    public static boolean withdrawMoney(UUID uuid, double amount) {
-        if (LunaticLib.getMode() == Mode.PROXY) {
-            AbstractPlayerSender sender = AbstractSender.getPlayerSender(uuid);
-            if (sender.isOnline()) {
-                return new WithdrawMoneyRequest().get(sender.getServerName(), uuid, amount);
-            } else {
-                PlayerSender randomSender = (PlayerSender) LunaticLib.getRandomPlayerSender();
-                return new WithdrawMoneyRequest().get(randomSender.getServerName(), uuid, amount);
-            }
+    public static boolean hasEnoughMoney(UUID uuid, double amount) {
+        if(LunaticLib.getMode() == Mode.PROXY) {
+            Logger.errorLog("You can't use this method in PROXY mode.");
         }
+        return econ.has(Bukkit.getOfflinePlayer(uuid), amount);
+    }
 
+    public static boolean withdrawMoney(String serverName, UUID uuid, double amount) {
+        if (LunaticLib.getMode() == Mode.PROXY) {
+            return new WithdrawMoneyRequest().get(serverName, uuid, amount);
+        }
+        return econ.withdrawPlayer(Bukkit.getOfflinePlayer(uuid), amount).transactionSuccess();
+    }
 
+    public static boolean withdrawMoney(UUID uuid, double amount) {
+        if(LunaticLib.getMode() == Mode.PROXY) {
+            Logger.errorLog("You can't use this method in PROXY mode.");
+        }
         return econ.withdrawPlayer(Bukkit.getOfflinePlayer(uuid), amount).transactionSuccess();
     }
 }

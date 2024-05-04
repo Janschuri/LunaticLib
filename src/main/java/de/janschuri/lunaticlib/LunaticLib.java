@@ -34,6 +34,8 @@ public final class LunaticLib {
             new IsInRangeRequest(),
             new RemoveItemInMainHandRequest(),
             new GetSkinURLRequest(),
+            new HasEnoughMoneyRequest(),
+            new WithdrawMoneyRequest(),
     };
 
     public static boolean sendPluginMessage(String serverName, byte[] message) {
@@ -77,20 +79,6 @@ public final class LunaticLib {
     static void unregisterRequests() {
         for (FutureRequest request : requests) {
             FutureRequestsHandler.unregisterRequest(request.getRequestName());
-        }
-    }
-
-    public static AbstractSender getRandomPlayerSender() {
-        switch (platform) {
-//            case PAPER:
-//                return AbstractSender.getSender(PaperLunaticLib.getRandomPlayer());
-//            case VELOCITY:
-//                return AbstractSender.getSender(VelocityLunaticLib.getRandomPlayer());
-//            case BUNGEE:
-//                return AbstractSender.getSender(BungeeLunaticLib.getRandomPlayer());
-            default:
-                Logger.errorLog("Platform not supported");
-                return null;
         }
     }
 
