@@ -91,15 +91,8 @@ public final class LunaticLib {
         }
     }
 
-    public static void loadVault() {
-        if (!installedVault) {
-            Logger.errorLog("Vault is not installed! Please install Vault or disable it in plugins config.yml.");
-            return;
-        }
-        Logger.infoLog("Vault enabled.");
-    }
-
     public static void loadConfig() {
+
         File file = new File(dataDirectory.toFile(), "config.yml");
 
         if (!file.exists()) {
