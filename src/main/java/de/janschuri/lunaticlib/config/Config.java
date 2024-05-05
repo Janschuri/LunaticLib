@@ -1,6 +1,7 @@
 package de.janschuri.lunaticlib.config;
 
 import com.google.common.base.Preconditions;
+import de.janschuri.lunaticlib.logger.Logger;
 import org.yaml.snakeyaml.DumperOptions;
 import org.yaml.snakeyaml.LoaderOptions;
 import org.yaml.snakeyaml.Yaml;
@@ -85,8 +86,10 @@ public abstract class Config {
             Node newNode;
 
             if (root == null) {
+                Logger.errorLog("Error while loading config file: " + file.getName());
                 newNode = defaultRoot;
             } else {
+                Logger.infoLog("Loaded config file: " + file.getName());
                 newNode = mergeNodes(root, defaultRoot);
             }
 
@@ -161,18 +164,30 @@ public abstract class Config {
     private static List<NodeTuple> mergeMappingNodes(List<NodeTuple> list, List<NodeTuple> defaultList) {
         Map<String, NodeTuple> map = new HashMap<>();
         Map<String, NodeTuple> defaultMap = new HashMap<>();
-        for (NodeTuple n : list) {
-            map.put(((ScalarNode) n.getKeyNode()).getValue(), n);
-        }
+        List<String> index = new ArrayList<>();
+        List<NodeTuple> mergedList = new ArrayList<>();
         for (NodeTuple n : defaultList) {
             defaultMap.put(((ScalarNode) n.getKeyNode()).getValue(), n);
+            index.add(((ScalarNode) n.getKeyNode()).getValue());
         }
-        for (Map.Entry<String, NodeTuple> entry : defaultMap.entrySet()) {
-            if (!map.containsKey(entry.getKey())) {
-                list.add(entry.getValue());
+        for (NodeTuple n : list) {
+            map.put(((ScalarNode) n.getKeyNode()).getValue(), n);
+            if (!index.contains(((ScalarNode) n.getKeyNode()).getValue())) {
+                index.add(((ScalarNode) n.getKeyNode()).getValue());
+            }
+        }
+
+        for (String key : index) {
+            Logger.debugLog("Merging key: " + key);
+
+            if (!map.containsKey(key)) {
+                Logger.errorLog("Missing key in config: " + key);
+                Logger.errorLog("Using default value: " + loadNodeTuple(defaultMap.get(key)));
+                mergedList.add(defaultMap.get(key));
             } else {
-                Node node = map.get(entry.getKey()).getValueNode();
-                Node defaultNode = defaultMap.get(entry.getKey()).getValueNode();
+                Logger.debugLog("Key found in map: " + key);
+                Node node = map.get(key).getValueNode();
+                Node defaultNode = defaultMap.get(key).getValueNode();
                 if (node instanceof MappingNode && defaultNode instanceof MappingNode) {
                     MappingNode newMappingNode = (MappingNode) node;
                     MappingNode newDefaultMappingNode = (MappingNode) defaultNode;
@@ -181,13 +196,14 @@ public abstract class Config {
 
                     newMappingNode.setValue(mergeMappingNodes(newList, newDefaultList));
 
-                    NodeTuple newNodeTuple = new NodeTuple(entry.getValue().getKeyNode(), newMappingNode);
-                    list.remove(map.get(entry.getKey()));
-                    list.add(newNodeTuple);
+                    NodeTuple newNodeTuple = new NodeTuple(defaultMap.get(key).getKeyNode(), newMappingNode);
+                    mergedList.add(newNodeTuple);
+                } else {
+                    mergedList.add(map.get(key));
                 }
             }
         }
-        return list;
+        return mergedList;
     }
 
     private Object get(String path) {
