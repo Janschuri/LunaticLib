@@ -137,6 +137,10 @@ public class PlayerSender extends AbstractPlayerSender {
 
     @Override
     public boolean exists() {
+        OfflinePlayer player = Bukkit.getOfflinePlayer(uuid);
+        if (player.isOnline()) {
+            return true;
+        }
         return Bukkit.getOfflinePlayer(uuid).hasPlayedBefore();
     }
 
