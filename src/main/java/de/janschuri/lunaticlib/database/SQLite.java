@@ -105,7 +105,7 @@ public class SQLite extends Database {
             try {
                 dataFolder.createNewFile();
             } catch (IOException e) {
-                Logger.errorLog("File write error: " + filename + ".db");
+                Logger.errorLog("File write error: " + dataDirectory + "\\" + filename + ".db");
             }
         }
         try {

@@ -12,7 +12,7 @@ public class Logger extends AbstractLogger {
     }
 
     public static void debugLog(String msg) {
-        if (true) {
+        if (isDebug()) {
             debug(logger, msg);
         }
     }

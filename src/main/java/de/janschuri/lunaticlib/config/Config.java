@@ -86,10 +86,10 @@ public abstract class Config {
             Node newNode;
 
             if (root == null) {
-                Logger.errorLog("Error while loading config file: " + file.getName());
+                Logger.errorLog("Error while loading config file: " + dataDirectory + "\\" + file.getName());
                 newNode = defaultRoot;
             } else {
-                Logger.infoLog("Loaded config file: " + file.getName());
+                Logger.infoLog("Loaded config file: " + dataDirectory + "\\" + file.getName());
                 newNode = mergeNodes(root, defaultRoot);
             }
 

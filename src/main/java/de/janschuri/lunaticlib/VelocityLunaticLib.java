@@ -1,7 +1,6 @@
 package de.janschuri.lunaticlib;
 
 import com.google.inject.Inject;
-import com.velocitypowered.api.command.CommandManager;
 import com.velocitypowered.api.event.Subscribe;
 import com.velocitypowered.api.event.proxy.ProxyInitializeEvent;
 import com.velocitypowered.api.event.proxy.ProxyShutdownEvent;
@@ -18,7 +17,7 @@ import java.nio.file.Path;
 @Plugin(
         id = "lunaticlib",
         name = "LunaticLib",
-        version = "1.0-SNAPSHOT",
+        version = "1.0.0",
         authors = "janschuri"
 )
 public class VelocityLunaticLib {
