@@ -14,7 +14,6 @@ public abstract class AbstractDatabaseConfig extends Config {
         super(dataDirectory, DATABASE_FILE, DEFAULT_DATABASE_FILE);
         this.NAME = name;
         this.dataDirectory = dataDirectory;
-        this.load();
     }
 
     @Override

@@ -12,7 +12,6 @@ public abstract class Language extends Config {
     public Language(Path dataDirectory, String[] commands, String language) {
         super(dataDirectory, "lang.yml", "lang/" + language + ".yml");
         this.commands = commands;
-        this.load();
     }
 
     public void load(){

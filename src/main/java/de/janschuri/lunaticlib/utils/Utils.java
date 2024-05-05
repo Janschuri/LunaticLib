@@ -4,6 +4,7 @@ import de.janschuri.lunaticlib.BungeeLunaticLib;
 import de.janschuri.lunaticlib.LunaticLib;
 import de.janschuri.lunaticlib.PaperLunaticLib;
 import de.janschuri.lunaticlib.VelocityLunaticLib;
+import de.janschuri.lunaticlib.logger.Logger;
 
 import java.awt.*;
 import java.util.Base64;
@@ -104,6 +105,8 @@ public class Utils {
     }
 
     public static String getSkinURLFromValue(String base64TextureValue) {
+
+        Logger.debugLog("Getting skin URL from base64 texture value: " + base64TextureValue);
 
         // Decode the base64 texture value
         byte[] decodedBytes = Base64.getDecoder().decode(base64TextureValue);

@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public abstract class AbstractSubcommand {
+
     protected final String permission;
     protected final List<String> aliases;
     protected final String name;
@@ -99,6 +100,14 @@ public abstract class AbstractSubcommand {
         } else {
           return ClickableMessage.empty();
         }
+    }
+
+    public String getPermission() {
+        return permission;
+    }
+
+    public String getName() {
+        return name;
     }
 
     public abstract boolean execute(AbstractSender sender, String[] args);

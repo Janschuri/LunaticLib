@@ -25,18 +25,14 @@ public abstract class Database {
             if (db.getSQLConnection() == null) {
                 Logger.errorLog("Error initializing MySQL database.");
                 return null;
-            } else {
-                Logger.infoLog("Successfully initialized MySQL database: " + config.getDatabase());
             }
+            Logger.infoLog("Successfully initialized MySQL database: " + config.getDatabase());
         } else {
             db = new SQLite(config, tables);
             if (db.getSQLConnection() == null) {
                 Logger.errorLog("Error initializing SQLite database.");
                 return null;
-            } else {
-                Logger.infoLog("Successfully initialized SQLite database.");
             }
-
             Logger.infoLog("Successfully initialized SQLite database: " + config.getFilename() + ".db");
         }
         db.load();

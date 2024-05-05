@@ -78,7 +78,6 @@ public class ItemStackUtils {
     }
 
     public static String getSkinURLFromUUID(UUID uuid) {
-
         Logger.debugLog("Getting skull from UUID: " + uuid);
         PlayerProfile profile = Bukkit.createProfile(uuid);
 
@@ -88,8 +87,6 @@ public class ItemStackUtils {
             return null;
         }
 
-        String urlString = url.toString();
-
-        return Utils.getSkinURLFromValue(urlString);
+        return url.toString();
     }
 }

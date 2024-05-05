@@ -1,5 +1,6 @@
 package de.janschuri.lunaticlib.senders.paper;
 
+import de.janschuri.lunaticlib.logger.Logger;
 import de.janschuri.lunaticlib.senders.AbstractPlayerSender;
 import de.janschuri.lunaticlib.utils.ClickableDecisionMessage;
 import de.janschuri.lunaticlib.utils.ClickableMessage;
@@ -146,6 +147,7 @@ public class PlayerSender extends AbstractPlayerSender {
 
     @Override
     public String getSkinURL() {
+        Logger.debugLog("Getting skin URL for " + uuid);
         return ItemStackUtils.getSkinURLFromUUID(uuid);
     }
 

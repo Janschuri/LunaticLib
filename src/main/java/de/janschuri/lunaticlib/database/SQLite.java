@@ -32,7 +32,6 @@ public class SQLite extends Database {
         connection = getSQLConnection();
         for (Table table : tables) {
             try {
-                Logger.infoLog("Creating table: " + table.getName());
                 Statement stmt = connection.createStatement();
 
                 PrimaryKey primaryKey = table.getPrimaryKey();
@@ -88,8 +87,6 @@ public class SQLite extends Database {
                 sqlBuilder.append(");");
 
                 String sql = sqlBuilder.toString();
-
-                Logger.debugLog(sql);
 
                 stmt.execute(sql);
 

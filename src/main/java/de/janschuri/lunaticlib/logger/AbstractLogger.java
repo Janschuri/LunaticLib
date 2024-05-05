@@ -28,8 +28,6 @@ public abstract class AbstractLogger {
         logger.error(ANSI_RED + msg + ANSI_RESET);
     }
 
-    abstract public boolean isDebug();
-
     protected static Logger getLogger(String pluginName) {
         return LoggerFactory.getLogger(pluginName);
     }
