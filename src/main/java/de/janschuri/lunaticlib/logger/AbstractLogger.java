@@ -29,6 +29,6 @@ public abstract class AbstractLogger {
     }
 
     protected static Logger getLogger(String pluginName) {
-        return LoggerFactory.getLogger(ANSI_BLUE + pluginName + ANSI_RESET);
+        return LoggerFactory.getLogger(pluginName);
     }
 }
