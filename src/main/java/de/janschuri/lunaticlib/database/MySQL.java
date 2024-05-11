@@ -128,6 +128,8 @@ public class MySQL extends Database {
                 return "CHAR";
             case VARCHAR:
                 return "VARCHAR(255)";
+            case VARBINARY:
+                return "VARBINARY(1000)";
             default:
                 return "VARCHAR(255)";
         }
