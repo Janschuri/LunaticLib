@@ -1,5 +1,6 @@
 package de.janschuri.lunaticlib;
 
+import de.janschuri.lunaticlib.bstats.MetricsBukkit;
 import de.janschuri.lunaticlib.external.Vault;
 import de.janschuri.lunaticlib.listener.paper.MessageListener;
 import de.janschuri.lunaticlib.utils.Mode;
@@ -29,6 +30,9 @@ public class PaperLunaticLib  extends JavaPlugin {
             LunaticLib.installedVault = true;
             new Vault();
         }
+
+        int pluginId = 21913;
+        MetricsBukkit metrics = new MetricsBukkit(this, pluginId);
 
         LunaticLib.onEnable();
     }
