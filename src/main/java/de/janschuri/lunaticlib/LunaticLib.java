@@ -22,6 +22,7 @@ public final class LunaticLib {
     private static boolean debug;
     static Platform platform;
     static boolean installedVault = false;
+    static boolean installedLogBlock = false;
     static Path dataDirectory;
 
     public static Platform getPlatform() {

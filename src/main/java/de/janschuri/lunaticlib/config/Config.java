@@ -298,6 +298,15 @@ public abstract class Config {
         return intMap;
     }
 
+    protected Map<String, Boolean> getBooleanMap(String path) {
+        Map map = getMap(path);
+        Map<String, Boolean> booleanMap = new HashMap<>();
+        for (Object key : map.keySet()) {
+            booleanMap.put(key.toString(), Boolean.parseBoolean(map.get(key).toString()));
+        }
+        return booleanMap;
+    }
+
     protected List<String> getKeys(String path) {
         return new ArrayList<>(((Map<String, Object>) get(path)).keySet());
     }

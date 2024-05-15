@@ -6,7 +6,7 @@
 
   <groupId>de.janschuri</groupId>
   <artifactId>lunaticlib</artifactId>
-  <version>1.0.1</version>
+  <version>1.0.2-Snapshot</version>
   <packaging>jar</packaging>
 
   <name>LunaticLib</name>
@@ -115,6 +115,12 @@
           <groupId>net.md-5</groupId>
           <artifactId>bungeecord-api</artifactId>
           <version>1.20-R0.1-SNAPSHOT</version>
+          <scope>provided</scope>
+      </dependency>
+      <dependency>
+          <groupId>de.diddiz</groupId>
+          <artifactId>logblock</artifactId>
+          <version>1.19.0.0-SNAPSHOT</version>
           <scope>provided</scope>
       </dependency>
   </dependencies>
