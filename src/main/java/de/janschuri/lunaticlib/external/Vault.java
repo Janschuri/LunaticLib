@@ -15,10 +15,6 @@ public class Vault {
 
     private static Economy econ = null;
     public Vault() {
-        if (!LunaticLib.isInstalledVault()) {
-            Logger.warnLog("Vault is not installed! Please install Vault or disable it in plugin config.yml.");
-        }
-
         if (!setupEconomy() ) {
             Logger.warnLog("Could not setup Economy.");
         }

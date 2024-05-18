@@ -5,6 +5,7 @@ import com.velocitypowered.api.proxy.Player;
 import de.janschuri.lunaticlib.LunaticLib;
 import de.janschuri.lunaticlib.utils.ClickableDecisionMessage;
 import de.janschuri.lunaticlib.utils.ClickableMessage;
+import net.md_5.bungee.api.connection.ProxiedPlayer;
 import org.bukkit.command.CommandSender;
 
 import java.util.List;
@@ -48,7 +49,7 @@ public abstract class AbstractSender {
     public static AbstractSender getSender(net.md_5.bungee.api.CommandSender sender) {
         switch (LunaticLib.getPlatform()) {
             case BUNGEE:
-                if (sender instanceof org.bukkit.entity.Player) {
+                if (sender instanceof ProxiedPlayer) {
                     return new de.janschuri.lunaticlib.senders.bungee.PlayerSender(sender);
                 } else {
                     return new de.janschuri.lunaticlib.senders.bungee.Sender(sender);

@@ -1,5 +1,8 @@
 package de.janschuri.lunaticlib.config;
 
+import de.janschuri.lunaticlib.LunaticLib;
+import de.janschuri.lunaticlib.utils.Platform;
+
 import java.nio.file.Path;
 
 public abstract class AbstractDatabaseConfig extends Config {
@@ -26,6 +29,10 @@ public abstract class AbstractDatabaseConfig extends Config {
         password = getString("MySQL.password", "");
         filename = getString("SQLite.filename", NAME);
         useMySQL = getBoolean("MySQL.enabled", false);
+
+        if (LunaticLib.getPlatform() == Platform.VELOCITY) {
+            useMySQL = true;
+        }
     }
 
     public String getHost() {

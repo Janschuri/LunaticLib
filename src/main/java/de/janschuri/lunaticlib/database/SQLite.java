@@ -118,7 +118,7 @@ public class SQLite extends Database {
         } catch (SQLException ex) {
             Logger.errorLog("SQLite exception on initialize");
         } catch (ClassNotFoundException ex) {
-            Logger.errorLog("You need the SQLite JBDC library. Google it. Put it in /lib folder.");
+            Logger.errorLog("Class not found exception: org.sqlite.JDBC");
         }
         return null;
     }
@@ -148,6 +148,8 @@ public class SQLite extends Database {
                 return "CHAR";
             case VARCHAR:
                 return "VARCHAR";
+            case VARBINARY:
+                return "VARBINARY";
             default:
                 return "VARCHAR(255)";
         }

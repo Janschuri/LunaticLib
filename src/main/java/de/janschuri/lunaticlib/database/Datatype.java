@@ -10,5 +10,6 @@ public enum Datatype {
     CHAR,
     VARCHAR,
     TIMESTAMP,
+    VARBINARY,
 
 }

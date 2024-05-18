@@ -1,13 +1,14 @@
 package de.janschuri.lunaticlib;
 
 import de.janschuri.lunaticlib.external.AdventureAPI;
+import de.janschuri.lunaticlib.bstats.MetricsBukkit;
+import de.janschuri.lunaticlib.external.LogBlock;
 import de.janschuri.lunaticlib.external.Vault;
 import de.janschuri.lunaticlib.listener.paper.MessageListener;
 import de.janschuri.lunaticlib.utils.Mode;
 import de.janschuri.lunaticlib.utils.Platform;
 import de.janschuri.lunaticlib.utils.Utils;
 import de.janschuri.lunaticlib.logger.Logger;
-import net.kyori.adventure.platform.bukkit.BukkitAudiences;
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -33,6 +34,14 @@ public class PaperLunaticLib  extends JavaPlugin {
             LunaticLib.installedVault = true;
             new Vault();
         }
+
+        if (Utils.classExists("de.diddiz.LogBlock.LogBlock")) {
+            LunaticLib.installedLogBlock = true;
+            new LogBlock();
+        }
+
+        int pluginId = 21913;
+        MetricsBukkit metrics = new MetricsBukkit(this, pluginId);
 
         LunaticLib.onEnable();
     }
