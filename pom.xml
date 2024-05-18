@@ -18,7 +18,7 @@
 
     <distributionManagement>
         <repository>
-            <id>de.janschuri</id>
+            <id>github</id>
             <name>GitHub Janschuri Apache Maven Packages</name>
             <url>https://maven.pkg.github.com/janschuri/lunaticlib</url>
         </repository>
