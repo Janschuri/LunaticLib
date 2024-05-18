@@ -1,4 +1,4 @@
-package de.janschuri.lunaticlib.senders.paper;
+package de.janschuri.lunaticlib.senders.bukkit;
 
 import de.janschuri.lunaticlib.logger.Logger;
 import de.janschuri.lunaticlib.senders.AbstractPlayerSender;

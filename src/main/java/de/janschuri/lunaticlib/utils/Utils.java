@@ -98,7 +98,7 @@ public class Utils {
             case BUNGEE:
                 BungeeLunaticLib.sendConsoleCommand(command);
                 break;
-            case PAPER:
+            case BUKKIT:
                 PaperLunaticLib.sendConsoleCommand(command);
                 break;
         }

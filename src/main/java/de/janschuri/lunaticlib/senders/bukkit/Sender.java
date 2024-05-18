@@ -1,5 +1,6 @@
-package de.janschuri.lunaticlib.senders.paper;
+package de.janschuri.lunaticlib.senders.bukkit;
 
+import de.janschuri.lunaticlib.external.AdventureAPI;
 import de.janschuri.lunaticlib.senders.AbstractSender;
 import de.janschuri.lunaticlib.utils.ClickableDecisionMessage;
 import de.janschuri.lunaticlib.utils.ClickableMessage;
@@ -30,14 +31,14 @@ public class Sender extends AbstractSender {
     @Override
     public boolean sendMessage(String message) {
         TextComponent msg = LegacyComponentSerializer.legacy('§').deserialize(message);
-        sender.sendMessage(msg);
+        AdventureAPI.sendMessage(sender, msg);
         return true;
     }
 
     @Override
     public boolean sendMessage(ClickableDecisionMessage message) {
 
-            sender.sendMessage(
+            AdventureAPI.sendMessage(sender,
                     LegacyComponentSerializer.legacy('§').deserialize(message.getText())
                     .append(Component.text(" ✓", NamedTextColor.GREEN, TextDecoration.BOLD)
                             .clickEvent(ClickEvent.runCommand(message.getConfirmCommand()))
@@ -70,7 +71,7 @@ public class Sender extends AbstractSender {
             msg = msg.color(TextColor.fromHexString(message.getColor()));
         }
 
-        sender.sendMessage(msg);
+        AdventureAPI.sendMessage(sender, msg);
         return true;
     }
 
@@ -92,7 +93,7 @@ public class Sender extends AbstractSender {
                 }
                 component = component.append(text);
             }
-            sender.sendMessage(component);
+            AdventureAPI.sendMessage(sender, component);
             return true;
     }
 }

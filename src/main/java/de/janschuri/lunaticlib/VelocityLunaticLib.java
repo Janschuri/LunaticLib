@@ -17,7 +17,7 @@ import java.nio.file.Path;
 @Plugin(
         id = "lunaticlib",
         name = "LunaticLib",
-        version = "1.0.0",
+        version = "1.0.2",
         authors = "janschuri"
 )
 public class VelocityLunaticLib {

@@ -50,7 +50,7 @@ public final class LunaticLib {
         Logger.debugLog("Sending plugin message to " + serverName);
 
         switch (platform) {
-            case PAPER:
+            case BUKKIT:
                 return PaperLunaticLib.sendPluginMessage(message);
             case VELOCITY:
                 return VelocityLunaticLib.sendPluginMessage(serverName, message);
@@ -66,7 +66,7 @@ public final class LunaticLib {
         Logger.debugLog("Sending plugin message to all servers.");
 
         switch (platform) {
-            case PAPER:
+            case BUKKIT:
                 return PaperLunaticLib.sendPluginMessage(message);
             case VELOCITY:
                 return VelocityLunaticLib.sendPluginMessage(message);

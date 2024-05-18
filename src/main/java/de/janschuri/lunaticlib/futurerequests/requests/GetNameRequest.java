@@ -4,7 +4,7 @@ import com.google.common.io.ByteArrayDataInput;
 import com.google.common.io.ByteArrayDataOutput;
 import com.google.common.io.ByteStreams;
 import de.janschuri.lunaticlib.logger.Logger;
-import de.janschuri.lunaticlib.senders.paper.PlayerSender;
+import de.janschuri.lunaticlib.senders.bukkit.PlayerSender;
 import de.janschuri.lunaticlib.futurerequests.FutureRequest;
 
 import java.util.UUID;

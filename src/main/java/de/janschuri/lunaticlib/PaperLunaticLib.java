@@ -1,11 +1,13 @@
 package de.janschuri.lunaticlib;
 
+import de.janschuri.lunaticlib.external.AdventureAPI;
 import de.janschuri.lunaticlib.external.Vault;
 import de.janschuri.lunaticlib.listener.paper.MessageListener;
 import de.janschuri.lunaticlib.utils.Mode;
 import de.janschuri.lunaticlib.utils.Platform;
 import de.janschuri.lunaticlib.utils.Utils;
 import de.janschuri.lunaticlib.logger.Logger;
+import net.kyori.adventure.platform.bukkit.BukkitAudiences;
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -18,7 +20,9 @@ public class PaperLunaticLib  extends JavaPlugin {
         instance = this;
 
         LunaticLib.mode = Mode.STANDALONE;
-        LunaticLib.platform = Platform.PAPER;
+        LunaticLib.platform = Platform.BUKKIT;
+
+        AdventureAPI.initialize(this);
 
         getServer().getMessenger().registerIncomingPluginChannel(this, IDENTIFIER, new MessageListener());
         getServer().getMessenger().registerOutgoingPluginChannel(this, IDENTIFIER);
@@ -39,6 +43,7 @@ public class PaperLunaticLib  extends JavaPlugin {
 
     @Override
     public void onDisable() {
+        AdventureAPI.close();
         LunaticLib.onDisable();
     }
 

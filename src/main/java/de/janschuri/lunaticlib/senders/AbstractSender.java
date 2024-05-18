@@ -34,11 +34,11 @@ public abstract class AbstractSender {
 
     public static AbstractSender getSender(CommandSender sender) {
         switch (LunaticLib.getPlatform()) {
-            case PAPER:
+            case BUKKIT:
                 if (sender instanceof org.bukkit.entity.Player) {
-                    return new de.janschuri.lunaticlib.senders.paper.PlayerSender(sender);
+                    return new de.janschuri.lunaticlib.senders.bukkit.PlayerSender(sender);
                 } else {
-                    return new de.janschuri.lunaticlib.senders.paper.Sender(sender);
+                    return new de.janschuri.lunaticlib.senders.bukkit.Sender(sender);
                 }
             default:
                 return null;
@@ -60,8 +60,8 @@ public abstract class AbstractSender {
 
     public static AbstractPlayerSender getPlayerSender(UUID uuid) {
         switch (LunaticLib.getPlatform()) {
-            case PAPER:
-                return new de.janschuri.lunaticlib.senders.paper.PlayerSender(uuid);
+            case BUKKIT:
+                return new de.janschuri.lunaticlib.senders.bukkit.PlayerSender(uuid);
             case VELOCITY:
                 return new de.janschuri.lunaticlib.senders.velocity.PlayerSender(uuid);
             case BUNGEE:
@@ -73,8 +73,8 @@ public abstract class AbstractSender {
 
     public static AbstractPlayerSender getPlayerSender(String name) {
         switch (LunaticLib.getPlatform()) {
-            case PAPER:
-                return new de.janschuri.lunaticlib.senders.paper.PlayerSender(name);
+            case BUKKIT:
+                return new de.janschuri.lunaticlib.senders.bukkit.PlayerSender(name);
             case VELOCITY:
                 return new de.janschuri.lunaticlib.senders.velocity.PlayerSender(name);
             case BUNGEE:

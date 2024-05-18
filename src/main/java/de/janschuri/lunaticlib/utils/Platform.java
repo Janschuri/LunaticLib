@@ -4,6 +4,6 @@ public enum Platform {
 
     VELOCITY,
     BUNGEE,
-    PAPER,
+    BUKKIT,
 
 }
