@@ -9,6 +9,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.command.CommandSender;
+import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.List;
@@ -47,11 +48,16 @@ public class PlayerSender extends AbstractPlayerSender {
 
     @Override
     public double[] getPosition() {
-        return new double[] {
-                Bukkit.getOfflinePlayer(uuid).getLocation().getX(),
-                Bukkit.getOfflinePlayer(uuid).getLocation().getY(),
-                Bukkit.getOfflinePlayer(uuid).getLocation().getZ()
-        };
+        OfflinePlayer player = Bukkit.getOfflinePlayer(uuid);
+
+        if (player.isOnline()) {
+            return new double[] {
+                Bukkit.getPlayer(uuid).getLocation().getX(),
+                Bukkit.getPlayer(uuid).getLocation().getY(),
+                Bukkit.getPlayer(uuid).getLocation().getZ()
+            };
+        }
+        return null;
     }
 
     @Override
@@ -89,7 +95,7 @@ public class PlayerSender extends AbstractPlayerSender {
 
     @Override
     public boolean hasItemInMainHand() {
-        return !Bukkit.getPlayer(uuid).getInventory().getItemInMainHand().getType().isAir();
+        return !Bukkit.getPlayer(uuid).getInventory().getItemInMainHand().getType().equals(Material.AIR);
     }
 
     @Override

@@ -6,6 +6,7 @@ import de.janschuri.lunaticlib.logger.Logger;
 import org.apache.commons.codec.binary.Base64;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
+import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.SkullMeta;
@@ -18,6 +19,7 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.lang.reflect.Field;
+import java.util.Collection;
 import java.util.UUID;
 
 public class ItemStackUtils {
@@ -81,22 +83,27 @@ public class ItemStackUtils {
 
     public static String getSkinURLFromUUID(UUID uuid) {
         Logger.debugLog("Getting skull from UUID: " + uuid);
-        Player player = Bukkit.getPlayer(uuid);
+        OfflinePlayer player = Bukkit.getOfflinePlayer(uuid);
 
         if (player == null) {
             Logger.debugLog("Player is offline. Could not get skin URL.");
             return null;
         }
 
+        GameProfile profile = new GameProfile(player.getUniqueId(), player.getName());
+        Collection<Property> property = profile.getProperties().get("textures");
 
-        PlayerProfile profile = player.getPlayerProfile();
-        PlayerTextures textures = profile.getTextures();
-        if (textures != null) {
-            return textures.getSkin().toString();
-        } else {
-            Logger.debugLog("Player has no textures. Could not get skin URL.");
-            return null;
+        if (property != null) {
+            for (Property prop : property) {
+                if (prop.getName().equals("textures")) {
+                    String texture = prop.getValue();
+                    return texture;
+                }
+            }
         }
+
+        Logger.debugLog("Player has no textures. Could not get skin URL.");
+        return null;
     }
 
 
