@@ -64,6 +64,9 @@ public abstract class Config {
             loaderOptions.setProcessComments(true);
             DumperOptions dumperOptions = new DumperOptions();
             dumperOptions.setProcessComments(true);
+            dumperOptions.setSplitLines(false); // remove the line breaks
+            dumperOptions.setDefaultFlowStyle(DumperOptions.FlowStyle.BLOCK); // remove quotes
+            dumperOptions.setIndent(2);
             Yaml yaml = new Yaml(new Constructor(loaderOptions), new Representer(dumperOptions), dumperOptions, loaderOptions);
             Node root;
 
@@ -186,20 +189,24 @@ public abstract class Config {
                 mergedList.add(defaultMap.get(key));
             } else {
                 Logger.debugLog("Key found in map: " + key);
-                Node node = map.get(key).getValueNode();
-                Node defaultNode = defaultMap.get(key).getValueNode();
-                if (node instanceof MappingNode && defaultNode instanceof MappingNode) {
-                    MappingNode newMappingNode = (MappingNode) node;
-                    MappingNode newDefaultMappingNode = (MappingNode) defaultNode;
-                    List<NodeTuple> newList = newMappingNode.getValue();
-                    List<NodeTuple> newDefaultList = newDefaultMappingNode.getValue();
-
-                    newMappingNode.setValue(mergeMappingNodes(newList, newDefaultList));
-
-                    NodeTuple newNodeTuple = new NodeTuple(defaultMap.get(key).getKeyNode(), newMappingNode);
-                    mergedList.add(newNodeTuple);
-                } else {
+                if (!defaultMap.containsKey(key)) {
                     mergedList.add(map.get(key));
+                } else {
+                    Node node = map.get(key).getValueNode();
+                    Node defaultNode = defaultMap.get(key).getValueNode();
+                    if (node instanceof MappingNode && defaultNode instanceof MappingNode) {
+                        MappingNode newMappingNode = (MappingNode) node;
+                        MappingNode newDefaultMappingNode = (MappingNode) defaultNode;
+                        List<NodeTuple> newList = newMappingNode.getValue();
+                        List<NodeTuple> newDefaultList = newDefaultMappingNode.getValue();
+
+                        newMappingNode.setValue(mergeMappingNodes(newList, newDefaultList));
+
+                        NodeTuple newNodeTuple = new NodeTuple(defaultMap.get(key).getKeyNode(), newMappingNode);
+                        mergedList.add(newNodeTuple);
+                    } else {
+                        mergedList.add(map.get(key));
+                    }
                 }
             }
         }
@@ -289,6 +296,15 @@ public abstract class Config {
             intMap.put(key.toString(), Integer.parseInt(map.get(key).toString()));
         }
         return intMap;
+    }
+
+    protected Map<String, Boolean> getBooleanMap(String path) {
+        Map map = getMap(path);
+        Map<String, Boolean> booleanMap = new HashMap<>();
+        for (Object key : map.keySet()) {
+            booleanMap.put(key.toString(), Boolean.parseBoolean(map.get(key).toString()));
+        }
+        return booleanMap;
     }
 
     protected List<String> getKeys(String path) {

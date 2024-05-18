@@ -1,5 +1,6 @@
 package de.janschuri.lunaticlib;
 
+import de.janschuri.lunaticlib.bstats.MetricsBungeecoord;
 import de.janschuri.lunaticlib.utils.Mode;
 import de.janschuri.lunaticlib.utils.Platform;
 import net.md_5.bungee.api.config.ServerInfo;
@@ -16,6 +17,9 @@ public class BungeeLunaticLib extends Plugin {
         LunaticLib.platform = Platform.BUNGEE;
         getProxy().registerChannel(LunaticLib.IDENTIFIER);
         LunaticLib.dataDirectory = getDataFolder().toPath();
+
+        int pluginId = 21919;
+        MetricsBungeecoord metrics = new MetricsBungeecoord(this, pluginId);
 
         LunaticLib.onEnable();
     }

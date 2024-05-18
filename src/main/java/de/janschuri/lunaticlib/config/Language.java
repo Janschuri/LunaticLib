@@ -1,5 +1,7 @@
 package de.janschuri.lunaticlib.config;
 
+import de.janschuri.lunaticlib.logger.Logger;
+
 import java.nio.file.Path;
 import java.util.*;
 
@@ -54,7 +56,7 @@ public abstract class Language extends Config {
     }
 
     public List<String> getAliases(String command) {
-        return getAliases(command, "basecommand");
+        return getAliases(command, "base_command");
     }
 
     public boolean checkIsSubcommand(final String command, final String subcommand, final String arg) {

@@ -89,4 +89,17 @@ public class ItemStackUtils {
 
         return url.toString();
     }
+
+
+    public static String getKey(ItemStack itemStack){
+        Material material = itemStack.getType();
+        if(material.isBlock()){
+            String id = material.getKey().getKey();
+            return "block.minecraft."+id;
+        } else if(material.isItem()){
+            String id = material.getKey().getKey();
+            return "item.minecraft."+id;
+        }
+        return "block.minecraft.dirt";
+    }
 }

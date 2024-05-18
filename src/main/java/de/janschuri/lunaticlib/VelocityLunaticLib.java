@@ -8,6 +8,7 @@ import com.velocitypowered.api.plugin.Plugin;
 import com.velocitypowered.api.plugin.annotation.DataDirectory;
 import com.velocitypowered.api.proxy.ProxyServer;
 import com.velocitypowered.api.proxy.messages.MinecraftChannelIdentifier;
+import de.janschuri.lunaticlib.bstats.MetricsVelocity;
 import de.janschuri.lunaticlib.listener.velocity.MessageListener;
 import de.janschuri.lunaticlib.utils.Mode;
 import de.janschuri.lunaticlib.utils.Platform;
@@ -17,7 +18,7 @@ import java.nio.file.Path;
 @Plugin(
         id = "lunaticlib",
         name = "LunaticLib",
-        version = "1.0.0",
+        version = "1.0.2",
         authors = "janschuri"
 )
 public class VelocityLunaticLib {
@@ -25,11 +26,13 @@ public class VelocityLunaticLib {
     private static ProxyServer proxy;
     private static Path dataDirectory;
     public static final MinecraftChannelIdentifier IDENTIFIER = MinecraftChannelIdentifier.from(LunaticLib.IDENTIFIER);
+    private final MetricsVelocity.Factory metricsFactory;
 
     @Inject
-    public VelocityLunaticLib(ProxyServer proxy, @DataDirectory Path dataDirectory) {
+    public VelocityLunaticLib(ProxyServer proxy, @DataDirectory Path dataDirectory, MetricsVelocity.Factory metricsFactory) {
         VelocityLunaticLib.proxy = proxy;
         VelocityLunaticLib.dataDirectory = dataDirectory;
+        this.metricsFactory = metricsFactory;
     }
 
     @Subscribe
@@ -42,6 +45,10 @@ public class VelocityLunaticLib {
         proxy.getEventManager().register(this, new MessageListener());
 
         LunaticLib.dataDirectory = dataDirectory;
+
+        int pluginId = 21915;
+        MetricsVelocity metrics = metricsFactory.make(this, pluginId);
+
         LunaticLib.onEnable();
     }
 
