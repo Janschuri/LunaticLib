@@ -15,7 +15,6 @@
     <java.version>16</java.version>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <nms-classifier>legacy</nms-classifier>
-    <spigot.version>1.20.4-R0.1-SNAPSHOT</spigot.version>
   </properties>
 
     <distributionManagement>

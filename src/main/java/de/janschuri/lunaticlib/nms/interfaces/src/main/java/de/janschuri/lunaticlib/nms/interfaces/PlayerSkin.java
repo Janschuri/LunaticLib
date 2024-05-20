@@ -1,5 +1,5 @@
 package de.janschuri.lunaticlib.nms.interfaces;
 
-public interface Craftplayer {
+public interface PlayerSkin {
     String getSkinURL();
 }

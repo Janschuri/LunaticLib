@@ -38,7 +38,7 @@
             </dependency>
             <dependency>
                 <groupId>de.janschuri</groupId>
-                <artifactId>lunaticlib-nms-interaces</artifactId>
+                <artifactId>lunaticlib-nms-interfaces</artifactId>
                 <version>1.0.0</version>
                 <scope>provided</scope>
             </dependency>
