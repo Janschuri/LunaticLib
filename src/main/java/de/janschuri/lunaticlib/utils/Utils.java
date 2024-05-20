@@ -2,7 +2,7 @@ package de.janschuri.lunaticlib.utils;
 
 import de.janschuri.lunaticlib.BungeeLunaticLib;
 import de.janschuri.lunaticlib.LunaticLib;
-import de.janschuri.lunaticlib.PaperLunaticLib;
+import de.janschuri.lunaticlib.BukkitLunaticLib;
 import de.janschuri.lunaticlib.VelocityLunaticLib;
 import de.janschuri.lunaticlib.logger.Logger;
 
@@ -99,7 +99,7 @@ public class Utils {
                 BungeeLunaticLib.sendConsoleCommand(command);
                 break;
             case BUKKIT:
-                PaperLunaticLib.sendConsoleCommand(command);
+                BukkitLunaticLib.sendConsoleCommand(command);
                 break;
         }
     }

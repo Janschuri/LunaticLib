@@ -14,8 +14,8 @@ import org.bukkit.plugin.java.JavaPlugin;
 
 import static de.janschuri.lunaticlib.LunaticLib.IDENTIFIER;
 
-public class PaperLunaticLib  extends JavaPlugin {
-    private static PaperLunaticLib instance;
+public class BukkitLunaticLib extends JavaPlugin {
+    private static BukkitLunaticLib instance;
     @Override
     public void onEnable() {
         instance = this;
@@ -46,7 +46,7 @@ public class PaperLunaticLib  extends JavaPlugin {
         LunaticLib.onEnable();
     }
 
-    public static PaperLunaticLib getInstance() {
+    public static BukkitLunaticLib getInstance() {
         return instance;
     }
 

@@ -56,7 +56,7 @@ public class ItemStackUtils {
         if (url == null || url.isEmpty())
             return skull;
         SkullMeta skullMeta = (SkullMeta) skull.getItemMeta();
-        GameProfile profile = new GameProfile(UUID.randomUUID(), null);
+        GameProfile profile = new GameProfile(UUID.randomUUID(), "");
         byte[] encodedData = Base64.encodeBase64(String.format("{textures:{SKIN:{url:\"%s\"}}}", url).getBytes());
         profile.getProperties().put("textures", new Property("textures", new String(encodedData)));
         Field profileField = null;
@@ -72,7 +72,7 @@ public class ItemStackUtils {
             e.printStackTrace();
         }
         skull.setItemMeta(skullMeta);
-        return skull;
+        return skull.clone();
     }
 
     public static ItemStack getSkullFromUUID(UUID uuid) {
@@ -83,7 +83,7 @@ public class ItemStackUtils {
 
     public static String getSkinURLFromUUID(UUID uuid) {
         Logger.debugLog("Getting skull from UUID: " + uuid);
-        OfflinePlayer player = Bukkit.getOfflinePlayer(uuid);
+        Player player = Bukkit.getPlayer(uuid);
 
         if (player == null) {
             Logger.debugLog("Player is offline. Could not get skin URL.");
@@ -94,7 +94,11 @@ public class ItemStackUtils {
         Collection<Property> property = profile.getProperties().get("textures");
 
         if (property != null) {
+            Logger.debugLog("Player has textures. Getting skin URL.");
+            Logger.debugLog("Properties: " + property.size());
+            Logger.debugLog("Properties: " + property);
             for (Property prop : property) {
+                Logger.debugLog("Property: " + prop.getName() + " - " + prop.getValue());
                 if (prop.getName().equals("textures")) {
                     String texture = prop.getValue();
                     return texture;

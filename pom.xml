@@ -6,14 +6,16 @@
 
   <groupId>de.janschuri</groupId>
   <artifactId>lunaticlib</artifactId>
-  <version>1.0.2-SNAPSHOT</version>
-  <packaging>jar</packaging>
+  <version>1.1.0-SNAPSHOT</version>
+  <packaging>pom</packaging>
 
   <name>LunaticLib</name>
 
   <properties>
-    <java.version>1.8</java.version>
+    <java.version>16</java.version>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    <nms-classifier>legacy</nms-classifier>
+    <spigot.version>1.20.4-R0.1-SNAPSHOT</spigot.version>
   </properties>
 
     <distributionManagement>
@@ -86,6 +88,13 @@
 
   <dependencies>
       <dependency>
+          <groupId>org.spigotmc</groupId>
+          <artifactId>spigot</artifactId>
+          <version>${spigot.version}</version>
+          <classifier>remapped-mojang</classifier>
+          <scope>provided</scope>
+      </dependency>
+      <dependency>
           <groupId>com.mysql</groupId>
           <artifactId>mysql-connector-j</artifactId>
           <version>8.4.0</version>
@@ -99,6 +108,11 @@
       <dependency>
           <groupId>net.kyori</groupId>
           <artifactId>adventure-platform-bukkit</artifactId>
+          <version>4.3.2</version>
+      </dependency>
+      <dependency>
+          <groupId>net.kyori</groupId>
+          <artifactId>adventure-platform-bungeecord</artifactId>
           <version>4.3.2</version>
       </dependency>
       <dependency>

@@ -16,7 +16,6 @@ import java.nio.file.Path;
 import java.util.Map;
 
 public final class LunaticLib {
-
     public static final String IDENTIFIER = "lunaticlib:futurerequests";
     static Mode mode = Mode.STANDALONE;
     private static boolean debug;
@@ -52,7 +51,7 @@ public final class LunaticLib {
 
         switch (platform) {
             case BUKKIT:
-                return PaperLunaticLib.sendPluginMessage(message);
+                return BukkitLunaticLib.sendPluginMessage(message);
             case VELOCITY:
                 return VelocityLunaticLib.sendPluginMessage(serverName, message);
             case BUNGEE:
@@ -68,7 +67,7 @@ public final class LunaticLib {
 
         switch (platform) {
             case BUKKIT:
-                return PaperLunaticLib.sendPluginMessage(message);
+                return BukkitLunaticLib.sendPluginMessage(message);
             case VELOCITY:
                 return VelocityLunaticLib.sendPluginMessage(message);
             case BUNGEE:
