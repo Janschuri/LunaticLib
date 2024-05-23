@@ -87,13 +87,6 @@
 
   <dependencies>
       <dependency>
-          <groupId>org.spigotmc</groupId>
-          <artifactId>spigot</artifactId>
-          <version>${spigot.version}</version>
-          <classifier>remapped-mojang</classifier>
-          <scope>provided</scope>
-      </dependency>
-      <dependency>
           <groupId>com.mysql</groupId>
           <artifactId>mysql-connector-j</artifactId>
           <version>8.4.0</version>
@@ -107,11 +100,6 @@
       <dependency>
           <groupId>net.kyori</groupId>
           <artifactId>adventure-platform-bukkit</artifactId>
-          <version>4.3.2</version>
-      </dependency>
-      <dependency>
-          <groupId>net.kyori</groupId>
-          <artifactId>adventure-platform-bungeecord</artifactId>
           <version>4.3.2</version>
       </dependency>
       <dependency>
