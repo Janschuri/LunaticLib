@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <parent>
+        <groupId>de.janschuri</groupId>
+        <artifactId>lunaticlib-parent</artifactId>
+        <version>1.0.0</version>
+    </parent>
+
+    <artifactId>lunaticlib-platform</artifactId>
+    <version>1.0.0</version>
+    <packaging>pom</packaging>
+
+    <modules>
+        <module>lunaticlib-platform-bukkit</module>
+        <module>lunaticlib-platform-velocity</module>
+        <module>lunaticlib-platform-bungee</module>
+        <module>lunaticlib-platform-interface</module>
+        <module>lunaticlib-platform-all</module>
+    </modules>
+</project>
