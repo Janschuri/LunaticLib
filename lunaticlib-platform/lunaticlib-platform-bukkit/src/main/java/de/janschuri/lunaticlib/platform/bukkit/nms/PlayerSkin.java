@@ -5,6 +5,9 @@ import org.bukkit.entity.Player;
 
 public class PlayerSkin {
 
+    private PlayerSkin() {
+    }
+
     public static String[] getFromPlayer(Player playerBukkit) {
         return Version.getPlayerSkin().getFromPlayer(playerBukkit);
     }

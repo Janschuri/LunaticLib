@@ -25,7 +25,7 @@ public class SignGUIImpl implements SignGUI {
         packetHandlerImpl.addPacketInjector(plugin, p); // Ensure a packet play is present
 
         Location l = p.getLocation();
-        BlockPos pos = new BlockPos(l.getBlockX(), l.getBlockY(), l.getBlockZ()); // Create a sign GUI on the player
+        BlockPos pos = new BlockPos(l.getBlockX(), l.getBlockY()+3, l.getBlockZ()); // Create a sign GUI on the player
         BlockState old = ((CraftWorld) l.getWorld()).getHandle().getBlockState(pos); // Get the old block state for that position
 
         ClientboundBlockUpdatePacket sent1 = new ClientboundBlockUpdatePacket(pos, Blocks.OAK_SIGN.defaultBlockState());

@@ -7,6 +7,9 @@ import java.util.function.Consumer;
 
 public class SignGUI {
 
+    private SignGUI() {
+    }
+
     public static void sendSign(JavaPlugin plugin, Player p, Consumer<String[]> lines) {
         Version.getSignGUI().sendSign(plugin, p, lines);
     }

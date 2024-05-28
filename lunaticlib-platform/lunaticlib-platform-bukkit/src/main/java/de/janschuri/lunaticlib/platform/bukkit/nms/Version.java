@@ -11,6 +11,9 @@ import org.bukkit.plugin.java.JavaPlugin;
 
 public class Version {
 
+    private Version() {
+    }
+
     private static de.janschuri.lunaticlib.nms.Version getVersion() {
 
         VersionEnum version = BukkitLunaticLib.getServerVersion();

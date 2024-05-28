@@ -1,5 +1,6 @@
 package de.janschuri.lunaticlib.platform.bukkit;
 
+import de.janschuri.lunaticlib.platform.Vault;
 import de.janschuri.lunaticlib.platform.bukkit.external.AdventureAPI;
 import de.janschuri.lunaticlib.platform.bukkit.external.LogBlock;
 import de.janschuri.lunaticlib.platform.bukkit.external.Metrics;
@@ -20,9 +21,11 @@ import static de.janschuri.lunaticlib.common.LunaticLib.IDENTIFIER;
 
 public class BukkitLunaticLib extends JavaPlugin {
     private static BukkitLunaticLib instance;
-    static boolean installedVault = false;
-    static boolean installedLogBlock = false;
+    private static boolean installedVault = false;
+    private static boolean installedLogBlock = false;
     private static VersionEnum version = null;
+    private static Vault vault;
+    private static LogBlock logBlock;
 
     @Override
     public void onEnable() {
@@ -37,12 +40,11 @@ public class BukkitLunaticLib extends JavaPlugin {
 
         if (Utils.classExists("net.milkbowl.vault.economy.Economy")) {
             BukkitLunaticLib.installedVault = true;
-            new VaultImpl();
+            vault = new VaultImpl();
         }
 
         if (Utils.classExists("de.diddiz.LogBlock.LogBlock")) {
             BukkitLunaticLib.installedLogBlock = true;
-            new LogBlock();
         }
 
         int pluginId = 21913;
@@ -94,5 +96,21 @@ public class BukkitLunaticLib extends JavaPlugin {
             Logger.errorLog("Unknown server version: " + versionString);
             return VersionEnum.UNKNOWN;
         }
+    }
+
+    public static boolean isInstalledVault() {
+        return installedVault;
+    }
+
+    public static boolean isInstalledLogBlock() {
+        return installedLogBlock;
+    }
+
+    public static Vault getVault() {
+        if (!installedVault) {
+            Logger.errorLog("Vault is not installed.");
+            return null;
+        }
+        return vault;
     }
 }

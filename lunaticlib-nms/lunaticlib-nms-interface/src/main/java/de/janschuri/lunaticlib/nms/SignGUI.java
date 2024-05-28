@@ -7,5 +7,5 @@ import java.util.function.Consumer;
 
 public interface SignGUI {
 
-    public void sendSign(JavaPlugin plugin, Player p, Consumer<String[]> lines);
+    void sendSign(JavaPlugin plugin, Player p, Consumer<String[]> lines);
 }

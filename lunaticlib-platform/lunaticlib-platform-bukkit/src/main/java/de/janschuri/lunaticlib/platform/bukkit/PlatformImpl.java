@@ -49,7 +49,7 @@ public class PlatformImpl implements Platform<JavaPlugin, CommandSender> {
 
     @Override
     public Vault getVault() {
-        return new VaultImpl();
+        return BukkitLunaticLib.getVault();
     }
 
     @Override
