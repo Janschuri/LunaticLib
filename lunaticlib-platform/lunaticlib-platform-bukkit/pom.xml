@@ -66,6 +66,12 @@
             <version>4.3.2</version>
         </dependency>
         <dependency>
+            <groupId>de.janschuri</groupId>
+            <artifactId>lunaticlib-nms-all</artifactId>
+            <version>1.0.0</version>
+            <scope>compile</scope>
+        </dependency>
+        <dependency>
             <groupId>de.diddiz</groupId>
             <artifactId>logblock</artifactId>
             <version>1.19.0.0-SNAPSHOT</version>
@@ -80,6 +86,18 @@
         <dependency>
             <groupId>de.janschuri</groupId>
             <artifactId>lunaticlib-platform-interface</artifactId>
+            <version>1.0.0</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>io.netty</groupId>
+            <artifactId>netty-transport</artifactId>
+            <version>4.1.106.Final</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>de.janschuri</groupId>
+            <artifactId>lunaticlib-nms-interface</artifactId>
             <version>1.0.0</version>
             <scope>provided</scope>
         </dependency>

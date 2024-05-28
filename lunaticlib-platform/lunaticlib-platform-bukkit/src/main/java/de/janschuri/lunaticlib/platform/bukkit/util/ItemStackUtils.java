@@ -1,14 +1,24 @@
 package de.janschuri.lunaticlib.platform.bukkit.util;
 
 import de.janschuri.lunaticlib.common.logger.Logger;
+import de.janschuri.lunaticlib.common.utils.Utils;
+import de.janschuri.lunaticlib.platform.bukkit.nms.PlayerSkin;
+import org.bukkit.Bukkit;
 import org.bukkit.Material;
+import org.bukkit.OfflinePlayer;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.ItemMeta;
+import org.bukkit.inventory.meta.SkullMeta;
+import org.bukkit.profile.PlayerProfile;
+import org.bukkit.profile.PlayerTextures;
 import org.bukkit.util.io.BukkitObjectInputStream;
 import org.bukkit.util.io.BukkitObjectOutputStream;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.UUID;
 
 public class ItemStackUtils {
@@ -39,18 +49,26 @@ public class ItemStackUtils {
     }
 
     public static ItemStack getSkullFromURL(String url) {
-        Logger.debugLog("Getting skull from URL: " + url);
+        ItemStack item = new ItemStack(Material.PLAYER_HEAD);
+        ItemMeta meta = item.getItemMeta();
+        SkullMeta skullMeta = (SkullMeta) meta;
 
-        return new ItemStack(Material.PLAYER_HEAD);
-    }
+        PlayerProfile profile = Bukkit.getOfflinePlayer(UUID.randomUUID()).getPlayerProfile();
+        PlayerTextures textures = profile.getTextures();
 
-    public static ItemStack getSkullFromUUID(UUID uuid) {
-        Logger.debugLog("Getting skull from UUID: " + uuid);
-        return getSkullFromURL(getSkinURLFromUUID(uuid));
-    }
+        URL urlObject;
+        try {
+            urlObject = new URL(url);
+        } catch (MalformedURLException exception) {
+            throw new RuntimeException("Invalid URL", exception);
+        }
 
-    public static String getSkinURLFromUUID(UUID uuid) {
-        return null;
+        textures.setSkin(urlObject);
+        profile.setTextures(textures);
+        skullMeta.setOwnerProfile(profile);
+
+        item.setItemMeta(skullMeta);
+        return item.clone();
     }
 
 

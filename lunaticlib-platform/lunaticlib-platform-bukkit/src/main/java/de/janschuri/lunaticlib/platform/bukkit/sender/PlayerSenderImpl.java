@@ -2,6 +2,7 @@ package de.janschuri.lunaticlib.platform.bukkit.sender;
 
 import de.janschuri.lunaticlib.PlayerSender;
 import de.janschuri.lunaticlib.common.logger.Logger;
+import de.janschuri.lunaticlib.platform.bukkit.nms.PlayerSkin;
 import de.janschuri.lunaticlib.platform.bukkit.util.ItemStackUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
@@ -122,8 +123,10 @@ public class PlayerSenderImpl extends SenderImpl implements PlayerSender {
 
     @Override
     public String getSkinURL() {
-        Logger.debugLog("Getting skin URL for " + uuid);
-        return ItemStackUtils.getSkinURLFromUUID(uuid);
+        if (Bukkit.getPlayer(uuid) != null) {
+            return PlayerSkin.getSkinURL(Bukkit.getPlayer(uuid));
+        }
+        return null;
     }
 
     @Override

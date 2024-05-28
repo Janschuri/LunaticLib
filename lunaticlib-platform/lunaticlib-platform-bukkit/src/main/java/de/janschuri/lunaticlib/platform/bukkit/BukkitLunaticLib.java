@@ -10,6 +10,7 @@ import de.janschuri.lunaticlib.common.LunaticLib;
 import de.janschuri.lunaticlib.common.logger.Logger;
 import de.janschuri.lunaticlib.common.utils.Mode;
 import de.janschuri.lunaticlib.common.utils.Utils;
+import de.janschuri.lunaticlib.nms.VersionEnum;
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -21,9 +22,12 @@ public class BukkitLunaticLib extends JavaPlugin {
     private static BukkitLunaticLib instance;
     static boolean installedVault = false;
     static boolean installedLogBlock = false;
+    private static VersionEnum version = null;
+
     @Override
     public void onEnable() {
         instance = this;
+        version = getServerVersion();
 
         AdventureAPI.initialize(this);
 
@@ -73,5 +77,22 @@ public class BukkitLunaticLib extends JavaPlugin {
 
     public static void sendConsoleCommand(String command) {
         Bukkit.getServer().dispatchCommand(Bukkit.getServer().getConsoleSender(), command);
+    }
+
+    public static VersionEnum getServerVersion() {
+        if (version != null) {
+            return version;
+        }
+
+        String packageName = Bukkit.getServer().getClass().getPackage().getName();
+
+        String versionString = packageName.substring(packageName.lastIndexOf('.') + 1);
+
+        try {
+            return VersionEnum.valueOf(versionString);
+        } catch (IllegalArgumentException e) {
+            Logger.errorLog("Unknown server version: " + versionString);
+            return VersionEnum.UNKNOWN;
+        }
     }
 }
