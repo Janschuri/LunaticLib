@@ -106,7 +106,7 @@ public class Utils {
         return parts[19];
     }
 
-    public static Component getClickableDecisionMessage(TextComponent message, TextComponent confirmText, TextComponent confirmHoverText, String confirmCommand, TextComponent cancelText, TextComponent cancelHoverText, String cancelCommand) {
+    public static Component getClickableDecisionMessage(Component message, Component confirmText, Component confirmHoverText, String confirmCommand, Component cancelText, Component cancelHoverText, String cancelCommand) {
         return message
                 .append(
                         confirmText
@@ -117,7 +117,7 @@ public class Utils {
                         cancelText
                                 .hoverEvent(HoverEvent.showText(cancelHoverText))
                                 .clickEvent(ClickEvent.clickEvent(ClickEvent.Action.RUN_COMMAND, cancelCommand))
-                ).toBuilder().build();
+                );
     }
 
     public static Component getClickableDecisionMessage(String message, String confirmHoverText, String confirmCommand, String cancelHoverText, String cancelCommand) {
@@ -128,6 +128,18 @@ public class Utils {
                 confirmCommand,
                 Component.text(" ❌", NamedTextColor.RED, TextDecoration.BOLD),
                 Component.text(cancelHoverText).color(NamedTextColor.RED),
+                cancelCommand
+        );
+    }
+
+    public static Component getClickableDecisionMessage(Component message, Component confirmHoverText, String confirmCommand, Component cancelHoverText, String cancelCommand) {
+        return getClickableDecisionMessage(
+                message,
+                Component.text(" ✓", NamedTextColor.GREEN, TextDecoration.BOLD),
+                confirmHoverText.color(NamedTextColor.GREEN),
+                confirmCommand,
+                Component.text(" ❌", NamedTextColor.RED, TextDecoration.BOLD),
+                cancelHoverText.color(NamedTextColor.RED),
                 cancelCommand
         );
     }

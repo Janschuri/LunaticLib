@@ -4,7 +4,7 @@ package de.janschuri.lunaticlib.common.database;
 import de.janschuri.lunaticlib.common.database.columns.Column;
 import de.janschuri.lunaticlib.common.database.columns.ForeignKey;
 import de.janschuri.lunaticlib.common.database.columns.PrimaryKey;
-import de.janschuri.lunaticlib.common.config.AbstractDatabaseConfig;
+import de.janschuri.lunaticlib.common.config.DatabaseConfig;
 import de.janschuri.lunaticlib.common.logger.Logger;
 
 import java.io.File;
@@ -21,7 +21,7 @@ public class SQLite extends Database {
     private final Path dataDirectory;
     private final Table[] tables;
 
-    public SQLite(AbstractDatabaseConfig config, Table[] tables) {
+    public SQLite(DatabaseConfig config, Table[] tables) {
         super(tables);
         this.filename = config.getFilename();
         this.dataDirectory = config.getDataDirectory();

@@ -5,7 +5,7 @@ import com.velocitypowered.api.command.CommandMeta;
 import com.velocitypowered.api.command.CommandSource;
 import com.velocitypowered.api.proxy.Player;
 import com.velocitypowered.api.proxy.ProxyServer;
-import de.janschuri.lunaticlib.Subcommand;
+import de.janschuri.lunaticlib.LunaticCommand;
 import de.janschuri.lunaticlib.platform.*;
 import de.janschuri.lunaticlib.platform.velocity.command.Command;
 import de.janschuri.lunaticlib.platform.velocity.sender.PlayerSenderImpl;
@@ -59,15 +59,15 @@ public class PlatformImpl implements Platform<ProxyServer, CommandSource> {
     }
 
     @Override
-    public void registerCommand(ProxyServer proxy, Subcommand subcommand) {
+    public void registerCommand(ProxyServer proxy, LunaticCommand lunaticCommand) {
         CommandManager commandManager = VelocityLunaticLib.getProxy().getCommandManager();
 
-        CommandMeta commandMeta = commandManager.metaBuilder(subcommand.getName())
-                .aliases(subcommand.getAliases().toArray(new String[0]))
+        CommandMeta commandMeta = commandManager.metaBuilder(lunaticCommand.getName())
+                .aliases(lunaticCommand.getAliases().toArray(new String[0]))
                 .plugin(proxy)
                 .build();
 
 
-        commandManager.register(commandMeta, new Command(subcommand));
+        commandManager.register(commandMeta, new Command(lunaticCommand));
     }
 }

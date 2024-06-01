@@ -1,13 +1,21 @@
 package de.janschuri.lunaticlib;
 
+import net.kyori.adventure.text.Component;
+
 import java.util.List;
 
 public interface LanguageConfig extends Config {
 
-    public String getMessage(String key);
+    Component getMessage(MessageKey key, boolean withPrefix);
+    Component getMessage(MessageKey key);
 
-    public List<String> getAliases(String command, String subcommand);
-    public List<String> getAliases(String command);
-    public boolean checkIsSubcommand(final String command, final String subcommand, final String arg);
-    public String getPrefix();
+    List<String> getAliases(String command);
+
+    List<String> getAliases(String command, String subcommand);
+
+    Component getHelpHeader(String command);
+
+    Component getHelpFooter(String command);
+
+    Component getPrefix();
 }

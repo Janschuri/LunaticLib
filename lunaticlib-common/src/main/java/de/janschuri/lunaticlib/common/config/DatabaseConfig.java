@@ -1,12 +1,11 @@
 package de.janschuri.lunaticlib.common.config;
 
-import de.janschuri.lunaticlib.DatabaseConfig;
 import de.janschuri.lunaticlib.common.LunaticLib;
 import de.janschuri.lunaticlib.platform.PlatformType;
 
 import java.nio.file.Path;
 
-public abstract class AbstractDatabaseConfig extends AbstractConfig implements DatabaseConfig {
+public class DatabaseConfig extends AbstractConfig implements de.janschuri.lunaticlib.DatabaseConfig {
 
     private final String NAME;
     private String host, database, username, password, filename;
@@ -14,7 +13,7 @@ public abstract class AbstractDatabaseConfig extends AbstractConfig implements D
     private boolean useMySQL;
     private final Path dataDirectory;
 
-    protected AbstractDatabaseConfig(String name, Path dataDirectory, String DATABASE_FILE, String DEFAULT_DATABASE_FILE) {
+    protected DatabaseConfig(String name, Path dataDirectory, String DATABASE_FILE, String DEFAULT_DATABASE_FILE) {
         super(dataDirectory, DATABASE_FILE, DEFAULT_DATABASE_FILE);
         this.NAME = name;
         this.dataDirectory = dataDirectory;

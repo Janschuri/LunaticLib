@@ -1,10 +1,8 @@
 package de.janschuri.lunaticlib.platform.bukkit;
 
-import de.janschuri.lunaticlib.Subcommand;
-import de.janschuri.lunaticlib.common.logger.Logger;
+import de.janschuri.lunaticlib.LunaticCommand;
 import de.janschuri.lunaticlib.platform.*;
 import de.janschuri.lunaticlib.platform.bukkit.commands.Command;
-import de.janschuri.lunaticlib.platform.bukkit.external.VaultImpl;
 import de.janschuri.lunaticlib.platform.bukkit.sender.PlayerSenderImpl;
 import de.janschuri.lunaticlib.platform.bukkit.sender.SenderImpl;
 import org.bukkit.Bukkit;
@@ -64,25 +62,25 @@ public class PlatformImpl implements Platform<JavaPlugin, CommandSender> {
     }
 
     @Override
-    public void registerCommand(JavaPlugin plugin, Subcommand subcommand) {
-        PluginCommand cmd = plugin.getCommand(subcommand.getName());
+    public void registerCommand(JavaPlugin plugin, LunaticCommand lunaticCommand) {
+        PluginCommand cmd = plugin.getCommand(lunaticCommand.getName());
         assert cmd != null;
         try {
             final Field bukkitCommandMap = Bukkit.getServer().getClass().getDeclaredField("commandMap");
             bukkitCommandMap.setAccessible(true);
             CommandMap commandMap = (CommandMap) bukkitCommandMap.get(Bukkit.getServer());
 
-            subcommand.getAliases().forEach(alias -> {
+            lunaticCommand.getAliases().forEach(alias -> {
                 commandMap.register(alias, plugin.getName(), cmd);
             });
         } catch (NoSuchFieldException | IllegalAccessException e) {
             e.printStackTrace();
         }
 
-        plugin.getCommand(subcommand.getName()).setPermission(subcommand.getPermission());
+        plugin.getCommand(lunaticCommand.getName()).setPermission(lunaticCommand.getPermission());
 
-        plugin.getCommand(subcommand.getName()).setExecutor(new Command(subcommand));
-        plugin.getCommand(subcommand.getName()).setTabCompleter(new Command(subcommand));
+        plugin.getCommand(lunaticCommand.getName()).setExecutor(new Command(lunaticCommand));
+        plugin.getCommand(lunaticCommand.getName()).setTabCompleter(new Command(lunaticCommand));
     }
 
 }

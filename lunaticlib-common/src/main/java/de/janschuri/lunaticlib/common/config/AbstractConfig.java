@@ -23,18 +23,13 @@ public abstract class AbstractConfig implements Config {
     private final Path dataDirectory;
     private Map<String, Object> yamlMap = new LinkedHashMap<>();
 
-    public AbstractConfig(Path dataDirectory, String filepath) {
-        this.filePath = filepath;
-        this.defaultFilePath = filepath;
-        this.dataDirectory = dataDirectory;
-    }
-
     public AbstractConfig(Path dataDirectory, String filepath, String defaultFilePath) {
         this.filePath = filepath;
         this.defaultFilePath = defaultFilePath;
         this.dataDirectory = dataDirectory;
     }
 
+    @Override
     public void load() {
 
         File file = new File(dataDirectory.toFile(), filePath);
@@ -214,6 +209,10 @@ public abstract class AbstractConfig implements Config {
         return mergedList;
     }
 
+    protected Map<String, Object> getYamlMap() {
+        return yamlMap;
+    }
+
     private Object get(String path) {
         String[] parts = path.split("\\.");
         Object current = yamlMap;
@@ -221,48 +220,64 @@ public abstract class AbstractConfig implements Config {
             if (current instanceof Map) {
                 current = ((Map<?, ?>) current).get(part);
             } else {
+                Logger.errorLog("Error while getting config value: " + path);
                 return null;
             }
         }
         return current;
     }
 
+    @Override
     public String getString(String path, String defaultValue) {
         return get(path) == null ? defaultValue : get(path).toString();
     }
+
+    @Override
     public String getString(String path) {
         return get(path).toString();
     }
 
+    @Override
     public int getInt(String path, int defaultValue) {
         return get(path) == null ? defaultValue : Integer.parseInt(get(path).toString());
     }
+
+    @Override
     public int getInt(String path) {
         return Integer.parseInt(get(path).toString());
     }
 
+    @Override
     public double getDouble(String path, double defaultValue) {
         return get(path) == null ? defaultValue : Double.parseDouble(get(path).toString());
     }
 
+    @Override
     public double getDouble(String path) {
         return Double.parseDouble(get(path).toString());
     }
 
+    @Override
     public boolean getBoolean(String path, boolean defaultValue) {
         return get(path) == null ? defaultValue : Boolean.parseBoolean(get(path).toString());
     }
+
+    @Override
     public boolean getBoolean(String path) {
         return Boolean.parseBoolean(get(path).toString());
     }
+
+    @Override
     public List<String> getStringList(String path) {
         return (List<String>) get(path);
     }
 
+    @Override
     public Map<String, Object> getMap(String path) {
         return (Map<String, Object>) get(path);
     }
 
+    @Override
     public Map<String, String> getStringMap(String path) {
         Map map = getMap(path);
         Map<String, String> stringMap = new HashMap<>();
@@ -272,6 +287,7 @@ public abstract class AbstractConfig implements Config {
         return stringMap;
     }
 
+    @Override
     public Map<String, Double> getDoubleMap(String path) {
         Map map = getMap(path);
         Map<String, Double> doubleMap = new HashMap<>();
@@ -281,6 +297,7 @@ public abstract class AbstractConfig implements Config {
         return doubleMap;
     }
 
+    @Override
     public Map<String, List<String>> getStringListMap(String path) {
         Map map = getMap(path);
         Map<String, List<String>> stringListMap = new HashMap<>();
@@ -290,6 +307,7 @@ public abstract class AbstractConfig implements Config {
         return stringListMap;
     }
 
+    @Override
     public Map<String, Integer> getIntMap(String path) {
         Map map = getMap(path);
         Map<String, Integer> intMap = new HashMap<>();
@@ -299,6 +317,7 @@ public abstract class AbstractConfig implements Config {
         return intMap;
     }
 
+    @Override
     public Map<String, Boolean> getBooleanMap(String path) {
         Map map = getMap(path);
         Map<String, Boolean> booleanMap = new HashMap<>();
@@ -308,11 +327,12 @@ public abstract class AbstractConfig implements Config {
         return booleanMap;
     }
 
+    @Override
     public List<String> getKeys(String path) {
         return new ArrayList<>(((Map<String, Object>) get(path)).keySet());
     }
 
-    public static String translateAlternateColorCodes(char altColorChar, String textToTranslate) {
+    protected static String translateAlternateColorCodes(char altColorChar, String textToTranslate) {
         Preconditions.checkArgument(textToTranslate != null, "Cannot translate null text");
         char[] b = textToTranslate.toCharArray();
 

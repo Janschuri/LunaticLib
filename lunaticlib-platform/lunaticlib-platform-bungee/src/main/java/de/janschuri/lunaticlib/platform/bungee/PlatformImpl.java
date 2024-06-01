@@ -1,6 +1,6 @@
 package de.janschuri.lunaticlib.platform.bungee;
 
-import de.janschuri.lunaticlib.Subcommand;
+import de.janschuri.lunaticlib.LunaticCommand;
 import de.janschuri.lunaticlib.platform.*;
 import de.janschuri.lunaticlib.platform.bungee.commands.Command;
 import de.janschuri.lunaticlib.platform.bungee.sender.PlayerSenderImpl;
@@ -68,7 +68,7 @@ public class PlatformImpl implements Platform<Plugin, CommandSender> {
     }
 
     @Override
-    public void registerCommand(Plugin plugin, Subcommand subcommand) {
-        plugin.getProxy().getPluginManager().registerCommand(BungeeLunaticLib.getInstance(), new Command(subcommand));
+    public void registerCommand(Plugin plugin, LunaticCommand lunaticCommand) {
+        plugin.getProxy().getPluginManager().registerCommand(BungeeLunaticLib.getInstance(), new Command(lunaticCommand));
     }
 }
