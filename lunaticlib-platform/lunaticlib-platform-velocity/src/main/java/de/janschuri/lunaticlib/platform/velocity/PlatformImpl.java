@@ -6,11 +6,14 @@ import com.velocitypowered.api.command.CommandSource;
 import com.velocitypowered.api.proxy.Player;
 import com.velocitypowered.api.proxy.ProxyServer;
 import de.janschuri.lunaticlib.LunaticCommand;
+import de.janschuri.lunaticlib.PlayerSender;
 import de.janschuri.lunaticlib.platform.*;
 import de.janschuri.lunaticlib.platform.velocity.command.Command;
 import de.janschuri.lunaticlib.platform.velocity.sender.PlayerSenderImpl;
 import de.janschuri.lunaticlib.platform.velocity.sender.SenderImpl;
 
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.UUID;
 
 import static de.janschuri.lunaticlib.platform.velocity.VelocityLunaticLib.MINECRAFT_CHANNEL_IDENTIFIER;
@@ -69,5 +72,18 @@ public class PlatformImpl implements Platform<ProxyServer, CommandSource> {
 
 
         commandManager.register(commandMeta, new Command(lunaticCommand));
+    }
+
+    @Override
+    public Collection<PlayerSender> getOnlinePlayers() {
+        Collection<Player> proxyPlayers = VelocityLunaticLib.getProxy().getAllPlayers();
+
+        Collection<PlayerSender> players = new ArrayList<>();
+
+        for (Player player : proxyPlayers) {
+            players.add(new PlayerSenderImpl(player));
+        }
+
+        return players;
     }
 }

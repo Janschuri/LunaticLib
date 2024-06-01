@@ -1,6 +1,7 @@
 package de.janschuri.lunaticlib.platform.bungee;
 
 import de.janschuri.lunaticlib.LunaticCommand;
+import de.janschuri.lunaticlib.PlayerSender;
 import de.janschuri.lunaticlib.platform.*;
 import de.janschuri.lunaticlib.platform.bungee.commands.Command;
 import de.janschuri.lunaticlib.platform.bungee.sender.PlayerSenderImpl;
@@ -11,6 +12,8 @@ import net.md_5.bungee.api.config.ServerInfo;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
 import net.md_5.bungee.api.plugin.Plugin;
 
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.UUID;
 
 import static de.janschuri.lunaticlib.common.LunaticLib.IDENTIFIER;
@@ -70,5 +73,18 @@ public class PlatformImpl implements Platform<Plugin, CommandSender> {
     @Override
     public void registerCommand(Plugin plugin, LunaticCommand lunaticCommand) {
         plugin.getProxy().getPluginManager().registerCommand(BungeeLunaticLib.getInstance(), new Command(lunaticCommand));
+    }
+
+    @Override
+    public Collection<PlayerSender> getOnlinePlayers() {
+        Collection<ProxiedPlayer> proyiedPlayers = BungeeLunaticLib.getInstance().getProxy().getPlayers();
+
+        Collection<PlayerSender> players = new ArrayList<>();
+
+        for (ProxiedPlayer player : proyiedPlayers) {
+            players.add(new PlayerSenderImpl(player));
+        }
+
+        return players;
     }
 }

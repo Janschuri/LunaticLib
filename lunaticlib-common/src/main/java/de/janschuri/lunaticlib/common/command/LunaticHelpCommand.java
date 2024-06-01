@@ -4,6 +4,7 @@ import de.janschuri.lunaticlib.*;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.ComponentBuilder;
 import net.kyori.adventure.text.TextReplacementConfig;
+import net.kyori.adventure.text.event.ClickEvent;
 import net.kyori.adventure.text.event.HoverEvent;
 import org.checkerframework.checker.units.qual.C;
 
@@ -71,7 +72,7 @@ public class LunaticHelpCommand extends AbstractLunaticCommand {
     }
 
     @Override
-    public Map<String, String> getParams(int paramIndex) {
+    public Map<String, String> getParam(int paramIndex) {
         int sizeSubcommands = command.getSubcommands().size();
         int pages = sizeSubcommands / pageSize;
         Map<String, String> map = new HashMap<>();
@@ -105,7 +106,7 @@ public class LunaticHelpCommand extends AbstractLunaticCommand {
     private Component getHelpMessage(Sender sender, int page) {
         Component header = languageConfig.getHelpHeader(command.getName());
 
-        ComponentBuilder builder = Component.text().append(languageConfig.getPrefix())
+        ComponentBuilder builder = Component.text()
                 .append(header);
 
         int start = (page - 1) * pageSize;
@@ -117,12 +118,16 @@ public class LunaticHelpCommand extends AbstractLunaticCommand {
 
                 if (subcommand.hasHelpCommand()) {
                     if (sender.hasPermission(subcommand.getHelpCommand().getPermission())) {
-                        messages.add(subcommand.getHelpCommand().getMessage(new CommandMessageKey(subcommand.getHelpCommand(), "help")));
+                        Component m = getMessage(new CommandMessageKey(subcommand.getHelpCommand(), "help"), false);
+                        m = getReplacedComponent(m, sender, subcommand);
+                        messages.add(m);
                     }
                 } else if (!subcommand.getHelpMessages().isEmpty()) {
                     for (Map.Entry<CommandMessageKey, String> entry : subcommand.getHelpMessages().entrySet()) {
                         if (sender.hasPermission(entry.getValue())) {
-                            messages.add(subcommand.getMessage(entry.getKey()));
+                            Component m = subcommand.getMessage(entry.getKey(), false);
+                            m = getReplacedComponent(m, sender, subcommand);
+                            messages.add(m);
                         }
                     }
                 }
@@ -174,13 +179,13 @@ public class LunaticHelpCommand extends AbstractLunaticCommand {
     private Component getReplacedComponent(Component message, Sender sender, LunaticCommand subcommand) {
         int paramsIndex = 0;
 
-        TextReplacementConfig paramReplacement = TextReplacementConfig.builder()
-                .match("%params%")
-                .once()
-                .replacement(getParamsHover(sender, subcommand, paramsIndex))
-                .build();
+        while (message.toString().contains("%param%")) {
+            TextReplacementConfig paramReplacement = TextReplacementConfig.builder()
+                    .match("%param%")
+                    .once()
+                    .replacement(getParamsHover(sender, subcommand, paramsIndex))
+                    .build();
 
-        while (message.contains(Component.text("%params%"))) {
             message = message.replaceText(paramReplacement);
             paramsIndex++;
         }
@@ -197,6 +202,10 @@ public class LunaticHelpCommand extends AbstractLunaticCommand {
 
         message = message.replaceText(commandReplacement);
         message = message.replaceText(subcommandReplacement);
+
+        String commandString = "/" + subcommand.getFullCommand();
+
+        message = message.clickEvent(ClickEvent.suggestCommand(commandString));
 
         return message;
     }

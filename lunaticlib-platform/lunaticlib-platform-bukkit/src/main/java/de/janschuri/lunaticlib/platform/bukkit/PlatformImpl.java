@@ -1,6 +1,7 @@
 package de.janschuri.lunaticlib.platform.bukkit;
 
 import de.janschuri.lunaticlib.LunaticCommand;
+import de.janschuri.lunaticlib.PlayerSender;
 import de.janschuri.lunaticlib.platform.*;
 import de.janschuri.lunaticlib.platform.bukkit.commands.Command;
 import de.janschuri.lunaticlib.platform.bukkit.sender.PlayerSenderImpl;
@@ -13,6 +14,8 @@ import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.lang.reflect.Field;
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.UUID;
 
 import static de.janschuri.lunaticlib.common.LunaticLib.IDENTIFIER;
@@ -83,4 +86,16 @@ public class PlatformImpl implements Platform<JavaPlugin, CommandSender> {
         plugin.getCommand(lunaticCommand.getName()).setTabCompleter(new Command(lunaticCommand));
     }
 
+    @Override
+    public Collection<PlayerSender> getOnlinePlayers() {
+        Collection<? extends Player> bukkitPlayers = Bukkit.getOnlinePlayers();
+
+        Collection<PlayerSender> players = new ArrayList<>();
+
+        for (Player player : bukkitPlayers) {
+            players.add(new PlayerSenderImpl(player));
+        }
+
+        return players;
+    }
 }

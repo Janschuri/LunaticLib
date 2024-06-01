@@ -1,16 +1,11 @@
 package de.janschuri.lunaticlib.common.command;
 
-import de.janschuri.lunaticlib.CommandMessageKey;
-import de.janschuri.lunaticlib.LunaticCommand;
-import de.janschuri.lunaticlib.MessageKey;
-import de.janschuri.lunaticlib.Sender;
+import de.janschuri.lunaticlib.*;
+import de.janschuri.lunaticlib.common.LunaticLib;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.TextReplacementConfig;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public abstract class AbstractLunaticCommand implements LunaticCommand {
 
@@ -30,8 +25,8 @@ public abstract class AbstractLunaticCommand implements LunaticCommand {
                 if (isAlias(args[0])) {
                     if (args[1].equalsIgnoreCase("")) {
                         if (!getParams().isEmpty() && args.length == 2) {
-                            for (String s : getParams(0).keySet()) {
-                                if (sender.hasPermission(getParams(0).get(s))) {
+                            for (String s : getParam(0).keySet()) {
+                                if (sender.hasPermission(getParam(0).get(s))) {
                                     list.add(s);
                                 }
                             }
@@ -45,8 +40,8 @@ public abstract class AbstractLunaticCommand implements LunaticCommand {
                         }
                     } else {
                         if (!getParams().isEmpty() && args.length == 2) {
-                            for (String s : getParams(0).keySet()) {
-                                if (sender.hasPermission(getParams(0).get(s))) {
+                            for (String s : getParam(0).keySet()) {
+                                if (sender.hasPermission(getParam(0).get(s))) {
                                     if (s.toLowerCase().startsWith(args[1].toLowerCase())) {
                                         list.add(s);
                                     }
@@ -116,7 +111,7 @@ public abstract class AbstractLunaticCommand implements LunaticCommand {
     }
 
     @Override
-    public Map<String, String> getParams(int paramIndex) {
+    public Map<String, String> getParam(int paramIndex) {
         if (paramIndex < getParams().size()) {
             return getParams().get(paramIndex);
         } else {
@@ -185,7 +180,7 @@ public abstract class AbstractLunaticCommand implements LunaticCommand {
 
     @Override
     public boolean isParam(int paramIndex, String arg) {
-        return getParams(paramIndex).containsKey(arg);
+        return getParam(paramIndex).containsKey(arg);
     }
 
     @Override
@@ -196,8 +191,8 @@ public abstract class AbstractLunaticCommand implements LunaticCommand {
     @Override
     public List<Component> getFormattedParamsList(Sender sender, int paramIndex) {
         List<Component> list = new ArrayList<>();
-        for (String param : getParams(paramIndex).keySet()) {
-            if (sender.hasPermission(getParams(paramIndex).get(param))) {
+        for (String param : getParam(paramIndex).keySet()) {
+            if (sender.hasPermission(getParam(paramIndex).get(param))) {
                 list.add(Component.text(param));
             }
         }
@@ -209,11 +204,7 @@ public abstract class AbstractLunaticCommand implements LunaticCommand {
         List<Component> list = new ArrayList<>();
 
         for (String alias : getAliases()) {
-            if (isPrimaryCommand()) {
-                list.add(Component.text("/" + alias));
-            } else {
                 list.add(Component.text(alias));
-            }
         }
         return list;
     }
@@ -223,6 +214,16 @@ public abstract class AbstractLunaticCommand implements LunaticCommand {
                 .match(match)
                 .replacement(replacement)
                 .build();
+    }
+
+    protected Map<String, String> getOnlinePlayersParam() {
+        Collection<PlayerSender> players = LunaticLib.getPlatform().getOnlinePlayers();
+        Map<String, String> playerParams = new HashMap<>();
+
+        for (PlayerSender player : players) {
+            playerParams.put(player.getName(), getPermission());
+        }
+        return playerParams;
     }
 
 

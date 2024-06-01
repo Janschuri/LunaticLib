@@ -2,8 +2,6 @@ package de.janschuri.lunaticlib;
 
 import net.kyori.adventure.text.Component;
 
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -31,7 +29,7 @@ public interface LunaticCommand {
     List<String> getAliases();
     List<Map<String, String>> getParams();
 
-    Map<String, String> getParams(int paramIndex);
+    Map<String, String> getParam(int paramIndex);
     LunaticCommand getHelpCommand();
 
     boolean hasParams();
