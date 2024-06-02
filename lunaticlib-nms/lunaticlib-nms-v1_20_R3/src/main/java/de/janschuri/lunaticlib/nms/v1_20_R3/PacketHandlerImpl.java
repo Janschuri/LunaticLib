@@ -21,7 +21,7 @@ import java.util.function.Predicate;
 public final class PacketHandlerImpl extends ChannelDuplexHandler implements de.janschuri.lunaticlib.nms.PacketHandler {
 
     private final JavaPlugin plugin;
-    private final String PACKET_INJECTOR_ID = "lunaticstorage:packet_handler";
+    private final String PACKET_INJECTOR_ID = "lunaticlib:packet_handler";
     public static final Map<UUID, Predicate<Packet<?>>> PACKET_HANDLERS = new HashMap<>();
 
     private final Player p; // Store your target player

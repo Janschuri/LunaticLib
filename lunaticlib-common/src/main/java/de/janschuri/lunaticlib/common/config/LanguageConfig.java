@@ -7,7 +7,7 @@ import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 import java.nio.file.Path;
 import java.util.*;
 
-public abstract class LanguageConfig extends AbstractConfig implements de.janschuri.lunaticlib.LanguageConfig {
+public class LanguageConfig extends Config implements de.janschuri.lunaticlib.LanguageConfig {
 
     public LanguageConfig(Path dataDirectory, String language) {
         super(dataDirectory, "lang.yml", "lang/" + language + ".yml");

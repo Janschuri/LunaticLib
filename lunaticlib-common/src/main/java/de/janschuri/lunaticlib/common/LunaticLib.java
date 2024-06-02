@@ -67,7 +67,9 @@ public final class LunaticLib {
         }
 
         LunaticLib.debug = (boolean) config.get("debug");
-        Logger.infoLog("Debug mode enabled.");
+        if (LunaticLib.debug) {
+            Logger.infoLog("Debug mode enabled.");
+        }
     }
 
     public static void onEnable(Path dataDirectory, Mode mode, Platform platform) {

@@ -5,7 +5,7 @@ import de.janschuri.lunaticlib.platform.PlatformType;
 
 import java.nio.file.Path;
 
-public class DatabaseConfig extends AbstractConfig implements de.janschuri.lunaticlib.DatabaseConfig {
+public class DatabaseConfig extends Config implements de.janschuri.lunaticlib.DatabaseConfig {
 
     private final String NAME;
     private String host, database, username, password, filename;

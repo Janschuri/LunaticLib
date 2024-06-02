@@ -1,7 +1,6 @@
 package de.janschuri.lunaticlib.common.config;
 
 import com.google.common.base.Preconditions;
-import de.janschuri.lunaticlib.Config;
 import de.janschuri.lunaticlib.common.logger.Logger;
 import org.yaml.snakeyaml.DumperOptions;
 import org.yaml.snakeyaml.LoaderOptions;
@@ -16,14 +15,14 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.*;
 
-public abstract class AbstractConfig implements Config {
+public class Config implements de.janschuri.lunaticlib.Config {
 
     private final String filePath;
     private final String defaultFilePath;
     private final Path dataDirectory;
     private Map<String, Object> yamlMap = new LinkedHashMap<>();
 
-    public AbstractConfig(Path dataDirectory, String filepath, String defaultFilePath) {
+    public Config(Path dataDirectory, String filepath, String defaultFilePath) {
         this.filePath = filepath;
         this.defaultFilePath = defaultFilePath;
         this.dataDirectory = dataDirectory;
