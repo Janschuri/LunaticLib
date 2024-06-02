@@ -17,9 +17,6 @@
         <module>lunaticlib-platform</module>
         <module>lunaticlib-interface</module>
         <module>lunaticlib-nms</module>
-        <module>lunaticlib-nms/lunaticlib-nms-interface</module>
-        <module>lunaticlib-nms/lunaticlib-nms-v1_20_R3</module>
-        <module>lunaticlib-nms/lunaticlib-nms-all</module>
     </modules>
 
     <properties>

@@ -20,8 +20,14 @@ public class Version {
         Logger.debugLog("Server version: " + version);
 
         switch (version) {
-            case v1_20_R3:
+            case v1_20_R1:
+                return new de.janschuri.lunaticlib.nms.v1_20_R1.VersionImpl();
+            case v1_20_R2:
+                return new de.janschuri.lunaticlib.nms.v1_20_R2.VersionImpl();
+            case v1_20_R3, v1_20_R4:
                 return new de.janschuri.lunaticlib.nms.v1_20_R3.VersionImpl();
+            case v1_20_R5, v1_20_R6:
+                return new de.janschuri.lunaticlib.nms.v1_20_R5.VersionImpl();
             default:
                 return null;
         }

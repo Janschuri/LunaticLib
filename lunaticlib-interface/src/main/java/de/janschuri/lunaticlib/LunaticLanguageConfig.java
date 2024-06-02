@@ -4,7 +4,7 @@ import net.kyori.adventure.text.Component;
 
 import java.util.List;
 
-public interface LanguageConfig extends Config {
+public interface LunaticLanguageConfig extends LunaticConfig {
 
     Component getMessage(MessageKey key, boolean withPrefix);
     Component getMessage(MessageKey key);

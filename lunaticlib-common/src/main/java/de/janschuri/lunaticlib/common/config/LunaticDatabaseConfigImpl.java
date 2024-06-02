@@ -5,7 +5,7 @@ import de.janschuri.lunaticlib.platform.PlatformType;
 
 import java.nio.file.Path;
 
-public class DatabaseConfig extends Config implements de.janschuri.lunaticlib.DatabaseConfig {
+public class LunaticDatabaseConfigImpl extends LunaticConfigImpl implements de.janschuri.lunaticlib.LunaticDatabaseConfig {
 
     private final String NAME;
     private String host, database, username, password, filename;
@@ -13,7 +13,7 @@ public class DatabaseConfig extends Config implements de.janschuri.lunaticlib.Da
     private boolean useMySQL;
     private final Path dataDirectory;
 
-    protected DatabaseConfig(String name, Path dataDirectory, String DATABASE_FILE, String DEFAULT_DATABASE_FILE) {
+    protected LunaticDatabaseConfigImpl(String name, Path dataDirectory, String DATABASE_FILE, String DEFAULT_DATABASE_FILE) {
         super(dataDirectory, DATABASE_FILE, DEFAULT_DATABASE_FILE);
         this.NAME = name;
         this.dataDirectory = dataDirectory;

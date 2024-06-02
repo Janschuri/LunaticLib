@@ -3,7 +3,7 @@ package de.janschuri.lunaticlib;
 import java.util.List;
 import java.util.Map;
 
-public interface Config {
+public interface LunaticConfig {
 
     void load();
 

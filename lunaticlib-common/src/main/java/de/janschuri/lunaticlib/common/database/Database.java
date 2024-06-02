@@ -1,6 +1,6 @@
 package de.janschuri.lunaticlib.common.database;
 
-import de.janschuri.lunaticlib.common.config.DatabaseConfig;
+import de.janschuri.lunaticlib.common.config.LunaticDatabaseConfigImpl;
 import de.janschuri.lunaticlib.common.logger.Logger;
 
 import java.sql.Connection;
@@ -18,7 +18,7 @@ public abstract class Database {
         this.tables = tables;
     }
 
-    public static Database getDatabase(DatabaseConfig config, Table[] tables) {
+    public static Database getDatabase(LunaticDatabaseConfigImpl config, Table[] tables) {
         Database db;
         if (config.isUseMySQL()) {
             db = new MySQL(config, tables);

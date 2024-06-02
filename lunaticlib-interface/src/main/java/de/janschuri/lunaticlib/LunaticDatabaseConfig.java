@@ -2,7 +2,7 @@ package de.janschuri.lunaticlib;
 
 import java.nio.file.Path;
 
-public interface DatabaseConfig extends Config {
+public interface LunaticDatabaseConfig extends LunaticConfig {
 
     String getHost();
     String getDatabase();

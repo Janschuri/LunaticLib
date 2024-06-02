@@ -16,6 +16,14 @@
         <spigot.version>default</spigot.version>
     </properties>
 
+    <modules>
+        <module>lunaticlib-nms-v1_20_R1</module>
+        <module>lunaticlib-nms-v1_20_R2</module>
+        <module>lunaticlib-nms-v1_20_R3</module>
+        <module>lunaticlib-nms-v1_20_R5</module>
+        <module>lunaticlib-nms-all</module>
+    </modules>
+
     <build>
         <pluginManagement>
             <plugins>
@@ -92,7 +100,7 @@
         <dependency>
             <groupId>org.spigotmc</groupId>
             <artifactId>spigot-api</artifactId>
-            <version>1.20.4-R0.1-SNAPSHOT</version>
+            <version>1.20.6-R0.1-SNAPSHOT</version>
             <scope>provided</scope>
         </dependency>
         <dependency>

@@ -32,6 +32,11 @@ public class BukkitLunaticLib extends JavaPlugin {
         instance = this;
         version = getServerVersion();
 
+        if (version == VersionEnum.UNKNOWN) {
+            disable();
+            return;
+        }
+
         AdventureAPI.initialize(this);
 
         getServer().getMessenger().registerIncomingPluginChannel(this, IDENTIFIER, new MessageListener());
@@ -86,14 +91,15 @@ public class BukkitLunaticLib extends JavaPlugin {
             return version;
         }
 
-        String packageName = Bukkit.getServer().getClass().getPackage().getName();
+        String versionName = Bukkit.getServer().getBukkitVersion();
 
-        String versionString = packageName.substring(packageName.lastIndexOf('.') + 1);
+        String versionString = convertVersion(versionName);
 
         try {
+            Logger.infoLog("Server version: " + versionString);
             return VersionEnum.valueOf(versionString);
         } catch (IllegalArgumentException e) {
-            Logger.errorLog("Unknown server version: " + versionString);
+            Logger.errorLog("Unsupported server version: " + versionName);
             return VersionEnum.UNKNOWN;
         }
     }
@@ -112,5 +118,21 @@ public class BukkitLunaticLib extends JavaPlugin {
             return null;
         }
         return vault;
+    }
+
+    public static String convertVersion(String version) {
+        String regex = "^(\\d+)\\.(\\d+)\\.(\\d+)";
+        java.util.regex.Pattern pattern = java.util.regex.Pattern.compile(regex);
+        java.util.regex.Matcher matcher = pattern.matcher(version);
+
+        if (matcher.find()) {
+            String major = matcher.group(1);
+            String minor = matcher.group(2);
+            String patch = matcher.group(3);
+
+            return "v" + major + "_" + minor + "_R" + patch;
+        } else {
+            throw new IllegalArgumentException("Invalid version format: " + version);
+        }
     }
 }

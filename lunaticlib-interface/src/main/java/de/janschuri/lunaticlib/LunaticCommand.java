@@ -9,7 +9,7 @@ public interface LunaticCommand {
 
     List<String> tabComplete(Sender sender, String[] args);
 
-    LanguageConfig getLanguageConfig();
+    LunaticLanguageConfig getLanguageConfig();
 
     Map<CommandMessageKey, String> getHelpMessages();
 

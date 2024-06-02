@@ -6,7 +6,6 @@ import net.kyori.adventure.text.ComponentBuilder;
 import net.kyori.adventure.text.TextReplacementConfig;
 import net.kyori.adventure.text.event.ClickEvent;
 import net.kyori.adventure.text.event.HoverEvent;
-import org.checkerframework.checker.units.qual.C;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -15,7 +14,7 @@ import java.util.Map;
 
 public class LunaticHelpCommand extends AbstractLunaticCommand {
 
-    private final LanguageConfig languageConfig;
+    private final LunaticLanguageConfig languageConfig;
     private final LunaticCommand command;
     private final String permission;
     private final int pageSize;
@@ -23,28 +22,28 @@ public class LunaticHelpCommand extends AbstractLunaticCommand {
     private final MessageKey noPermission = new MessageKey("no_permission");
     private final MessageKey no_number = new MessageKey("no_number");
 
-    public LunaticHelpCommand(LanguageConfig languageConfig, LunaticCommand command) {
+    public LunaticHelpCommand(LunaticLanguageConfig languageConfig, LunaticCommand command) {
         this.languageConfig = languageConfig;
         this.command = command;
         this.permission = command.getPermission();
         this.pageSize = 10;
     }
 
-    public LunaticHelpCommand(LanguageConfig languageConfig, LunaticCommand command, String permission) {
+    public LunaticHelpCommand(LunaticLanguageConfig languageConfig, LunaticCommand command, String permission) {
         this.languageConfig = languageConfig;
         this.command = command;
         this.permission =  permission;
         this.pageSize = 10;
     }
 
-    public LunaticHelpCommand(LanguageConfig languageConfig, LunaticCommand command, int pageSize) {
+    public LunaticHelpCommand(LunaticLanguageConfig languageConfig, LunaticCommand command, int pageSize) {
         this.languageConfig = languageConfig;
         this.command = command;
         this.permission = command.getPermission();
         this.pageSize = pageSize;
     }
 
-    public LunaticHelpCommand(LanguageConfig languageConfig, LunaticCommand command, String permission, int pageSize) {
+    public LunaticHelpCommand(LunaticLanguageConfig languageConfig, LunaticCommand command, String permission, int pageSize) {
         this.languageConfig = languageConfig;
         this.command = command;
         this.permission =  permission;
@@ -52,7 +51,7 @@ public class LunaticHelpCommand extends AbstractLunaticCommand {
     }
 
     @Override
-    public LanguageConfig getLanguageConfig() {
+    public LunaticLanguageConfig getLanguageConfig() {
         return languageConfig;
     }
 

@@ -15,14 +15,14 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.*;
 
-public class Config implements de.janschuri.lunaticlib.Config {
+public class LunaticConfigImpl implements de.janschuri.lunaticlib.LunaticConfig {
 
     private final String filePath;
     private final String defaultFilePath;
     private final Path dataDirectory;
     private Map<String, Object> yamlMap = new LinkedHashMap<>();
 
-    public Config(Path dataDirectory, String filepath, String defaultFilePath) {
+    public LunaticConfigImpl(Path dataDirectory, String filepath, String defaultFilePath) {
         this.filePath = filepath;
         this.defaultFilePath = defaultFilePath;
         this.dataDirectory = dataDirectory;

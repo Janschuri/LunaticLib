@@ -22,7 +22,25 @@
         </dependency>
         <dependency>
             <groupId>de.janschuri</groupId>
+            <artifactId>lunaticlib-nms-v1_20_R1</artifactId>
+            <version>1.0.0</version>
+            <scope>compile</scope>
+        </dependency>
+        <dependency>
+            <groupId>de.janschuri</groupId>
+            <artifactId>lunaticlib-nms-v1_20_R2</artifactId>
+            <version>1.0.0</version>
+            <scope>compile</scope>
+        </dependency>
+        <dependency>
+            <groupId>de.janschuri</groupId>
             <artifactId>lunaticlib-nms-v1_20_R3</artifactId>
+            <version>1.0.0</version>
+            <scope>compile</scope>
+        </dependency>
+        <dependency>
+            <groupId>de.janschuri</groupId>
+            <artifactId>lunaticlib-nms-v1_20_R5</artifactId>
             <version>1.0.0</version>
             <scope>compile</scope>
         </dependency>

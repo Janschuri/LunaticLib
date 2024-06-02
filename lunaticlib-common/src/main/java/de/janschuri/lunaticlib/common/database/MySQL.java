@@ -3,7 +3,7 @@ package de.janschuri.lunaticlib.common.database;
 import de.janschuri.lunaticlib.common.database.columns.Column;
 import de.janschuri.lunaticlib.common.database.columns.ForeignKey;
 import de.janschuri.lunaticlib.common.database.columns.PrimaryKey;
-import de.janschuri.lunaticlib.common.config.DatabaseConfig;
+import de.janschuri.lunaticlib.common.config.LunaticDatabaseConfigImpl;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -15,7 +15,7 @@ public class MySQL extends Database {
     private final int port;
     private final Table[] tables;
 
-    public MySQL(DatabaseConfig config, Table[] tables) {
+    public MySQL(LunaticDatabaseConfigImpl config, Table[] tables) {
         super(tables);
         this.host = config.getHost();
         this.database = config.getDatabase();
