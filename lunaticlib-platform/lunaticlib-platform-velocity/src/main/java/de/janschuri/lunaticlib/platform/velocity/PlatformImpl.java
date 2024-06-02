@@ -9,6 +9,7 @@ import de.janschuri.lunaticlib.LunaticCommand;
 import de.janschuri.lunaticlib.PlayerSender;
 import de.janschuri.lunaticlib.platform.*;
 import de.janschuri.lunaticlib.platform.velocity.command.Command;
+import de.janschuri.lunaticlib.platform.velocity.external.VaultImpl;
 import de.janschuri.lunaticlib.platform.velocity.sender.PlayerSenderImpl;
 import de.janschuri.lunaticlib.platform.velocity.sender.SenderImpl;
 
@@ -20,17 +21,12 @@ import static de.janschuri.lunaticlib.platform.velocity.VelocityLunaticLib.MINEC
 
 public class PlatformImpl implements Platform<ProxyServer, CommandSource> {
     public boolean sendPluginMessage(String server, byte[] message) {
-        if (VelocityLunaticLib.getProxy().getPlayerCount() == 0) {
-            return false;
-        }
-
-        VelocityLunaticLib.getProxy().getAllServers().forEach(serverConnection -> serverConnection.sendPluginMessage(MINECRAFT_CHANNEL_IDENTIFIER, message));
-        return false;
+        return VelocityLunaticLib.sendPluginMessage(server, message);
     }
 
     @Override
     public boolean sendPluginMessage(byte[] message) {
-        return false;
+        return VelocityLunaticLib.sendPluginMessage(message);
     }
 
     public void sendConsoleCommand(String command) {
@@ -48,7 +44,7 @@ public class PlatformImpl implements Platform<ProxyServer, CommandSource> {
 
     @Override
     public Vault getVault() {
-        return null;
+        return new VaultImpl();
     }
 
 

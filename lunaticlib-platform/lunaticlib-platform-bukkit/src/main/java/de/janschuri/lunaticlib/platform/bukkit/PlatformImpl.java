@@ -23,14 +23,12 @@ import static de.janschuri.lunaticlib.common.LunaticLib.IDENTIFIER;
 public class PlatformImpl implements Platform<JavaPlugin, CommandSender> {
     @Override
     public boolean sendPluginMessage(String server, byte[] message) {
-        BukkitLunaticLib.getInstance().getServer().sendPluginMessage(BukkitLunaticLib.getInstance(), IDENTIFIER, message);
-        return false;
+        return BukkitLunaticLib.sendPluginMessage(message);
     }
 
     @Override
     public boolean sendPluginMessage(byte[] message) {
-        BukkitLunaticLib.getInstance().getServer().sendPluginMessage(BukkitLunaticLib.getInstance(), IDENTIFIER, message);
-        return false;
+        return BukkitLunaticLib.sendPluginMessage(message);
     }
 
     @Override

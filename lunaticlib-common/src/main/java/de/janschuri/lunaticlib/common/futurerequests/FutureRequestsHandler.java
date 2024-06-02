@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.CompletableFuture;
 
 public class FutureRequestsHandler {
 
@@ -15,7 +16,9 @@ public class FutureRequestsHandler {
     public static void handleRequest(String requestKey, ByteArrayDataInput in) {
         if (requests.containsKey(requestKey)) {
             Logger.debugLog("Handling request: " + requestKey);
-            requests.get(requestKey).execute(in);
+            CompletableFuture.runAsync(() -> {
+                requests.get(requestKey).execute(in);
+            });
         } else {
             Logger.errorLog("Unknown request: " + requestKey);
         }

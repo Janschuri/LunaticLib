@@ -12,10 +12,10 @@ import java.util.concurrent.atomic.AtomicInteger;
 public abstract class FutureRequest<R> {
 
     protected final String requestName;
-    protected boolean suppressTimeoutException = false;
+    protected final boolean suppressTimeoutException;
     protected final ConcurrentHashMap<Integer, CompletableFuture<R>> requestMap;
     protected static final AtomicInteger requestIdGenerator = new AtomicInteger(0);
-    protected static final int TIMEOUT = 3;
+    protected final int timeout;
     protected static final TimeUnit UNIT = TimeUnit.SECONDS;
     protected static final String RESPONSE = "Response";
     protected static final String REQUEST = "Request";
@@ -23,12 +23,22 @@ public abstract class FutureRequest<R> {
     public FutureRequest(String REQUEST_NAME, ConcurrentHashMap<Integer, CompletableFuture<R>> REQUEST_MAP) {
         this.requestName = REQUEST_NAME;
         this.requestMap = REQUEST_MAP;
+        this.suppressTimeoutException = false;
+        this.timeout = 3;
     }
 
     public FutureRequest(String REQUEST_NAME, ConcurrentHashMap<Integer, CompletableFuture<R>> REQUEST_MAP, boolean suppressTimeoutException) {
         this.requestName = REQUEST_NAME;
         this.requestMap = REQUEST_MAP;
         this.suppressTimeoutException = suppressTimeoutException;
+        this.timeout = 3;
+    }
+
+    public FutureRequest(String REQUEST_NAME, ConcurrentHashMap<Integer, CompletableFuture<R>> REQUEST_MAP, int timeout) {
+        this.requestName = REQUEST_NAME;
+        this.requestMap = REQUEST_MAP;
+        this.suppressTimeoutException = false;
+        this.timeout = timeout;
     }
 
     public void execute(ByteArrayDataInput in) {
@@ -64,8 +74,15 @@ public abstract class FutureRequest<R> {
         out.writeInt(requestId);
         out.write(data);
 
+        StackTraceElement[] stackTraceElements = Thread.currentThread().getStackTrace();
 
-        Logger.debugLog("Sending request: " + requestName + " with id: " + requestId);
+        String stackTrace = "";
+
+        for (int i = 0; i < stackTraceElements.length; i++) {
+            stackTrace += " to " + stackTraceElements[i].getClassName() + " in " + stackTraceElements[i].getMethodName() + " at " + stackTraceElements[i].getLineNumber() + "\n";
+        }
+
+        Logger.debugLog("Sending request: " + requestName + " with id: " + requestId + " from " + stackTrace);
 
         if (!LunaticLib.getPlatform().sendPluginMessage(out.toByteArray())) {
             Logger.debugLog("Cannot sent plugin message: " + requestName + "-Request" + " with id: " + requestId);
@@ -73,7 +90,7 @@ public abstract class FutureRequest<R> {
         }
 
         try {
-            return responseFuture.get(TIMEOUT, UNIT);
+            return responseFuture.get(timeout, UNIT);
         } catch (InterruptedException | ExecutionException | TimeoutException e) {
             if (!suppressTimeoutException) {
                 Logger.errorLog("Error while waiting for response: " + requestName + " with id: " + requestId);
@@ -94,7 +111,15 @@ public abstract class FutureRequest<R> {
         out.write(data);
 
 
-        Logger.debugLog("Sending request: " + requestName + " to " + serverName + "with id: " + requestId);
+        StackTraceElement[] stackTraceElements = Thread.currentThread().getStackTrace();
+
+        String stackTrace = "";
+
+        for (int i = 0; i < stackTraceElements.length || i < 5 ; i++) {
+            stackTrace += " to " + stackTraceElements[i].getClassName() + " in " + stackTraceElements[i].getMethodName() + " at " + stackTraceElements[i].getLineNumber() + "\n";
+        }
+
+        Logger.debugLog("Sending request: " + requestName + " with id: " + requestId + " from " + stackTrace);
 
         if (!LunaticLib.getPlatform().sendPluginMessage(serverName, out.toByteArray())) {
             Logger.debugLog("Cannot sent plugin message: " + requestName + "-Request to " + serverName + " with id: " + requestId);
@@ -102,7 +127,7 @@ public abstract class FutureRequest<R> {
         }
 
         try {
-            return responseFuture.get(TIMEOUT, UNIT);
+            return responseFuture.get(timeout, UNIT);
         } catch (InterruptedException | ExecutionException | TimeoutException e) {
             if (!suppressTimeoutException) {
                 Logger.errorLog("Error while waiting for response: " + requestName + " to " + serverName + " with id: " + requestId);

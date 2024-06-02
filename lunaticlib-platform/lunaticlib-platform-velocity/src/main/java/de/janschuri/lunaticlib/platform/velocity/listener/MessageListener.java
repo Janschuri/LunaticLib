@@ -6,6 +6,7 @@ import com.velocitypowered.api.event.Subscribe;
 import com.velocitypowered.api.event.connection.PluginMessageEvent;
 import com.velocitypowered.api.proxy.ServerConnection;
 import de.janschuri.lunaticlib.common.futurerequests.FutureRequestsHandler;
+import de.janschuri.lunaticlib.common.logger.Logger;
 
 import static de.janschuri.lunaticlib.platform.velocity.VelocityLunaticLib.MINECRAFT_CHANNEL_IDENTIFIER;
 
@@ -25,6 +26,7 @@ public class MessageListener {
         byte[] message = event.getData();
         ByteArrayDataInput in = ByteStreams.newDataInput(message);
         String subchannel = in.readUTF();
+        Logger.debugLog("Received message on subchannel: " + subchannel);
         FutureRequestsHandler.handleRequest(subchannel, in);
     }
 }

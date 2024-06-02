@@ -70,4 +70,16 @@ public class VelocityLunaticLib {
         proxy.getServer(serverName).ifPresent(serverConnection -> serverConnection.sendPluginMessage(MINECRAFT_CHANNEL_IDENTIFIER, message));
         return true;
     }
-}
+
+    static boolean sendPluginMessage(byte[] message) {
+        if (getProxy().getPlayerCount() == 0) {
+            return false;
+        }
+
+
+        getProxy().getAllServers().forEach(serverConnection -> serverConnection.sendPluginMessage(MINECRAFT_CHANNEL_IDENTIFIER, message));
+        return true;
+    }
+
+
+    }

@@ -25,7 +25,7 @@ public class WithdrawMoneyRequest extends FutureRequest<Boolean> {
 
         UUID uuid = UUID.fromString(in.readUTF());
         double amount = in.readDouble();
-        success = LunaticLib.getPlatform().getVault().withdrawMoney(uuid, amount);
+        success = LunaticLib.getPlatform().getVault().withdrawMoney("", uuid, amount);
 
         ByteArrayDataOutput out = ByteStreams.newDataOutput();
         out.writeBoolean(success);

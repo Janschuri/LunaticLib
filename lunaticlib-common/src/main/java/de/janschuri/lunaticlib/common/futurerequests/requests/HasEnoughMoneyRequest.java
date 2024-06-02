@@ -25,7 +25,7 @@ public class HasEnoughMoneyRequest extends FutureRequest<Boolean> {
 
         UUID uuid = UUID.fromString(in.readUTF());
         double amount = in.readDouble();
-        hasEnoughMoney = LunaticLib.getPlatform().getVault().hasEnoughMoney(uuid, amount);
+        hasEnoughMoney = LunaticLib.getPlatform().getVault().hasEnoughMoney("", uuid, amount);
 
         ByteArrayDataOutput out = ByteStreams.newDataOutput();
         out.writeBoolean(hasEnoughMoney);

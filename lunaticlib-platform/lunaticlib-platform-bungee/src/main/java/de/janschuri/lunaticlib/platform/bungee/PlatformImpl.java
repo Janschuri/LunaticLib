@@ -4,6 +4,7 @@ import de.janschuri.lunaticlib.LunaticCommand;
 import de.janschuri.lunaticlib.PlayerSender;
 import de.janschuri.lunaticlib.platform.*;
 import de.janschuri.lunaticlib.platform.bungee.commands.Command;
+import de.janschuri.lunaticlib.platform.bungee.external.VaultImpl;
 import de.janschuri.lunaticlib.platform.bungee.sender.PlayerSenderImpl;
 import de.janschuri.lunaticlib.common.LunaticLib;
 import de.janschuri.lunaticlib.platform.bungee.sender.SenderImpl;
@@ -26,7 +27,7 @@ public class PlatformImpl implements Platform<Plugin, CommandSender> {
         }
 
         BungeeLunaticLib.getInstance().getProxy().getServerInfo(server).sendData(IDENTIFIER, message);
-        return false;
+        return true;
     }
 
     @Override
@@ -59,7 +60,7 @@ public class PlatformImpl implements Platform<Plugin, CommandSender> {
 
     @Override
     public Vault getVault() {
-        return null;
+        return new VaultImpl();
     }
 
     @Override

@@ -34,15 +34,7 @@ public class VaultImpl implements Vault {
         return econ.has(Bukkit.getOfflinePlayer(uuid), amount);
     }
 
-    public boolean hasEnoughMoney(UUID uuid, double amount) {
-        return econ.has(Bukkit.getOfflinePlayer(uuid), amount);
-    }
-
     public boolean withdrawMoney(String serverName, UUID uuid, double amount) {
-        return econ.withdrawPlayer(Bukkit.getOfflinePlayer(uuid), amount).transactionSuccess();
-    }
-
-    public boolean withdrawMoney(UUID uuid, double amount) {
         return econ.withdrawPlayer(Bukkit.getOfflinePlayer(uuid), amount).transactionSuccess();
     }
 }
