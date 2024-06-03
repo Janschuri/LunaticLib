@@ -4,5 +4,5 @@ import org.bukkit.entity.Player;
 
 public interface PlayerSkin {
 
-    public String[] getFromPlayer(Player playerBukkit);
+    String[] getFromPlayer(Player playerBukkit);
 }

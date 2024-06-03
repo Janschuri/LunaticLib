@@ -17,10 +17,11 @@
     </properties>
 
     <modules>
+        <module>lunaticlib-nms-interface</module>
         <module>lunaticlib-nms-v1_20_R1</module>
         <module>lunaticlib-nms-v1_20_R2</module>
         <module>lunaticlib-nms-v1_20_R3</module>
-        <module>lunaticlib-nms-v1_20_R5</module>
+        <module>lunaticlib-nms-v1_20_R4</module>
         <module>lunaticlib-nms-all</module>
     </modules>
 

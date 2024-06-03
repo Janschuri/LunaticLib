@@ -1,4 +1,4 @@
-package de.janschuri.lunaticlib.nms.v1_20_R3;
+package de.janschuri.lunaticlib.nms.v1_20_R4;
 
 import de.janschuri.lunaticlib.nms.PlayerSkin;
 import de.janschuri.lunaticlib.nms.Version;
