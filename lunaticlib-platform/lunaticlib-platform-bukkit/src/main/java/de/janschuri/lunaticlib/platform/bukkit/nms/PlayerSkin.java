@@ -13,6 +13,18 @@ public class PlayerSkin {
     }
 
     public static String getSkinURL(Player playerBukkit) {
-        return Utils.getSkinURLFromValue(getFromPlayer(playerBukkit)[0]);
+        String[] skin = getFromPlayer(playerBukkit);
+
+        if (skin == null) {
+            return null;
+        }
+
+        String value = skin[0];
+
+        if (value == null) {
+            return null;
+        }
+
+        return Utils.getSkinURLFromValue(value);
     }
 }
