@@ -223,6 +223,10 @@ public class LunaticConfigImpl implements de.janschuri.lunaticlib.LunaticConfig 
                 return null;
             }
         }
+        if (current == null) {
+            Logger.errorLog("Error while getting config value: " + path);
+        }
+
         return current;
     }
 

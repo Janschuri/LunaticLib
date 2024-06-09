@@ -7,11 +7,13 @@ import org.bukkit.block.BlockFace;
 import org.bukkit.entity.Player;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.block.BlockBreakEvent;
+import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.inventory.ClickType;
 import org.bukkit.event.inventory.InventoryAction;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.event.player.PlayerInteractEvent;
+import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.InventoryView;
 import org.bukkit.inventory.ItemStack;
@@ -59,8 +61,8 @@ public final class EventUtils {
         return allowed;
     }
 
-    public static boolean isAllowedBreakBlock(Player player, Block block) {
-        BlockBreakEvent event = new BlockBreakEvent(block, player);
+    public static boolean isAllowedPlaceBlock(Player player, Block block) {
+        BlockPlaceEvent event = new BlockPlaceEvent(block, block.getState(), block, new ItemStack(block.getType()), player, true, EquipmentSlot.HAND);
         Bukkit.getPluginManager().callEvent(event);
         boolean allowed = !event.isCancelled();
         event.setCancelled(true);

@@ -2,6 +2,7 @@ package de.janschuri.lunaticlib.platform.bukkit;
 
 import de.janschuri.lunaticlib.LunaticCommand;
 import de.janschuri.lunaticlib.PlayerSender;
+import de.janschuri.lunaticlib.common.logger.Logger;
 import de.janschuri.lunaticlib.platform.*;
 import de.janschuri.lunaticlib.platform.bukkit.commands.Command;
 import de.janschuri.lunaticlib.platform.bukkit.sender.PlayerSenderImpl;
@@ -16,6 +17,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 import java.util.UUID;
 
 import static de.janschuri.lunaticlib.common.LunaticLib.IDENTIFIER;
@@ -71,7 +73,12 @@ public class PlatformImpl implements Platform<JavaPlugin, CommandSender> {
             bukkitCommandMap.setAccessible(true);
             CommandMap commandMap = (CommandMap) bukkitCommandMap.get(Bukkit.getServer());
 
-            lunaticCommand.getAliases().forEach(alias -> {
+            List<String> aliases = lunaticCommand.getAliases();
+
+            Logger.debugLog("Registering command " + lunaticCommand.getName() + " with aliases " + aliases.toString());
+            Logger.debugLog("Command: " + cmd.toString());
+
+            aliases.forEach(alias -> {
                 commandMap.register(alias, plugin.getName(), cmd);
             });
         } catch (NoSuchFieldException | IllegalAccessException e) {

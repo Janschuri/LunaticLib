@@ -2,6 +2,7 @@ package de.janschuri.lunaticlib.common.command;
 
 import de.janschuri.lunaticlib.*;
 import de.janschuri.lunaticlib.common.LunaticLib;
+import de.janschuri.lunaticlib.common.logger.Logger;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.TextReplacementConfig;
 
@@ -106,7 +107,7 @@ public abstract class AbstractLunaticCommand implements LunaticCommand {
         if (list.isEmpty()) {
             list.add(getName());
         }
-
+        Logger.debugLog("Aliases: " + list.toString());
         return list;
     }
 
