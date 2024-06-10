@@ -4,3 +4,6 @@ main: de.janschuri.lunaticlib.platform.bukkit.BukkitLunaticLib
 api-version: '1.20'
 author: Janschuri
 description: A Library for Lunatic plugins.
+softdepend:
+  - Vault
+  - LogBlock

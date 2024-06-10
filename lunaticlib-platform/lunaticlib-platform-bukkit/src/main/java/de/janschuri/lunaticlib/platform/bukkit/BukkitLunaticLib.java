@@ -42,16 +42,6 @@ public class BukkitLunaticLib extends JavaPlugin {
         getServer().getMessenger().registerIncomingPluginChannel(this, IDENTIFIER, new MessageListener());
         getServer().getMessenger().registerOutgoingPluginChannel(this, IDENTIFIER);
 
-
-        if (Utils.classExists("net.milkbowl.vault.economy.Economy")) {
-            BukkitLunaticLib.installedVault = true;
-            vault = new VaultImpl();
-        }
-
-        if (Utils.classExists("de.diddiz.LogBlock.LogBlock")) {
-            BukkitLunaticLib.installedLogBlock = true;
-        }
-
         int pluginId = 21913;
         Metrics metrics = new Metrics(this, pluginId);
 
@@ -60,6 +50,17 @@ public class BukkitLunaticLib extends JavaPlugin {
         Platform platform = new PlatformImpl();
 
         LunaticLib.onEnable(dataDirectory, mode, platform);
+
+        if (Utils.classExists("net.milkbowl.vault.economy.Economy")) {
+            installedVault = true;
+            Logger.debugLog("Vault is installed.");
+            vault = new VaultImpl();
+        }
+
+        if (Utils.classExists("de.diddiz.LogBlock.LogBlock")) {
+            installedLogBlock = true;
+            Logger.debugLog("LogBlock is installed.");
+        }
     }
 
     public static BukkitLunaticLib getInstance() {
