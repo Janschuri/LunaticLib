@@ -175,8 +175,13 @@ public abstract class AbstractLunaticCommand implements LunaticCommand {
     }
 
     @Override
-    public Component getParamsName() {
-        return Component.text("params");
+    public Component getParamsName(int paramIndex) {
+        return getParamsNames().get(paramIndex);
+    }
+
+    @Override
+    public List<Component> getParamsNames() {
+        return List.of(Component.text("params"));
     }
 
     @Override

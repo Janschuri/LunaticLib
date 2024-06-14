@@ -144,7 +144,7 @@ public class LunaticHelpCommand extends AbstractLunaticCommand {
 
     private Component getParamsHover(Sender sender, LunaticCommand subcommand, int paramsIndex) {
         List<Component> params = subcommand.getFormattedParamsList(sender, paramsIndex);
-        Component paramsName = subcommand.getParamsName();
+        Component paramsName = subcommand.getParamsName(paramsIndex);
 
         ComponentBuilder paramsHover = Component.text();
 

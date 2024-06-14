@@ -46,7 +46,8 @@ public interface LunaticCommand {
 
     boolean hasHelpCommand();
 
-    Component getParamsName();
+    Component getParamsName(int paramIndex);
+    List<Component> getParamsNames();
 
     boolean isParam(int paramIndex, String arg);
 
