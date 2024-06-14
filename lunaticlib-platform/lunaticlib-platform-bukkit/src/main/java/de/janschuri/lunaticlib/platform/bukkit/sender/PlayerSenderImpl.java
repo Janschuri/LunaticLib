@@ -1,14 +1,20 @@
 package de.janschuri.lunaticlib.platform.bukkit.sender;
 
 import de.janschuri.lunaticlib.PlayerSender;
+import de.janschuri.lunaticlib.common.external.Geyser;
 import de.janschuri.lunaticlib.common.logger.Logger;
+import de.janschuri.lunaticlib.platform.bukkit.external.AdventureAPI;
 import de.janschuri.lunaticlib.platform.bukkit.nms.PlayerSkin;
 import de.janschuri.lunaticlib.platform.bukkit.util.ItemStackUtils;
+import net.kyori.adventure.inventory.Book;
+import net.kyori.adventure.text.Component;
+import net.md_5.bungee.api.chat.hover.content.Item;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.BookMeta;
 
 import java.util.UUID;
 
@@ -132,5 +138,29 @@ public class PlayerSenderImpl extends SenderImpl implements PlayerSender {
     @Override
     public boolean isSameServer(UUID uuid) {
         return true;
+    }
+
+
+    @Override
+    public boolean openBook(Book.Builder book) {
+        if (Bukkit.getPlayer(uuid) != null) {
+            AdventureAPI.sendBook(Bukkit.getPlayer(uuid), book);
+        }
+        return false;
+    }
+
+    @Override
+    public boolean closeBook() {
+        if (Bukkit.getPlayer(uuid) != null) {
+            Player player = Bukkit.getPlayer(uuid);
+            player.openInventory(Bukkit.createInventory(null, 9));
+            player.closeInventory();
+        }
+        return false;
+    }
+
+    @Override
+    public boolean isBedrockPlayer() {
+        return Geyser.isBedrockPlayer(uuid);
     }
 }

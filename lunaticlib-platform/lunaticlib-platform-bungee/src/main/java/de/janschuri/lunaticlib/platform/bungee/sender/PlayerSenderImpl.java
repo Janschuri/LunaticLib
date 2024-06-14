@@ -1,10 +1,14 @@
 package de.janschuri.lunaticlib.platform.bungee.sender;
 
+import de.janschuri.lunaticlib.common.external.Geyser;
 import de.janschuri.lunaticlib.common.futurerequests.requests.GetSkinURLRequest;
 import de.janschuri.lunaticlib.platform.bungee.BungeeLunaticLib;
 import de.janschuri.lunaticlib.PlayerSender;
+import de.janschuri.lunaticlib.platform.bungee.external.AdventureAPI;
+import net.kyori.adventure.inventory.Book;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
 
+import java.util.Optional;
 import java.util.UUID;
 
 public class PlayerSenderImpl extends SenderImpl implements PlayerSender {
@@ -90,4 +94,20 @@ public class PlayerSenderImpl extends SenderImpl implements PlayerSender {
     public boolean isSameServer(UUID uuid) {
         return BungeeLunaticLib.getInstance().getProxy().getPlayer(uuid).getServer().getInfo().getName().equals(getServerName());
     }
+
+    @Override
+    public boolean openBook(Book.Builder book) {
+        return AdventureAPI.sendBook(BungeeLunaticLib.getInstance().getProxy().getPlayer(uuid), book);
+    }
+
+    @Override
+    public boolean closeBook() {
+        return new de.janschuri.lunaticlib.common.futurerequests.requests.CloseBookRequest().get(getServerName(), uuid);
+    }
+
+    @Override
+    public boolean isBedrockPlayer() {
+        return Geyser.isBedrockPlayer(uuid);
+    }
+
 }

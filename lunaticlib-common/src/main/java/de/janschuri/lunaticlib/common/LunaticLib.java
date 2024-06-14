@@ -1,6 +1,7 @@
 package de.janschuri.lunaticlib.common;
 
 import de.janschuri.lunaticlib.common.futurerequests.requests.*;
+import de.janschuri.lunaticlib.common.utils.Utils;
 import de.janschuri.lunaticlib.platform.Platform;
 import de.janschuri.lunaticlib.common.futurerequests.FutureRequest;
 import de.janschuri.lunaticlib.common.futurerequests.FutureRequestsHandler;
@@ -21,6 +22,7 @@ public final class LunaticLib {
     private static boolean debug;
     static Platform platform;
     static Path dataDirectory;
+    private static boolean installedGeyser;
 
     public static Platform getPlatform() {
         return platform;
@@ -77,6 +79,8 @@ public final class LunaticLib {
         LunaticLib.mode = mode;
         LunaticLib.platform = platform;
 
+        installedGeyser = Utils.classExists("org.geysermc.api.Geyser");
+
         loadConfig();
         registerRequests();
         Logger.infoLog("LunaticLib enabled.");
@@ -89,5 +93,9 @@ public final class LunaticLib {
 
     public static boolean isDebug() {
         return debug;
+    }
+
+    public static boolean isInstalledGeyser() {
+        return installedGeyser;
     }
 }

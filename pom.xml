@@ -50,5 +50,9 @@
             <id>logblock-repo</id>
             <url>https://www.iani.de/nexus/content/repositories/snapshots/</url>
         </repository>
+        <repository>
+            <id>opencollab-snapshot</id>
+            <url>https://repo.opencollab.dev/main/</url>
+        </repository>
     </repositories>
 </project>

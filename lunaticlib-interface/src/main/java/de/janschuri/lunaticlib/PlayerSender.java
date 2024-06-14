@@ -1,5 +1,8 @@
 package de.janschuri.lunaticlib;
 
+import net.kyori.adventure.inventory.Book;
+import net.kyori.adventure.text.Component;
+
 import java.util.UUID;
 
 public interface PlayerSender extends Sender {
@@ -18,4 +21,14 @@ public interface PlayerSender extends Sender {
     boolean isInRange(UUID playerUUID, double range);
     boolean exists();
     boolean isSameServer(UUID uuid);
+    boolean openBook(Book.Builder book);
+    boolean closeBook();
+    boolean isBedrockPlayer();
+    default boolean sendClickableMessage(Component message) {
+        if (isBedrockPlayer()) {
+            return sendMessage(message);
+        } else {
+            return sendMessage(message);
+        }
+    }
 }

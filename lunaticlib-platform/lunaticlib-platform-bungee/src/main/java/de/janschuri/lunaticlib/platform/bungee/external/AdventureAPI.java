@@ -1,5 +1,6 @@
 package de.janschuri.lunaticlib.platform.bungee.external;
 
+import net.kyori.adventure.inventory.Book;
 import net.kyori.adventure.platform.bungeecord.BungeeAudiences;
 import net.kyori.adventure.text.Component;
 import net.md_5.bungee.api.CommandSender;
@@ -9,19 +10,16 @@ public class AdventureAPI {
 
     private static BungeeAudiences bungeeAudiences;
 
-    // Initialize Adventure API
     public static void initialize(Plugin plugin) {
         bungeeAudiences = BungeeAudiences.create(plugin);
     }
 
-    // Close Adventure API
     public static void close() {
         if (bungeeAudiences != null) {
             bungeeAudiences.close();
         }
     }
 
-    // Send message to player
     public static boolean sendMessage(CommandSender sender, String message) {
         if (bungeeAudiences != null) {
             bungeeAudiences.sender(sender).sendMessage(
@@ -32,10 +30,17 @@ public class AdventureAPI {
         return false;
     }
 
-    // Send formatted message to player
     public static boolean sendMessage(CommandSender sender, Component message) {
         if (bungeeAudiences != null) {
             bungeeAudiences.sender(sender).sendMessage(message);
+            return true;
+        }
+        return false;
+    }
+
+    public static boolean sendBook(CommandSender sender, Book.Builder book) {
+        if (bungeeAudiences != null) {
+            bungeeAudiences.sender(sender).openBook(book.build());
             return true;
         }
         return false;

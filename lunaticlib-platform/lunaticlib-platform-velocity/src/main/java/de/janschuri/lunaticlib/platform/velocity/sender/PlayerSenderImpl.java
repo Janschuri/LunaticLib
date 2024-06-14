@@ -2,10 +2,12 @@ package de.janschuri.lunaticlib.platform.velocity.sender;
 
 import com.velocitypowered.api.proxy.Player;
 import com.velocitypowered.api.util.GameProfile;
+import de.janschuri.lunaticlib.common.external.Geyser;
 import de.janschuri.lunaticlib.common.futurerequests.requests.GetSkinURLRequest;
 import de.janschuri.lunaticlib.PlayerSender;
 import de.janschuri.lunaticlib.platform.velocity.VelocityLunaticLib;
 import de.janschuri.lunaticlib.common.utils.Utils;
+import net.kyori.adventure.inventory.Book;
 
 import java.util.*;
 
@@ -125,5 +127,29 @@ public class PlayerSenderImpl extends SenderImpl implements PlayerSender {
         Optional<com.velocitypowered.api.proxy.Player> player = VelocityLunaticLib.getProxy().getPlayer(uuid);
 
         return player1.isPresent() && player.isPresent() && player1.get().getCurrentServer().get().getServerInfo().getName().equals(player.get().getCurrentServer().get().getServerInfo().getName());
+    }
+
+    @Override
+    public boolean openBook(Book.Builder book) {
+        Optional<com.velocitypowered.api.proxy.Player> player = VelocityLunaticLib.getProxy().getPlayer(uuid);
+        if (player.isPresent()) {
+            player.get().openBook(book.build());
+            return true;
+        }
+        return false;
+    }
+
+    @Override
+    public boolean closeBook() {
+        Optional<com.velocitypowered.api.proxy.Player> player = VelocityLunaticLib.getProxy().getPlayer(uuid);
+        if (player.isPresent()) {
+            return new de.janschuri.lunaticlib.common.futurerequests.requests.CloseBookRequest().get(getServerName(), uuid);
+        }
+        return false;
+    }
+
+    @Override
+    public boolean isBedrockPlayer() {
+        return Geyser.isBedrockPlayer(uuid);
     }
 }
