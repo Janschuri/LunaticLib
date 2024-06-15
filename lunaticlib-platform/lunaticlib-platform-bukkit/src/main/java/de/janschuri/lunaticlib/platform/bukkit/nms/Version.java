@@ -27,6 +27,8 @@ public class Version {
                 return new de.janschuri.lunaticlib.nms.v1_20_R3.VersionImpl();
             case v1_20_R5, v1_20_R6:
                 return new de.janschuri.lunaticlib.nms.v1_20_R4.VersionImpl();
+            case v1_21_R1:
+                return new de.janschuri.lunaticlib.nms.v1_21_R1.VersionImpl();
             default:
                 return null;
         }

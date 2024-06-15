@@ -122,7 +122,7 @@ public class BukkitLunaticLib extends JavaPlugin {
     }
 
     public static String convertVersion(String version) {
-        String regex = "^(\\d+)\\.(\\d+)\\.(\\d+)";
+        String regex = "^(\\d+)\\.(\\d+)(?:\\.(\\d+))?-(R\\d+).*-SNAPSHOT$";
         java.util.regex.Pattern pattern = java.util.regex.Pattern.compile(regex);
         java.util.regex.Matcher matcher = pattern.matcher(version);
 
@@ -131,7 +131,15 @@ public class BukkitLunaticLib extends JavaPlugin {
             String minor = matcher.group(2);
             String patch = matcher.group(3);
 
-            return "v" + major + "_" + minor + "_R" + patch;
+            StringBuilder newVersion = new StringBuilder();
+            newVersion.append("v").append(major).append("_").append(minor);
+            if (patch != null) {
+                newVersion.append("_R").append(patch);
+            } else {
+                newVersion.append("_R").append("1");
+            }
+
+            return newVersion.toString();
         } else {
             throw new IllegalArgumentException("Invalid version format: " + version);
         }
