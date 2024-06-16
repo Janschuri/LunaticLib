@@ -27,11 +27,12 @@ public class LunaticDatabaseConfigImpl extends LunaticConfigImpl implements de.j
         database = getString("MySQL.database", NAME);
         username = getString("MySQL.username", "root");
         password = getString("MySQL.password", "");
-        filename = getString("SQLite.filename", NAME);
         useMySQL = getBoolean("MySQL.enabled", false);
 
         if (LunaticLib.getPlatform().getPlatformType() == PlatformType.VELOCITY) {
             useMySQL = true;
+        } else {
+            filename = getString("SQLite.filename", NAME);
         }
     }
 
