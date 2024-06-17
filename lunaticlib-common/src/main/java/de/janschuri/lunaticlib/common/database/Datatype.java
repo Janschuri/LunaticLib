@@ -11,5 +11,6 @@ public enum Datatype {
     VARCHAR,
     TIMESTAMP,
     VARBINARY,
+    TIMESTAMP_NULL,
 
 }

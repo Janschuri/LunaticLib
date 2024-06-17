@@ -10,10 +10,7 @@ import de.janschuri.lunaticlib.common.logger.Logger;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Path;
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.SQLException;
-import java.sql.Statement;
+import java.sql.*;
 
 
 public class SQLite extends Database {
@@ -28,6 +25,7 @@ public class SQLite extends Database {
         this.tables = tables;
     }
 
+    @Override
     public void createTables() {
         connection = getSQLConnection();
         for (Table table : tables) {
@@ -69,20 +67,6 @@ public class SQLite extends Database {
                 }
 
 
-                for (Column column : columns) {
-                    if (column instanceof ForeignKey) {
-                        ForeignKey foreignKey = (ForeignKey) column;
-                        sqlBuilder.append(", FOREIGN KEY (`").append(column.getName()).append("`) REFERENCES ")
-                                .append(foreignKey.getTableName())
-                                .append("(").append(foreignKey.getColumnName()).append(")");
-
-                        if (foreignKey.getOnDelete() != null) {
-                            sqlBuilder.append(" ON DELETE ").append(foreignKey.getOnDelete());
-                        }
-                    }
-                }
-
-
 
                 sqlBuilder.append(");");
 
@@ -99,6 +83,7 @@ public class SQLite extends Database {
         }
     }
 
+    @Override
     public Connection getSQLConnection() {
         File dataFolder = new File(dataDirectory.toFile(), filename + ".db");
         if (!dataFolder.exists()) {
@@ -127,6 +112,7 @@ public class SQLite extends Database {
     public void load() {
         connection = getSQLConnection();
         createTables();
+        addMissingColumns();
         initialize();
     }
 
@@ -151,8 +137,66 @@ public class SQLite extends Database {
                 return "VARCHAR";
             case VARBINARY:
                 return "VARBINARY";
+            case TIMESTAMP_NULL:
+                return "TIMESTAMP NULL";
             default:
                 return "VARCHAR(255)";
+        }
+    }
+
+    @Override
+    protected void addMissingColumns() {
+        for (Table table : tables) {
+
+            if(connection == null) {
+                connection = getSQLConnection();
+            }
+
+            for (Column column : table.getColumns()) {
+                try {
+                    StringBuilder sqlBuilder = new StringBuilder();
+                    sqlBuilder.append("ALTER TABLE ")
+                            .append(table.getName())
+                            .append(" ADD COLUMN ")
+                            .append(column.getName())
+                            .append(" ")
+                            .append(getDatatypeString(column.getDatatype()));
+
+                    if (!column.isNullable()) {
+                        sqlBuilder.append(" NOT NULL");
+                    }
+
+                    if (column.getDefaultValue() != null) {
+                        sqlBuilder.append(" DEFAULT ").append(column.getDefaultValue());
+                    }
+
+                    if (column instanceof ForeignKey) {
+                        ForeignKey foreignKey = (ForeignKey) column;
+                        sqlBuilder.append(" REFERENCES ")
+                                .append(foreignKey.getTableName())
+                                .append("(")
+                                .append(foreignKey.getColumnName())
+                                .append(")");
+
+                        if (foreignKey.getOnDelete() != null) {
+                            sqlBuilder.append(" ON DELETE ").append(foreignKey.getOnDelete());
+                        }
+                    }
+
+                    sqlBuilder.append(";");
+
+                    Logger.debugLog(sqlBuilder.toString());
+
+                    PreparedStatement ps = connection.prepareStatement(sqlBuilder.toString());
+                    ps.execute();
+                    ps.close();
+
+                } catch (SQLException e) {
+                    if (!e.getMessage().contains("duplicate column")) {
+                        Error.addForeignKey(e);
+                    }
+                }
+            }
         }
     }
 }

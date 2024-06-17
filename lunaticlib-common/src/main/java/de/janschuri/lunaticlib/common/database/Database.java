@@ -57,6 +57,8 @@ public abstract class Database {
 
     protected abstract void load();
     protected abstract String getDatatypeString(Datatype datatype);
+    protected abstract void addMissingColumns();
+    protected abstract void createTables();
 
     public void close(PreparedStatement ps, ResultSet rs) {
         try {

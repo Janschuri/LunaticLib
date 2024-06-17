@@ -4,11 +4,10 @@ import de.janschuri.lunaticlib.common.database.columns.Column;
 import de.janschuri.lunaticlib.common.database.columns.ForeignKey;
 import de.janschuri.lunaticlib.common.database.columns.PrimaryKey;
 import de.janschuri.lunaticlib.common.config.LunaticDatabaseConfigImpl;
+import de.janschuri.lunaticlib.common.logger.Logger;
 
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.SQLException;
-import java.sql.Statement;
+import java.nio.file.LinkOption;
+import java.sql.*;
 
 public class MySQL extends Database {
     private final String host, database, username, password;
@@ -25,7 +24,8 @@ public class MySQL extends Database {
         this.tables = tables;
     }
 
-    public void createTables() {
+    @Override
+    protected void createTables() {
         connection = getSQLConnection();
         try {
             Statement stmt = connection.createStatement();
@@ -92,6 +92,7 @@ public class MySQL extends Database {
         }
     }
 
+    @Override
     public Connection getSQLConnection() {
         try {
             Class.forName("com.mysql.cj.jdbc.Driver");
@@ -110,6 +111,7 @@ public class MySQL extends Database {
         return null;
     }
 
+    @Override
     protected String getDatatypeString(Datatype datatype) {
         switch (datatype) {
             case INTEGER:
@@ -130,15 +132,75 @@ public class MySQL extends Database {
                 return "VARCHAR(255)";
             case VARBINARY:
                 return "VARBINARY(1000)";
+            case TIMESTAMP_NULL:
+                return "TIMESTAMP NULL";
             default:
                 return "VARCHAR(255)";
         }
     }
 
+    @Override
     public void load() {
         connection = getSQLConnection();
         createTables();
+        addMissingColumns();
         initialize();
+    }
+
+    @Override
+    protected void addMissingColumns() {
+        for (Table table : tables) {
+
+            if(connection == null) {
+                connection = getSQLConnection();
+            }
+
+            for (Column column : table.getColumns()) {
+                try {
+                    StringBuilder sqlBuilder = new StringBuilder();
+                    sqlBuilder.append("ALTER TABLE ")
+                            .append(table.getName())
+                            .append(" ADD COLUMN ")
+                            .append(column.getName())
+                            .append(" ")
+                            .append(getDatatypeString(column.getDatatype()));
+
+                    if (!column.isNullable()) {
+                        sqlBuilder.append(" NOT NULL");
+                    }
+
+                    if (column.getDefaultValue() != null) {
+                        sqlBuilder.append(" DEFAULT ").append(column.getDefaultValue());
+                    }
+
+                    if (column instanceof ForeignKey) {
+                        ForeignKey foreignKey = (ForeignKey) column;
+                        sqlBuilder.append(" REFERENCES ")
+                                .append(foreignKey.getTableName())
+                                .append("(")
+                                .append(foreignKey.getColumnName())
+                                .append(")");
+
+                        if (foreignKey.getOnDelete() != null) {
+                            sqlBuilder.append(" ON DELETE ").append(foreignKey.getOnDelete());
+                        }
+                    }
+
+                    sqlBuilder.append(";");
+
+                    Logger.debugLog(sqlBuilder.toString());
+
+                    PreparedStatement ps = connection.prepareStatement(sqlBuilder.toString());
+                    ps.execute();
+                    ps.close();
+
+                } catch (SQLException e) {
+                    if (!e.getMessage().contains("Duplicate column")) {
+                        Error.addColumn(e);
+                    }
+                }
+            }
+        }
     }
 }
 

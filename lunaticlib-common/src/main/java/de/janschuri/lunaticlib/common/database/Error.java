@@ -23,4 +23,10 @@ public class Error {
     public static void noTable(Exception ex) {
         Logger.errorLog("Database Error: No Table Found: " + ex);
     }
+    public static void addColumn(Exception ex) {
+        Logger.errorLog("Database Error: Couldn't add column: " + ex);
+    }
+    public static  void addForeignKey(Exception ex) {
+        Logger.errorLog("Database Error: Couldn't add foreign key: " + ex);
+    }
 }
