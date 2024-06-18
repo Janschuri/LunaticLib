@@ -2,6 +2,7 @@ package de.janschuri.lunaticlib.common.config;
 
 import de.janschuri.lunaticlib.MessageKey;
 import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.TextComponent;
 import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 
 import java.nio.file.Path;
@@ -26,9 +27,21 @@ public class LunaticLanguageConfigImpl extends LunaticConfigImpl implements de.j
 
 
 
+
+
     @Override
     public Component getMessage(MessageKey key) {
         return getMessage(key, true);
+    }
+
+    @Override
+    public String getMessageAsString(MessageKey key) {
+        return getMessageAsString(key, true);
+    }
+
+    @Override
+    public String getMessageAsString(MessageKey key, boolean withPrefix) {
+        return ((TextComponent) getMessage(key, withPrefix)).content();
     }
 
     @Override
