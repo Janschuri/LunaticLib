@@ -139,6 +139,11 @@ public class LunaticHelpCommand extends AbstractLunaticCommand {
             }
         }
 
+        Component footer = languageConfig.getHelpFooter(command.getName(), page, (int) Math.ceil((double) messages.size() /pageSize));
+        builder.append(Component.newline());
+        builder.append(footer);
+
+
         return builder.build();
     }
 

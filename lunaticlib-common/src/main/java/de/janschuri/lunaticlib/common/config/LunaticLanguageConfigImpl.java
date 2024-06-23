@@ -74,8 +74,12 @@ public class LunaticLanguageConfigImpl extends LunaticConfigImpl implements de.j
     }
 
     @Override
-    public Component getHelpFooter(String command) {
-        return LegacyComponentSerializer.legacyAmpersand().deserialize(getString("help_footer").replace("%header%", getString("commands." + command + ".help_header")));
+    public Component getHelpFooter(String command, int page, int maxPage) {
+        return LegacyComponentSerializer.legacyAmpersand().deserialize(getString("help_footer")
+                .replace("%header%", getString("commands." + command + ".help_header"))
+                .replace("%page%", String.valueOf(page))
+                .replace("%pages%", String.valueOf(maxPage))
+        );
     }
 
     @Override

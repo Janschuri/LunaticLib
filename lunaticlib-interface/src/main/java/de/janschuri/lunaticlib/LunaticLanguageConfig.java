@@ -18,7 +18,7 @@ public interface LunaticLanguageConfig extends LunaticConfig {
 
     Component getHelpHeader(String command);
 
-    Component getHelpFooter(String command);
+    Component getHelpFooter(String command, int page, int maxPage);
 
     Component getPrefix();
 }
