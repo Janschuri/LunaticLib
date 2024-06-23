@@ -21,7 +21,7 @@ import static de.janschuri.lunaticlib.common.LunaticLib.IDENTIFIER;
 @Plugin(
         id = "lunaticlib",
         name = "LunaticLib",
-        version = "1.1.7",
+        version = "1.1.8",
         authors = "janschuri"
 )
 public class VelocityLunaticLib {

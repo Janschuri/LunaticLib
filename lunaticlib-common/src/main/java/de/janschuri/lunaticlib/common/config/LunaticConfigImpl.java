@@ -223,116 +223,193 @@ public class LunaticConfigImpl implements de.janschuri.lunaticlib.LunaticConfig 
                 return null;
             }
         }
-        if (current == null) {
-            Logger.errorLog("Error while getting config value: " + path);
-        }
 
         return current;
     }
 
     @Override
     public String getString(String path, String defaultValue) {
-        return get(path) == null ? defaultValue : get(path).toString();
+        try {
+            return get(path) == null ? defaultValue : Objects.requireNonNull(get(path)).toString();
+        } catch (Exception e) {
+            Logger.errorLog("Error while getting config value: " + path + "\n Returning default value: " + defaultValue);
+            return defaultValue;
+        }
     }
 
     @Override
     public String getString(String path) {
-        return get(path).toString();
+        try {
+            return Objects.requireNonNull(get(path)).toString();
+        } catch (Exception e) {
+            Logger.errorLog("Error while getting config value: " + path);
+            return null;
+        }
     }
 
     @Override
-    public int getInt(String path, int defaultValue) {
-        return get(path) == null ? defaultValue : Integer.parseInt(get(path).toString());
+    public Integer getInt(String path, int defaultValue) {
+        try {
+            return get(path) == null ? defaultValue : Integer.parseInt(Objects.requireNonNull(get(path)).toString());
+        } catch (Exception e) {
+            Logger.errorLog("Error while getting config value: " + path + "\n Returning default value: " + defaultValue);
+            return defaultValue;
+        }
     }
 
     @Override
-    public int getInt(String path) {
-        return Integer.parseInt(get(path).toString());
+    public Integer getInt(String path) {
+        try {
+            return Integer.parseInt(Objects.requireNonNull(get(path)).toString());
+        } catch (Exception e) {
+            Logger.errorLog("Error while getting config value: " + path);
+            return null;
+        }
     }
 
     @Override
-    public double getDouble(String path, double defaultValue) {
-        return get(path) == null ? defaultValue : Double.parseDouble(get(path).toString());
+    public Double getDouble(String path, double defaultValue) {
+        try {
+            return get(path) == null ? defaultValue : Double.parseDouble(Objects.requireNonNull(get(path)).toString());
+        } catch (Exception e) {
+            Logger.errorLog("Error while getting config value: " + path + "\n Returning default value: " + defaultValue);
+            return defaultValue;
+        }
     }
 
     @Override
-    public double getDouble(String path) {
-        return Double.parseDouble(get(path).toString());
+    public Double getDouble(String path) {
+        try {
+            return Double.parseDouble(Objects.requireNonNull(get(path)).toString());
+        } catch (Exception e) {
+            Logger.errorLog("Error while getting config value: " + path);
+            return null;
+        }
     }
 
     @Override
-    public boolean getBoolean(String path, boolean defaultValue) {
-        return get(path) == null ? defaultValue : Boolean.parseBoolean(get(path).toString());
+    public Boolean getBoolean(String path, boolean defaultValue) {
+        try {
+            return get(path) == null ? defaultValue : Boolean.parseBoolean(Objects.requireNonNull(get(path)).toString());
+        } catch (Exception e) {
+            Logger.errorLog("Error while getting config value: " + path + "\n Returning default value: " + defaultValue);
+            return defaultValue;
+        }
     }
 
     @Override
-    public boolean getBoolean(String path) {
-        return Boolean.parseBoolean(get(path).toString());
+    public Boolean getBoolean(String path) {
+        try {
+            return Boolean.parseBoolean(Objects.requireNonNull(get(path)).toString());
+        } catch (Exception e) {
+            Logger.errorLog("Error while getting config value: " + path);
+            return null;
+        }
     }
 
     @Override
     public List<String> getStringList(String path) {
-        return (List<String>) get(path);
+        try {
+            return (List<String>) get(path);
+        } catch (Exception e) {
+            Logger.errorLog("Error while getting config value: " + path);
+            return null;
+        }
     }
 
     @Override
     public Map<String, Object> getMap(String path) {
-        return (Map<String, Object>) get(path);
+        try {
+            return (Map<String, Object>) get(path);
+        } catch (Exception e) {
+            Logger.errorLog("Error while getting config value: " + path);
+            return null;
+        }
     }
 
     @Override
     public Map<String, String> getStringMap(String path) {
-        Map map = getMap(path);
-        Map<String, String> stringMap = new HashMap<>();
-        for (Object key : map.keySet()) {
-            stringMap.put(key.toString(), map.get(key).toString());
+        try {
+            Map<String, Object> map = getMap(path);
+            Map<String, String> stringMap = new HashMap<>();
+            for (Object key : map.keySet()) {
+                stringMap.put(key.toString(), map.get(key).toString());
+            }
+            return stringMap;
+        } catch (Exception e) {
+            Logger.errorLog("Error while getting config value: " + path);
+            return null;
         }
-        return stringMap;
     }
 
     @Override
     public Map<String, Double> getDoubleMap(String path) {
-        Map map = getMap(path);
-        Map<String, Double> doubleMap = new HashMap<>();
-        for (Object key : map.keySet()) {
-            doubleMap.put(key.toString(), Double.parseDouble(map.get(key).toString()));
+        try {
+            Map<String, Object> map = getMap(path);
+            Map<String, Double> doubleMap = new HashMap<>();
+            for (Object key : map.keySet()) {
+                doubleMap.put(key.toString(), Double.parseDouble(map.get(key).toString()));
+            }
+            return doubleMap;
+        } catch (Exception e) {
+            Logger.errorLog("Error while getting config value: " + path);
+            return null;
         }
-        return doubleMap;
     }
 
     @Override
     public Map<String, List<String>> getStringListMap(String path) {
-        Map map = getMap(path);
-        Map<String, List<String>> stringListMap = new HashMap<>();
-        for (Object key : map.keySet()) {
-            stringListMap.put(key.toString(), (List<String>) map.get(key));
+        try {
+            Map<String, Object> map = getMap(path);
+            Map<String, List<String>> stringListMap = new HashMap<>();
+            for (Object key : map.keySet()) {
+                stringListMap.put(key.toString(), (List<String>) map.get(key));
+            }
+            return stringListMap;
+        } catch (Exception e) {
+            Logger.errorLog("Error while getting config value: " + path);
+            return null;
         }
-        return stringListMap;
     }
 
     @Override
     public Map<String, Integer> getIntMap(String path) {
-        Map map = getMap(path);
-        Map<String, Integer> intMap = new HashMap<>();
-        for (Object key : map.keySet()) {
-            intMap.put(key.toString(), Integer.parseInt(map.get(key).toString()));
+        try {
+            Map<String,Object> map = getMap(path);
+            Map<String, Integer> intMap = new HashMap<>();
+            for (Object key : map.keySet()) {
+                intMap.put(key.toString(), Integer.parseInt(map.get(key).toString()));
+            }
+            return intMap;
+        } catch (Exception e) {
+            Logger.errorLog("Error while getting config value: " + path);
+            return null;
         }
-        return intMap;
     }
 
     @Override
     public Map<String, Boolean> getBooleanMap(String path) {
-        Map map = getMap(path);
-        Map<String, Boolean> booleanMap = new HashMap<>();
-        for (Object key : map.keySet()) {
-            booleanMap.put(key.toString(), Boolean.parseBoolean(map.get(key).toString()));
+        try {
+            Map<String,Object> map = getMap(path);
+            Map<String, Boolean> booleanMap = new HashMap<>();
+            for (Object key : map.keySet()) {
+                booleanMap.put(key.toString(), Boolean.parseBoolean(map.get(key).toString()));
+            }
+            return booleanMap;
+        } catch (Exception e) {
+            Logger.errorLog("Error while getting config value: " + path);
+            return null;
         }
-        return booleanMap;
     }
 
     @Override
     public List<String> getKeys(String path) {
-        return new ArrayList<>(((Map<String, Object>) get(path)).keySet());
+        try {
+            return new ArrayList<>(((Map<String, Object>) get(path)).keySet());
+        } catch (Exception e) {
+            Logger.errorLog("Error while getting config value: " + path);
+            return null;
+        }
     }
 
     protected static String translateAlternateColorCodes(char altColorChar, String textToTranslate) {

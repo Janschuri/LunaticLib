@@ -10,17 +10,17 @@ public interface LunaticConfig {
     String getString(String path, String defaultValue);
     String getString(String path);
 
-    int getInt(String path, int defaultValue);
+    Integer getInt(String path, int defaultValue);
 
-    int getInt(String path);
+    Integer getInt(String path);
 
-    double getDouble(String path, double defaultValue);
+    Double getDouble(String path, double defaultValue);
 
-    double getDouble(String path);
+    Double getDouble(String path);
 
-    boolean getBoolean(String path, boolean defaultValue);
+    Boolean getBoolean(String path, boolean defaultValue);
 
-    boolean getBoolean(String path);
+    Boolean getBoolean(String path);
 
     List<String> getStringList(String path);
 

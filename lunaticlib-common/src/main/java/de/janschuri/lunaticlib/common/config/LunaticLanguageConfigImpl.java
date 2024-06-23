@@ -18,16 +18,17 @@ public class LunaticLanguageConfigImpl extends LunaticConfigImpl implements de.j
     public Component getMessage(MessageKey key, boolean withPrefix) {
         String keyString = key.toString().toLowerCase();
 
-        if (withPrefix) {
-            return getPrefix().append(LegacyComponentSerializer.legacyAmpersand().deserialize(getString(keyString)));
+        String message = getString(keyString);
+        if (message == null) {
+            message = "Message not found: " + keyString;
         }
 
-        return LegacyComponentSerializer.legacyAmpersand().deserialize(getString(keyString));
+        if (withPrefix) {
+            return getPrefix().append(LegacyComponentSerializer.legacyAmpersand().deserialize(message));
+        }
+
+        return LegacyComponentSerializer.legacyAmpersand().deserialize(message);
     }
-
-
-
-
 
     @Override
     public Component getMessage(MessageKey key) {
