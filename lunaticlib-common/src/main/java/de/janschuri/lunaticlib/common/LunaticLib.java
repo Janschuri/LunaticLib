@@ -43,6 +43,7 @@ public final class LunaticLib {
             new GetSkinURLRequest(),
             new HasEnoughMoneyRequest(),
             new WithdrawMoneyRequest(),
+            new OpenDecisionGUIRequest(),
     };
 
     static void registerRequests() {
@@ -80,6 +81,10 @@ public final class LunaticLib {
         LunaticLib.platform = platform;
 
         installedGeyser = Utils.classExists("org.geysermc.api.Geyser");
+
+        if (installedGeyser) {
+            Logger.infoLog("Geyser detected.");
+        }
 
         loadConfig();
         registerRequests();

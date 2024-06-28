@@ -1,7 +1,8 @@
 package de.janschuri.lunaticlib.platform.bungee.sender;
 
-import de.janschuri.lunaticlib.common.external.Geyser;
+import de.janschuri.lunaticlib.DecisionMessage;
 import de.janschuri.lunaticlib.common.futurerequests.requests.GetSkinURLRequest;
+import de.janschuri.lunaticlib.common.futurerequests.requests.OpenDecisionGUIRequest;
 import de.janschuri.lunaticlib.platform.bungee.BungeeLunaticLib;
 import de.janschuri.lunaticlib.PlayerSender;
 import de.janschuri.lunaticlib.platform.bungee.external.AdventureAPI;
@@ -106,8 +107,7 @@ public class PlayerSenderImpl extends SenderImpl implements PlayerSender {
     }
 
     @Override
-    public boolean isBedrockPlayer() {
-        return Geyser.isBedrockPlayer(uuid);
+    public boolean openDecisionGUI(DecisionMessage message) {
+        return new OpenDecisionGUIRequest().get(getServerName(), uuid, message);
     }
-
 }

@@ -23,12 +23,12 @@ public interface PlayerSender extends Sender {
     boolean isSameServer(UUID uuid);
     boolean openBook(Book.Builder book);
     boolean closeBook();
-    boolean isBedrockPlayer();
-    default boolean sendClickableMessage(Component message) {
-        if (isBedrockPlayer()) {
-            return sendMessage(message);
+    default boolean sendMessage(DecisionMessage message, boolean asInventoryGUI) {
+        if (asInventoryGUI) {
+            return openDecisionGUI(message);
         } else {
-            return sendMessage(message);
+            return sendMessage(message.asComponent());
         }
     }
+    boolean openDecisionGUI(DecisionMessage message);
 }

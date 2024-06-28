@@ -5,6 +5,9 @@ import de.janschuri.lunaticlib.platform.bukkit.external.AdventureAPI;
 import de.janschuri.lunaticlib.platform.bukkit.external.LogBlock;
 import de.janschuri.lunaticlib.platform.bukkit.external.Metrics;
 import de.janschuri.lunaticlib.platform.bukkit.external.VaultImpl;
+import de.janschuri.lunaticlib.platform.bukkit.inventorygui.DecisionGUI;
+import de.janschuri.lunaticlib.platform.bukkit.inventorygui.GUIListener;
+import de.janschuri.lunaticlib.platform.bukkit.inventorygui.GUIManager;
 import de.janschuri.lunaticlib.platform.bukkit.listener.MessageListener;
 import de.janschuri.lunaticlib.platform.Platform;
 import de.janschuri.lunaticlib.common.LunaticLib;
@@ -27,10 +30,13 @@ public class BukkitLunaticLib extends JavaPlugin {
     private static Vault vault;
     private static LogBlock logBlock;
 
+    private GUIManager guiManager;
+
     @Override
     public void onEnable() {
         instance = this;
         version = getServerVersion();
+        guiManager = new GUIManager();
 
         if (version == VersionEnum.UNKNOWN) {
             disable();
@@ -41,6 +47,7 @@ public class BukkitLunaticLib extends JavaPlugin {
 
         getServer().getMessenger().registerIncomingPluginChannel(this, IDENTIFIER, new MessageListener());
         getServer().getMessenger().registerOutgoingPluginChannel(this, IDENTIFIER);
+        getServer().getPluginManager().registerEvents(new GUIListener(), this);
 
         int pluginId = 21913;
         Metrics metrics = new Metrics(this, pluginId);
@@ -69,6 +76,7 @@ public class BukkitLunaticLib extends JavaPlugin {
 
     @Override
     public void onDisable() {
+        GUIManager.closeAll();
         AdventureAPI.close();
         LunaticLib.onDisable();
     }
@@ -143,5 +151,9 @@ public class BukkitLunaticLib extends JavaPlugin {
         } else {
             throw new IllegalArgumentException("Invalid version format: " + version);
         }
+    }
+
+    public static GUIManager getGUIManager() {
+        return getInstance().guiManager;
     }
 }
