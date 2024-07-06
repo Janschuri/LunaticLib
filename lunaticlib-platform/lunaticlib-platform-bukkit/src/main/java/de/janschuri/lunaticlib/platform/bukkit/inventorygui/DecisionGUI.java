@@ -47,7 +47,7 @@ public class DecisionGUI extends InventoryGUI {
     }
     private InventoryButton createGrayButton() {
         return new InventoryButton()
-                .creator(player -> new ItemStack(Material.OAK_BUTTON));
+                .creator(player -> new ItemStack(Material.LIGHT_GRAY_STAINED_GLASS_PANE));
     }
 
     private InventoryButton createGreenButton() {
