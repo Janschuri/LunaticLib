@@ -64,9 +64,18 @@ public abstract class InventoryGUI implements InventoryHandler {
         if (event.isShiftClick()) {
             event.setCancelled(true);
         }
+
+        if (event.getAction() == InventoryAction.COLLECT_TO_CURSOR) {
+            event.setCancelled(true);
+        }
     }
 
     @EventHandler
     public void onPlayerInvDrag(InventoryDragEvent event) {
+    }
+
+    @Override
+    public int getSize() {
+        return this.inventory.getSize();
     }
 }

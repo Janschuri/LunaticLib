@@ -17,4 +17,5 @@ public interface InventoryHandler {
 
     void onPlayerInvClick(InventoryClickEvent event);
     void onPlayerInvDrag(InventoryDragEvent event);
+    int getSize();
 }

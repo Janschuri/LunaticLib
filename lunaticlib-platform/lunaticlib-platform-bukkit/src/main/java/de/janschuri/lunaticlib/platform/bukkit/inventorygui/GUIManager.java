@@ -56,20 +56,22 @@ public class GUIManager {
 
         if (handler != null) {
 
-            int guiSize = event.getView().getTopInventory().getSize();
+            int guiSize = handler.getSize();
 
             Logger.infoLog("GUI size: " + guiSize);
 
             Set<Integer> slots = event.getInventorySlots();
 
             for (int slot : slots) {
+                Logger.debugLog("Slot: " + slot);
+                Logger.debugLog("GUI size: " + guiSize);
                 if (slot < guiSize) {
                     handler.onDrag(event);
-                    return;
+//                    return;
                 }
             }
 
-            handler.onPlayerInvDrag(event);
+//            handler.onPlayerInvDrag(event);
         }
     }
 
