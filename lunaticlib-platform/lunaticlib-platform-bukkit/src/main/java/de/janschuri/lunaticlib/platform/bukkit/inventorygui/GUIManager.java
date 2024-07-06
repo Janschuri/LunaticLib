@@ -35,8 +35,10 @@ public class GUIManager {
         if (handler != null) {
             Inventory playerInv = event.getWhoClicked().getInventory();
 
-            if (event.getClickedInventory() != playerInv && !event.isShiftClick()) {
+            if (event.getClickedInventory() != playerInv) {
                 handler.onClick(event);
+            } else {
+                handler.onPlayerInvClick(event);
             }
         }
     }
@@ -63,8 +65,11 @@ public class GUIManager {
             for (int slot : slots) {
                 if (slot < guiSize) {
                     handler.onDrag(event);
+                    return;
                 }
             }
+
+            handler.onPlayerInvDrag(event);
         }
     }
 

@@ -2,10 +2,7 @@ package de.janschuri.lunaticlib.platform.bukkit.inventorygui;
 
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
-import org.bukkit.event.inventory.InventoryClickEvent;
-import org.bukkit.event.inventory.InventoryCloseEvent;
-import org.bukkit.event.inventory.InventoryDragEvent;
-import org.bukkit.event.inventory.InventoryOpenEvent;
+import org.bukkit.event.inventory.*;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 
@@ -64,6 +61,9 @@ public abstract class InventoryGUI implements InventoryHandler {
 
     @EventHandler
     public void onPlayerInvClick(InventoryClickEvent event) {
+        if (event.isShiftClick()) {
+            event.setCancelled(true);
+        }
     }
 
     @EventHandler

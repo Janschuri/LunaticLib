@@ -1,11 +1,11 @@
 package de.janschuri.lunaticlib.platform.bukkit;
 
+import de.janschuri.lunaticlib.nms.Version;
 import de.janschuri.lunaticlib.platform.Vault;
 import de.janschuri.lunaticlib.platform.bukkit.external.AdventureAPI;
 import de.janschuri.lunaticlib.platform.bukkit.external.LogBlock;
 import de.janschuri.lunaticlib.platform.bukkit.external.Metrics;
 import de.janschuri.lunaticlib.platform.bukkit.external.VaultImpl;
-import de.janschuri.lunaticlib.platform.bukkit.inventorygui.DecisionGUI;
 import de.janschuri.lunaticlib.platform.bukkit.inventorygui.GUIListener;
 import de.janschuri.lunaticlib.platform.bukkit.inventorygui.GUIManager;
 import de.janschuri.lunaticlib.platform.bukkit.listener.MessageListener;
@@ -14,7 +14,6 @@ import de.janschuri.lunaticlib.common.LunaticLib;
 import de.janschuri.lunaticlib.common.logger.Logger;
 import de.janschuri.lunaticlib.common.utils.Mode;
 import de.janschuri.lunaticlib.common.utils.Utils;
-import de.janschuri.lunaticlib.nms.VersionEnum;
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -26,9 +25,8 @@ public class BukkitLunaticLib extends JavaPlugin {
     private static BukkitLunaticLib instance;
     private static boolean installedVault = false;
     private static boolean installedLogBlock = false;
-    private static VersionEnum version = null;
+    private static Version version;
     private static Vault vault;
-    private static LogBlock logBlock;
 
     private GUIManager guiManager;
 
@@ -38,7 +36,7 @@ public class BukkitLunaticLib extends JavaPlugin {
         version = getServerVersion();
         guiManager = new GUIManager();
 
-        if (version == VersionEnum.UNKNOWN) {
+        if (version == null) {
             disable();
             return;
         }
@@ -95,21 +93,18 @@ public class BukkitLunaticLib extends JavaPlugin {
         Bukkit.getServer().dispatchCommand(Bukkit.getServer().getConsoleSender(), command);
     }
 
-    public static VersionEnum getServerVersion() {
-        if (version != null) {
-            return version;
-        }
-
-        String versionName = Bukkit.getServer().getBukkitVersion();
-
-        String versionString = convertVersion(versionName);
+    public static Version getServerVersion() {
+        Logger.infoLog("Server version: " + Bukkit.getBukkitVersion());
+        String string = Bukkit.getBukkitVersion().split("-")[0];
+        string = string.replace(".", "_");
+        string = "v" + string;
 
         try {
-            Logger.infoLog("Server version: " + versionString);
-            return VersionEnum.valueOf(versionString);
-        } catch (IllegalArgumentException e) {
-            Logger.errorLog("Unsupported server version: " + versionName);
-            return VersionEnum.UNKNOWN;
+            return (Version) Class.forName("de.janschuri.lunaticlib.nms." + string + ".VersionImpl").getConstructor().newInstance();
+        } catch (Exception e) {
+            Logger.errorLog("Error: " + e);
+            Logger.errorLog("Unsupported server version: " + string);
+            return null;
         }
     }
 
@@ -129,31 +124,11 @@ public class BukkitLunaticLib extends JavaPlugin {
         return vault;
     }
 
-    public static String convertVersion(String version) {
-        String regex = "^(\\d+)\\.(\\d+)(?:\\.(\\d+))?-(R\\d+).*-SNAPSHOT$";
-        java.util.regex.Pattern pattern = java.util.regex.Pattern.compile(regex);
-        java.util.regex.Matcher matcher = pattern.matcher(version);
-
-        if (matcher.find()) {
-            String major = matcher.group(1);
-            String minor = matcher.group(2);
-            String patch = matcher.group(3);
-
-            StringBuilder newVersion = new StringBuilder();
-            newVersion.append("v").append(major).append("_").append(minor);
-            if (patch != null) {
-                newVersion.append("_R").append(patch);
-            } else {
-                newVersion.append("_R").append("1");
-            }
-
-            return newVersion.toString();
-        } else {
-            throw new IllegalArgumentException("Invalid version format: " + version);
-        }
-    }
-
     public static GUIManager getGUIManager() {
         return getInstance().guiManager;
+    }
+
+    public static Version getVersion() {
+        return version;
     }
 }

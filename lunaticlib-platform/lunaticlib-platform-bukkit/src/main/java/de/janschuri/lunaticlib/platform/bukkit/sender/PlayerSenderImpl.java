@@ -129,7 +129,7 @@ public class PlayerSenderImpl extends SenderImpl implements PlayerSender {
     @Override
     public String getSkinURL() {
         if (Bukkit.getPlayer(uuid) != null) {
-            PlayerSkin.getSkinURL(Bukkit.getPlayer(uuid));
+            return PlayerSkin.getSkinURL(Bukkit.getPlayer(uuid));
         }
         return null;
     }
