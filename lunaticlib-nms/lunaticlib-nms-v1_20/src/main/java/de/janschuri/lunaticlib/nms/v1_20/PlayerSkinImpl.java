@@ -1,4 +1,4 @@
-package de.janschuri.lunaticlib.nms.v1_20_1;
+package de.janschuri.lunaticlib.nms.v1_20;
 
 import com.mojang.authlib.GameProfile;
 import com.mojang.authlib.properties.Property;
