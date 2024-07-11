@@ -1,7 +1,7 @@
 name: LunaticLib
 version:  '${project.version}'
 main: de.janschuri.lunaticlib.platform.bukkit.BukkitLunaticLib
-api-version: '1.20'
+api-version: '1.19'
 author: Janschuri
 description: A Library for Lunatic plugins.
 softdepend:

@@ -1,5 +1,6 @@
 package de.janschuri.lunaticlib.common.utils;
 
+import de.janschuri.lunaticlib.DecisionMessage;
 import de.janschuri.lunaticlib.common.logger.Logger;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.TextComponent;
@@ -106,41 +107,7 @@ public class Utils {
         return parts[19];
     }
 
-    public static Component getClickableDecisionMessage(Component message, Component confirmText, Component confirmHoverText, String confirmCommand, Component cancelText, Component cancelHoverText, String cancelCommand) {
-        return message
-                .append(
-                        confirmText
-                                .hoverEvent(HoverEvent.showText(confirmHoverText))
-                                .clickEvent(ClickEvent.clickEvent(ClickEvent.Action.RUN_COMMAND, confirmCommand))
-                )
-                .append(
-                        cancelText
-                                .hoverEvent(HoverEvent.showText(cancelHoverText))
-                                .clickEvent(ClickEvent.clickEvent(ClickEvent.Action.RUN_COMMAND, cancelCommand))
-                );
-    }
-
-    public static Component getClickableDecisionMessage(String message, String confirmHoverText, String confirmCommand, String cancelHoverText, String cancelCommand) {
-        return getClickableDecisionMessage(
-                LegacyComponentSerializer.legacy('§').deserialize(message),
-                Component.text(" ✓", NamedTextColor.GREEN, TextDecoration.BOLD),
-                Component.text(confirmHoverText).color(NamedTextColor.GREEN),
-                confirmCommand,
-                Component.text(" ❌", NamedTextColor.RED, TextDecoration.BOLD),
-                Component.text(cancelHoverText).color(NamedTextColor.RED),
-                cancelCommand
-        );
-    }
-
-    public static Component getClickableDecisionMessage(Component message, Component confirmHoverText, String confirmCommand, Component cancelHoverText, String cancelCommand) {
-        return getClickableDecisionMessage(
-                message,
-                Component.text(" ✓", NamedTextColor.GREEN, TextDecoration.BOLD),
-                confirmHoverText.color(NamedTextColor.GREEN),
-                confirmCommand,
-                Component.text(" ❌", NamedTextColor.RED, TextDecoration.BOLD),
-                cancelHoverText.color(NamedTextColor.RED),
-                cancelCommand
-        );
+    public static DecisionMessage getClickableDecisionMessage(Component prefix, Component message, Component confirmHoverText, String confirmCommand, Component cancelHoverText, String cancelCommand) {
+        return new DecisionMessage(prefix, message, confirmHoverText, cancelHoverText, confirmCommand, cancelCommand);
     }
 }

@@ -1,10 +1,13 @@
 package de.janschuri.lunaticlib.platform.bukkit.external;
 
+import net.kyori.adventure.Adventure;
+import net.kyori.adventure.internal.properties.AdventureProperties;
 import net.kyori.adventure.inventory.Book;
 import net.kyori.adventure.platform.bukkit.BukkitAudiences;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.command.CommandSender;
+import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.java.JavaPlugin;
 
 public class AdventureAPI {
