@@ -53,6 +53,8 @@ public class MySQL extends Database {
 
                     if (!column.isNullable()) {
                         sqlBuilder.append(" NOT NULL");
+                    } else {
+                        sqlBuilder.append(" NULL");
                     }
 
                     if (column.getDefaultValue() != null) {
