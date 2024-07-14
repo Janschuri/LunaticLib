@@ -85,6 +85,7 @@ public class MySQL extends Database {
                 sqlBuilder.append(";");
 
                 String sql = sqlBuilder.toString();
+                Logger.debugLog(sql);
 
                 stmt.execute(sql);
             }
@@ -135,7 +136,7 @@ public class MySQL extends Database {
             case VARBINARY:
                 return "VARBINARY(1000)";
             case TIMESTAMP_NULL:
-                return "TIMESTAMP NULL";
+                return "TIMESTAMP";
             default:
                 return "VARCHAR(255)";
         }

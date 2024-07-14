@@ -44,6 +44,8 @@ public class SQLite extends Database {
 
                 if (!primaryKey.isNullable()) {
                     sqlBuilder.append(" NOT NULL");
+                } else {
+                    sqlBuilder.append(" NULL");
                 }
 
                 sqlBuilder.append(" PRIMARY KEY");
@@ -137,8 +139,6 @@ public class SQLite extends Database {
                 return "VARCHAR";
             case VARBINARY:
                 return "VARBINARY";
-            case TIMESTAMP_NULL:
-                return "TIMESTAMP NULL";
             default:
                 return "VARCHAR(255)";
         }
