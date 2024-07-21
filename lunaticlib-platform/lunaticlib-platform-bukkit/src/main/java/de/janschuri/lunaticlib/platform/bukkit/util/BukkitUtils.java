@@ -21,6 +21,6 @@ public class BukkitUtils {
     }
 
     public static boolean isInRange(Location location, Location otherLocation, double range) {
-        return location.distanceSquared(otherLocation) <= range * range;
+        return location.distance(otherLocation) <= range;
     }
 }
