@@ -1,5 +1,6 @@
 package de.janschuri.lunaticlib.platform.bukkit.util;
 
+import de.janschuri.lunaticlib.common.logger.Logger;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
@@ -39,11 +40,18 @@ public final class EventUtils {
     }
 
     public static boolean isAllowedTakeItem(Player player, Inventory inventory) {
+
+        Logger.debugLog(String.valueOf(player.getOpenInventory().getType()));
+
         InventoryView oldView = player.getOpenInventory();
         ItemStack cursor = oldView.getCursor();
         oldView.setCursor(new ItemStack(Material.AIR));
         InventoryView view = player.openInventory(inventory);
-        player.openInventory(oldView);
+        try {
+            player.openInventory(oldView);
+        } catch (Exception e) {
+            Logger.debugLog("Error: " + e.getMessage());
+        }
         player.setItemOnCursor(cursor);
 
         InventoryClickEvent event = new InventoryClickEvent(view, InventoryType.SlotType.CONTAINER, 0, ClickType.LEFT, InventoryAction.PICKUP_ALL);
