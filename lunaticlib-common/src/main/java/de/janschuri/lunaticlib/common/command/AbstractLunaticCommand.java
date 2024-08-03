@@ -24,10 +24,12 @@ public abstract class AbstractLunaticCommand implements LunaticCommand {
                 }
             } else {
                 if (isAlias(args[0])) {
-                    if (args[1].equalsIgnoreCase("")) {
-                        if (!getParams().isEmpty() && args.length == 2) {
-                            for (String s : getParam(0).keySet()) {
-                                if (sender.hasPermission(getParam(0).get(s))) {
+                    String lastArg = args[args.length - 1];
+                    int paramsIndex = args.length - 2;
+                    if (lastArg.equalsIgnoreCase("")) {
+                        if (!getParams().isEmpty()) {
+                            for (String s : getParam(paramsIndex).keySet()) {
+                                if (sender.hasPermission(getParam(paramsIndex).get(s))) {
                                     list.add(s);
                                 }
                             }
@@ -40,10 +42,10 @@ public abstract class AbstractLunaticCommand implements LunaticCommand {
                             }
                         }
                     } else {
-                        if (!getParams().isEmpty() && args.length == 2) {
-                            for (String s : getParam(0).keySet()) {
-                                if (sender.hasPermission(getParam(0).get(s))) {
-                                    if (s.toLowerCase().startsWith(args[1].toLowerCase())) {
+                        if (!getParams().isEmpty()) {
+                            for (String s : getParam(paramsIndex).keySet()) {
+                                if (sender.hasPermission(getParam(paramsIndex).get(s))) {
+                                    if (s.toLowerCase().startsWith(lastArg.toLowerCase())) {
                                         list.add(s);
                                     }
                                 }
