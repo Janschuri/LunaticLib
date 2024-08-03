@@ -37,12 +37,20 @@ public class LunaticLanguageConfigImpl extends LunaticConfigImpl implements de.j
 
     @Override
     public String getMessageAsString(MessageKey key) {
-        return getMessageAsString(key, true);
+        return getMessageAsString(key, false);
     }
 
     @Override
     public String getMessageAsString(MessageKey key, boolean withPrefix) {
         return ((TextComponent) getMessage(key, withPrefix)).content();
+    }
+
+    public String getMessageAsLegacyString(MessageKey key, boolean withPrefix) {
+        return LegacyComponentSerializer.legacySection().serialize(getMessage(key, withPrefix));
+    }
+
+    public String getMessageAsLegacyString(MessageKey key) {
+        return getMessageAsLegacyString(key, false);
     }
 
     @Override

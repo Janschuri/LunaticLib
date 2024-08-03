@@ -7,9 +7,11 @@ import de.janschuri.lunaticlib.platform.bukkit.external.AdventureAPI;
 import de.janschuri.lunaticlib.platform.bukkit.inventorygui.DecisionGUI;
 import de.janschuri.lunaticlib.platform.bukkit.inventorygui.GUIManager;
 import de.janschuri.lunaticlib.platform.bukkit.nms.PlayerSkin;
+import de.janschuri.lunaticlib.platform.bukkit.util.BukkitUtils;
 import de.janschuri.lunaticlib.platform.bukkit.util.ItemStackUtils;
 import net.kyori.adventure.inventory.Book;
 import org.bukkit.Bukkit;
+import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
@@ -104,7 +106,18 @@ public class PlayerSenderImpl extends SenderImpl implements PlayerSender {
             return true;
         }
         org.bukkit.entity.Player player = Bukkit.getPlayer(playerUUID);
-        return Bukkit.getPlayer(uuid).getLocation().distance(player.getLocation()) <= range;
+        if (player == null) {
+            return false;
+        }
+
+        if (player.getWorld() != Bukkit.getPlayer(uuid).getWorld()) {
+            return false;
+        }
+
+        Location location1= player.getLocation();
+        Location location2 = Bukkit.getPlayer(uuid).getLocation();
+
+        return BukkitUtils.isInRange(location1, location2, range);
     }
 
     @Override

@@ -6,13 +6,16 @@ import org.bukkit.event.inventory.*;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public abstract class InventoryGUI implements InventoryHandler {
 
     private final Inventory inventory;
     private final Map<Integer, InventoryButton> buttonMap = new HashMap<>();
+    private final List<PlayerInvButton> playerInvButtons = new ArrayList<>();
 
     public InventoryGUI(Inventory inventory) {
         this.inventory = inventory;
@@ -24,6 +27,10 @@ public abstract class InventoryGUI implements InventoryHandler {
 
     public void addButton(int slot, InventoryButton button) {
         this.buttonMap.put(slot, button);
+    }
+
+    public void addButton(PlayerInvButton button) {
+        this.playerInvButtons.add(button);
     }
 
     public void decorate(Player player) {
@@ -67,6 +74,12 @@ public abstract class InventoryGUI implements InventoryHandler {
 
         if (event.getAction() == InventoryAction.COLLECT_TO_CURSOR) {
             event.setCancelled(true);
+        }
+
+        for (PlayerInvButton playerInvButton : this.playerInvButtons) {
+            if (playerInvButton.getCondition().apply(event)) {
+                playerInvButton.getEventConsumer().accept(event);
+            }
         }
     }
 

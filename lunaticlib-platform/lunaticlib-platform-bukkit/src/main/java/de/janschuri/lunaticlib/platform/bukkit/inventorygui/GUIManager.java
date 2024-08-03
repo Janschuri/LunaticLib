@@ -18,8 +18,14 @@ public class GUIManager {
     private static final Map<Inventory, InventoryHandler> activeInventories = new HashMap<>();
 
     public static void openGUI(InventoryGUI gui, Player player) {
+        openGUI(gui, player, true);
+    }
+
+    public static void openGUI(InventoryGUI gui, Player player, boolean openInventory) {
         registerHandledInventory(gui.getInventory(), gui);
-        player.openInventory(gui.getInventory());
+        if (openInventory) {
+            player.openInventory(gui.getInventory());
+        }
     }
 
     public static void registerHandledInventory(Inventory inventory, InventoryHandler handler) {

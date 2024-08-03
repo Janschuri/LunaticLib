@@ -135,8 +135,6 @@ public class MySQL extends Database {
                 return "VARCHAR(255)";
             case VARBINARY:
                 return "VARBINARY(1000)";
-            case TIMESTAMP_NULL:
-                return "TIMESTAMP";
             default:
                 return "VARCHAR(255)";
         }

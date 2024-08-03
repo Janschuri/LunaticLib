@@ -33,9 +33,9 @@ public class LunaticConfigImpl implements de.janschuri.lunaticlib.LunaticConfig 
 
         File file = new File(dataDirectory.toFile(), filePath);
 
-        if (!dataDirectory.toFile().exists()) {
+        if (!dataDirectory.resolve(filePath).getParent().toFile().exists()) {
             try {
-                Files.createDirectories(dataDirectory.toFile().toPath());
+                Files.createDirectories(dataDirectory.resolve(filePath).getParent().toFile().toPath());
             } catch (IOException e) {
                 e.printStackTrace();
                 return;
@@ -85,10 +85,10 @@ public class LunaticConfigImpl implements de.janschuri.lunaticlib.LunaticConfig 
             Node newNode;
 
             if (root == null) {
-                Logger.errorLog("Error while loading config file: " + dataDirectory + "\\" + file.getName());
+                Logger.errorLog("Error while loading config file: " + dataDirectory.resolve(filePath).getParent() + "/" + file.getName());
                 newNode = defaultRoot;
             } else {
-                Logger.infoLog("Loaded config file: " + dataDirectory + "\\" + file.getName());
+                Logger.infoLog("Loaded config file: " + dataDirectory.resolve(filePath).getParent() + "/" + file.getName());
                 newNode = mergeNodes(root, defaultRoot);
             }
 
@@ -113,6 +113,49 @@ public class LunaticConfigImpl implements de.janschuri.lunaticlib.LunaticConfig 
             yamlMap.put(((ScalarNode) node.getKeyNode()).getValue(), loadNodeTuple(node));
         }
         return yamlMap;
+    }
+
+    private void save() {
+        File file = new File(dataDirectory.toFile(), filePath);
+
+        LoaderOptions loaderOptions = new LoaderOptions();
+        loaderOptions.setProcessComments(true);
+        DumperOptions dumperOptions = new DumperOptions();
+        dumperOptions.setProcessComments(true);
+        dumperOptions.setSplitLines(false); // remove the line breaks
+        dumperOptions.setDefaultFlowStyle(DumperOptions.FlowStyle.BLOCK); // remove quotes
+        dumperOptions.setIndent(2);
+        Yaml yaml = new Yaml(new Constructor(loaderOptions), new Representer(dumperOptions), dumperOptions, loaderOptions);
+        Node root = null;
+
+        yaml.dump(yamlMap);
+        Node savingValues = yaml.compose(new StringReader(yaml.dump(yamlMap)));
+
+        try (FileInputStream inputStream = new FileInputStream(file)) {
+            try (InputStreamReader reader = new InputStreamReader(inputStream, StandardCharsets.UTF_8)) {
+                root = yaml.compose(reader);
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        Node newNode;
+
+        if (root == null) {
+            Logger.errorLog("Error while loading config file: " + filePath);
+            newNode = savingValues;
+        } else {
+            Logger.infoLog("Loaded config file: " + filePath);
+            newNode = mergeNodes(savingValues, root);
+        }
+
+        try (FileOutputStream fos = new FileOutputStream(file);
+             OutputStreamWriter osw = new OutputStreamWriter(fos, StandardCharsets.UTF_8);
+             BufferedWriter writer = new BufferedWriter(osw)) {
+             yaml.serialize(newNode, writer);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     private static Object loadNodeTuple(NodeTuple nodeTuple) {
@@ -247,6 +290,34 @@ public class LunaticConfigImpl implements de.janschuri.lunaticlib.LunaticConfig 
         }
     }
 
+    public void setString(String path, String value) {
+        Logger.debugLog("Setting value: " + path + " = " + value);
+        String[] parts = path.split("\\.");
+        Map<String, Object> current = yamlMap;
+        Logger.debugLog("Current map: " + current.toString());
+        for (int i = 0; i < parts.length; i++) {
+            if (i == parts.length - 1) {
+                current.put(parts[i], value);
+            } else {
+                if (current.containsKey(parts[i])) {
+                    if (current.get(parts[i]) instanceof Map) {
+                        current = (Map<String, Object>) current.get(parts[i]);
+                    } else {
+                        Map<String, Object> newMap = new LinkedHashMap<>();
+                        current.put(parts[i], newMap);
+                        current = newMap;
+                    }
+                } else {
+                    Map<String, Object> newMap = new LinkedHashMap<>();
+                    current.put(parts[i], newMap);
+                    current = newMap;
+                }
+            }
+        }
+
+        save();
+    }
+
     @Override
     public Integer getInt(String path, int defaultValue) {
         try {
@@ -265,6 +336,10 @@ public class LunaticConfigImpl implements de.janschuri.lunaticlib.LunaticConfig 
             Logger.errorLog("Error while getting config value: " + path);
             return null;
         }
+    }
+
+    public void setInt(String path, int value) {
+        setString(path, String.valueOf(value));
     }
 
     @Override
@@ -287,6 +362,10 @@ public class LunaticConfigImpl implements de.janschuri.lunaticlib.LunaticConfig 
         }
     }
 
+    public void setDouble(String path, double value) {
+        setString(path, String.valueOf(value));
+    }
+
     @Override
     public Boolean getBoolean(String path, boolean defaultValue) {
         try {
@@ -307,6 +386,32 @@ public class LunaticConfigImpl implements de.janschuri.lunaticlib.LunaticConfig 
         }
     }
 
+    public void setBoolean(String path, boolean value) {
+        setString(path, String.valueOf(value));
+    }
+
+    public Float getFloat(String path, float defaultValue) {
+        try {
+            return get(path) == null ? defaultValue : Float.parseFloat(Objects.requireNonNull(get(path)).toString());
+        } catch (Exception e) {
+            Logger.errorLog("Error while getting config value: " + path + "\n Returning default value: " + defaultValue);
+            return defaultValue;
+        }
+    }
+
+    public Float getFloat(String path) {
+        try {
+            return Float.parseFloat(Objects.requireNonNull(get(path)).toString());
+        } catch (Exception e) {
+            Logger.errorLog("Error while getting config value: " + path);
+            return null;
+        }
+    }
+
+    public void setFloat(String path, float value) {
+        setString(path, String.valueOf(value));
+    }
+
     @Override
     public List<String> getStringList(String path) {
         try {
@@ -317,6 +422,32 @@ public class LunaticConfigImpl implements de.janschuri.lunaticlib.LunaticConfig 
         }
     }
 
+    public void setStringList(String path, List<String> value) {
+        String[] parts = path.split("\\.");
+        Map<String, Object> current = yamlMap;
+        for (int i = 0; i < parts.length; i++) {
+            if (i == parts.length - 1) {
+                current.put(parts[i], value);
+            } else {
+                if (current.containsKey(parts[i])) {
+                    if (current.get(parts[i]) instanceof Map) {
+                        current = (Map<String, Object>) current.get(parts[i]);
+                    } else {
+                        Map<String, Object> newMap = new LinkedHashMap<>();
+                        current.put(parts[i], newMap);
+                        current = newMap;
+                    }
+                } else {
+                    Map<String, Object> newMap = new LinkedHashMap<>();
+                    current.put(parts[i], newMap);
+                    current = newMap;
+                }
+            }
+        }
+
+        save();
+    }
+
     @Override
     public Map<String, Object> getMap(String path) {
         try {
@@ -325,6 +456,21 @@ public class LunaticConfigImpl implements de.janschuri.lunaticlib.LunaticConfig 
             Logger.errorLog("Error while getting config value: " + path);
             return null;
         }
+    }
+
+    public void setMap(String path, Map<String, Object> value) {
+        for (String key : value.keySet()) {
+            Object obj = value.get(key);
+            if (obj instanceof Map) {
+                setMap(path + "." + key, (Map<String, Object>) obj);
+            } else if (obj instanceof List) {
+                setStringList(path + "." + key, (List<String>) obj);
+            } else {
+                setString(path + "." + key, obj.toString());
+            }
+        }
+
+        save();
     }
 
     @Override
@@ -342,6 +488,15 @@ public class LunaticConfigImpl implements de.janschuri.lunaticlib.LunaticConfig 
         }
     }
 
+    public void setStringMap(String path, Map<String, String> value) {
+        for (String key : value.keySet()) {
+            Object obj = value.get(key);
+            setString(path + "." + key, obj.toString());
+        }
+
+        save();
+    }
+
     @Override
     public Map<String, Double> getDoubleMap(String path) {
         try {
@@ -355,6 +510,15 @@ public class LunaticConfigImpl implements de.janschuri.lunaticlib.LunaticConfig 
             Logger.errorLog("Error while getting config value: " + path);
             return null;
         }
+    }
+
+    public void setDoubleMap(String path, Map<String, Double> value) {
+        for (String key : value.keySet()) {
+            Object obj = value.get(key);
+            setString(path + "." + key, obj.toString());
+        }
+
+        save();
     }
 
     @Override
@@ -372,6 +536,15 @@ public class LunaticConfigImpl implements de.janschuri.lunaticlib.LunaticConfig 
         }
     }
 
+    public void setStringListMap(String path, Map<String, List<String>> value) {
+        for (String key : value.keySet()) {
+            Object obj = value.get(key);
+            setStringList(path + "." + key, (List<String>) obj);
+        }
+
+        save();
+    }
+
     @Override
     public Map<String, Integer> getIntMap(String path) {
         try {
@@ -387,6 +560,15 @@ public class LunaticConfigImpl implements de.janschuri.lunaticlib.LunaticConfig 
         }
     }
 
+    public void setIntMap(String path, Map<String, Integer> value) {
+        for (String key : value.keySet()) {
+            Object obj = value.get(key);
+            setString(path + "." + key, obj.toString());
+        }
+
+        save();
+    }
+
     @Override
     public Map<String, Boolean> getBooleanMap(String path) {
         try {
@@ -400,6 +582,15 @@ public class LunaticConfigImpl implements de.janschuri.lunaticlib.LunaticConfig 
             Logger.errorLog("Error while getting config value: " + path);
             return null;
         }
+    }
+
+    public void setBooleanMap(String path, Map<String, Boolean> value) {
+        for (String key : value.keySet()) {
+            Object obj = value.get(key);
+            setString(path + "." + key, obj.toString());
+        }
+
+        save();
     }
 
     @Override
