@@ -4,7 +4,7 @@ import com.mojang.authlib.GameProfile;
 import com.mojang.authlib.properties.Property;
 import de.janschuri.lunaticlib.common.logger.Logger;
 import de.janschuri.lunaticlib.nms.PlayerSkin;
-import org.bukkit.craftbukkit.v1_21_R1.entity.CraftPlayer;
+import org.bukkit.craftbukkit.v1_21_R2.entity.CraftPlayer;
 import org.bukkit.entity.Player;
 
 import java.util.NoSuchElementException;
