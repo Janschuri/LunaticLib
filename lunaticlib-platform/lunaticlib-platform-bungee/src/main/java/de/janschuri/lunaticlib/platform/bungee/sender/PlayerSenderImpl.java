@@ -110,4 +110,9 @@ public class PlayerSenderImpl extends SenderImpl implements PlayerSender {
     public boolean openDecisionGUI(DecisionMessage message) {
         return new OpenDecisionGUIRequest().get(getServerName(), uuid, message);
     }
+
+    @Override
+    public void runCommand(String command) {
+        BungeeLunaticLib.getInstance().getProxy().getPlayer(uuid).chat("/" + command);
+    }
 }

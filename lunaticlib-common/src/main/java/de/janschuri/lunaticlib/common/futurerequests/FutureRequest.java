@@ -64,6 +64,10 @@ public abstract class FutureRequest<R> {
     protected abstract void handleResponse(int requestId, ByteArrayDataInput in);
 
     protected R sendRequest(byte[] data) {
+        return sendRequest(data, false);
+    }
+
+    protected R sendRequest(byte[] data, boolean voidRequest) {
         CompletableFuture<R> responseFuture = new CompletableFuture<>();
         int requestId = requestIdGenerator.incrementAndGet();
         requestMap.put(requestId, responseFuture);
@@ -90,6 +94,9 @@ public abstract class FutureRequest<R> {
         }
 
         try {
+            if (voidRequest) {
+                return null;
+            }
             return responseFuture.get(timeout, UNIT);
         } catch (InterruptedException | ExecutionException | TimeoutException e) {
             if (!suppressTimeoutException) {

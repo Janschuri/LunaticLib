@@ -1,6 +1,8 @@
 package de.janschuri.lunaticlib.platform.bukkit.inventorygui;
 
 import de.janschuri.lunaticlib.common.logger.Logger;
+import de.janschuri.lunaticlib.platform.bukkit.BukkitLunaticLib;
+import org.bukkit.Bukkit;
 import org.bukkit.entity.HumanEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryClickEvent;
@@ -8,8 +10,6 @@ import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.event.inventory.InventoryDragEvent;
 import org.bukkit.event.inventory.InventoryOpenEvent;
 import org.bukkit.inventory.Inventory;
-import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.meta.ItemMeta;
 
 import java.util.*;
 
@@ -23,9 +23,14 @@ public class GUIManager {
 
     public static void openGUI(InventoryGUI gui, Player player, boolean openInventory) {
         registerHandledInventory(gui.getInventory(), gui);
+
+
         if (openInventory) {
-            player.openInventory(gui.getInventory());
+                Bukkit.getScheduler().runTask(BukkitLunaticLib.getInstance(), () -> {
+                    player.openInventory(gui.getInventory());
+                });
         }
+
     }
 
     public static void registerHandledInventory(Inventory inventory, InventoryHandler handler) {

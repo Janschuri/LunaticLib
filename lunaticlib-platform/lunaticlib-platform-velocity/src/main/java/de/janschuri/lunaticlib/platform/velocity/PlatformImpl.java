@@ -3,10 +3,12 @@ package de.janschuri.lunaticlib.platform.velocity;
 import com.velocitypowered.api.command.CommandManager;
 import com.velocitypowered.api.command.CommandMeta;
 import com.velocitypowered.api.command.CommandSource;
+import com.velocitypowered.api.plugin.PluginContainer;
 import com.velocitypowered.api.proxy.Player;
 import com.velocitypowered.api.proxy.ProxyServer;
 import de.janschuri.lunaticlib.LunaticCommand;
 import de.janschuri.lunaticlib.PlayerSender;
+import de.janschuri.lunaticlib.common.logger.Logger;
 import de.janschuri.lunaticlib.platform.*;
 import de.janschuri.lunaticlib.platform.velocity.command.Command;
 import de.janschuri.lunaticlib.platform.velocity.external.VaultImpl;
@@ -19,7 +21,7 @@ import java.util.UUID;
 
 import static de.janschuri.lunaticlib.platform.velocity.VelocityLunaticLib.MINECRAFT_CHANNEL_IDENTIFIER;
 
-public class PlatformImpl implements Platform<ProxyServer, CommandSource> {
+public class PlatformImpl implements Platform<PluginContainer, CommandSource> {
     public boolean sendPluginMessage(String server, byte[] message) {
         return VelocityLunaticLib.sendPluginMessage(server, message);
     }
@@ -58,12 +60,12 @@ public class PlatformImpl implements Platform<ProxyServer, CommandSource> {
     }
 
     @Override
-    public void registerCommand(ProxyServer proxy, LunaticCommand lunaticCommand) {
+    public void registerCommand(PluginContainer pluginContainer, LunaticCommand lunaticCommand) {
         CommandManager commandManager = VelocityLunaticLib.getProxy().getCommandManager();
 
         CommandMeta commandMeta = commandManager.metaBuilder(lunaticCommand.getName())
                 .aliases(lunaticCommand.getAliases().toArray(new String[0]))
-                .plugin(proxy)
+                .plugin(pluginContainer)
                 .build();
 
 

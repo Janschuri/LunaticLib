@@ -28,11 +28,6 @@ public class Command implements SimpleCommand {
     }
 
     @Override
-    public boolean hasPermission(final Invocation invocation) {
-        return invocation.source().hasPermission(lunaticCommand.getPermission());
-    }
-
-    @Override
     public CompletableFuture<List<String>> suggestAsync(final Invocation invocation) {
         CommandSource source = invocation.source();
         String[] args = invocation.arguments();

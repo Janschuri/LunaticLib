@@ -5,6 +5,8 @@ import com.google.common.io.ByteArrayDataOutput;
 import com.google.common.io.ByteStreams;
 import de.janschuri.lunaticlib.common.LunaticLib;
 import de.janschuri.lunaticlib.common.futurerequests.FutureRequest;
+import de.janschuri.lunaticlib.common.logger.Logger;
+import de.janschuri.lunaticlib.platform.Vault;
 
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
@@ -21,19 +23,35 @@ public class WithdrawMoneyRequest extends FutureRequest<Boolean> {
 
     @Override
     protected void handleRequest(int requestId, ByteArrayDataInput in) {
+        boolean vaultAvailable = false;
         boolean success = false;
 
         UUID uuid = UUID.fromString(in.readUTF());
         double amount = in.readDouble();
-        success = LunaticLib.getPlatform().getVault().withdrawMoney("", uuid, amount);
+
+        Vault vault = LunaticLib.getPlatform().getVault();
+
+        if (vault != null) {
+            vaultAvailable = true;
+            success = vault.withdrawMoney("", uuid, amount);
+        }
 
         ByteArrayDataOutput out = ByteStreams.newDataOutput();
+        out.writeBoolean(vaultAvailable);
         out.writeBoolean(success);
         sendResponse(requestId, out.toByteArray());
     }
 
     @Override
     protected void handleResponse(int requestId, ByteArrayDataInput in) {
+        boolean vaultAvailable = in.readBoolean();
+
+        if (!vaultAvailable) {
+            Logger.errorLog("Vault not available. Disable or install it.");
+            completeRequest(requestId, false);
+            return;
+        }
+
         boolean success = in.readBoolean();
         completeRequest(requestId, success);
     }

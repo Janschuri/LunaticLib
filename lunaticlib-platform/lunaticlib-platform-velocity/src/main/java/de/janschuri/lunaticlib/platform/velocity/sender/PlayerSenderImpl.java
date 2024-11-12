@@ -1,5 +1,6 @@
 package de.janschuri.lunaticlib.platform.velocity.sender;
 
+import com.velocitypowered.api.command.CommandManager;
 import com.velocitypowered.api.proxy.Player;
 import com.velocitypowered.api.util.GameProfile;
 import de.janschuri.lunaticlib.DecisionMessage;
@@ -152,5 +153,14 @@ public class PlayerSenderImpl extends SenderImpl implements PlayerSender {
     @Override
     public boolean openDecisionGUI(DecisionMessage message) {
         return new  OpenDecisionGUIRequest().get(getServerName(), uuid, message);
+    }
+
+    @Override
+    public void runCommand(String command) {
+        Optional<com.velocitypowered.api.proxy.Player> player = VelocityLunaticLib.getProxy().getPlayer(uuid);
+        if (player.isPresent()) {
+            CommandManager commandManager = VelocityLunaticLib.getProxy().getCommandManager();
+            commandManager.executeAsync(player.get(), command);
+        }
     }
 }

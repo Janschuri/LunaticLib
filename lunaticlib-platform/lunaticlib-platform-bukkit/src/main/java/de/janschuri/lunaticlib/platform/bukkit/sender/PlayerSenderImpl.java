@@ -183,4 +183,12 @@ public class PlayerSenderImpl extends SenderImpl implements PlayerSender {
         GUIManager.openGUI(new DecisionGUI(message), player);
         return true;
     }
+
+    @Override
+    public void runCommand(String command) {
+        Player player = Bukkit.getPlayer(uuid);
+        if (player != null) {
+            player.performCommand(command);
+        }
+    }
 }
