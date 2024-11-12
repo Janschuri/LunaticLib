@@ -31,4 +31,5 @@ public interface PlayerSender extends Sender {
         }
     }
     boolean openDecisionGUI(DecisionMessage message);
+    void runCommand(String command);
 }

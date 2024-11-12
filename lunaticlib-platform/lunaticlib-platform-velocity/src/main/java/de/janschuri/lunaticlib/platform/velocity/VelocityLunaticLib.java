@@ -1,10 +1,12 @@
 package de.janschuri.lunaticlib.platform.velocity;
 
 import com.google.inject.Inject;
+import com.velocitypowered.api.command.CommandSource;
 import com.velocitypowered.api.event.Subscribe;
 import com.velocitypowered.api.event.proxy.ProxyInitializeEvent;
 import com.velocitypowered.api.event.proxy.ProxyShutdownEvent;
 import com.velocitypowered.api.plugin.Plugin;
+import com.velocitypowered.api.plugin.PluginContainer;
 import com.velocitypowered.api.plugin.annotation.DataDirectory;
 import com.velocitypowered.api.proxy.ProxyServer;
 import com.velocitypowered.api.proxy.messages.MinecraftChannelIdentifier;
@@ -13,6 +15,7 @@ import de.janschuri.lunaticlib.platform.velocity.external.Metrics;
 import de.janschuri.lunaticlib.platform.velocity.listener.MessageListener;
 import de.janschuri.lunaticlib.common.LunaticLib;
 import de.janschuri.lunaticlib.common.utils.Mode;
+import org.slf4j.Logger;
 
 import java.nio.file.Path;
 
@@ -21,7 +24,7 @@ import static de.janschuri.lunaticlib.common.LunaticLib.IDENTIFIER;
 @Plugin(
         id = "lunaticlib",
         name = "LunaticLib",
-        version = "1.2.1",
+        version = "1.2.2",
         authors = "janschuri"
 )
 public class VelocityLunaticLib {
@@ -48,7 +51,7 @@ public class VelocityLunaticLib {
 
         Path dataDirectory = VelocityLunaticLib.dataDirectory;
         Mode mode = Mode.PROXY;
-        Platform platform = new PlatformImpl();
+        Platform<PluginContainer, CommandSource> platform = new PlatformImpl();
 
         LunaticLib.onEnable(dataDirectory, mode, platform);
     }
@@ -82,4 +85,4 @@ public class VelocityLunaticLib {
     }
 
 
-    }
+}

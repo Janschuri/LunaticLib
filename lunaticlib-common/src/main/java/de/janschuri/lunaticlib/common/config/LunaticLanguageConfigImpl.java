@@ -1,6 +1,7 @@
 package de.janschuri.lunaticlib.common.config;
 
 import de.janschuri.lunaticlib.MessageKey;
+import de.janschuri.lunaticlib.common.logger.Logger;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.TextComponent;
 import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
@@ -20,6 +21,7 @@ public class LunaticLanguageConfigImpl extends LunaticConfigImpl implements de.j
 
         String message = getString(keyString);
         if (message == null) {
+            Logger.warnLog("Message not found: " + keyString);
             message = "Message not found: " + keyString;
         }
 
@@ -59,7 +61,7 @@ public class LunaticLanguageConfigImpl extends LunaticConfigImpl implements de.j
         list = getStringList("commands." + command + ".aliases");
 
         if (list == null) {
-            return new ArrayList<>();
+            return List.of(command);
         }
 
         return list;
@@ -70,7 +72,7 @@ public class LunaticLanguageConfigImpl extends LunaticConfigImpl implements de.j
         list = getStringList("commands." + command + ".subcommands." + subcommand + ".aliases");
 
         if (list == null) {
-            return new ArrayList<>();
+            return List.of(subcommand);
         }
 
         return list;
@@ -78,16 +80,40 @@ public class LunaticLanguageConfigImpl extends LunaticConfigImpl implements de.j
 
     @Override
     public Component getHelpHeader(String command) {
-        return LegacyComponentSerializer.legacyAmpersand().deserialize(getString("help_header").replace("%header%", getString("commands." + command + ".help_header")));
+        String headerRaw = getString("help_header");
+
+        if (headerRaw == null) {
+            headerRaw = "&7%header%";
+        }
+
+        return LegacyComponentSerializer.legacyAmpersand().deserialize(headerRaw
+                .replace("%header%", getCommandHelpHeader(command))
+        );
     }
 
     @Override
     public Component getHelpFooter(String command, int page, int maxPage) {
-        return LegacyComponentSerializer.legacyAmpersand().deserialize(getString("help_footer")
-                .replace("%header%", getString("commands." + command + ".help_header"))
+        String headerRaw = getString("help_footer");
+
+        if (headerRaw == null) {
+            headerRaw = "&7%header% &8| &7Page %page% of %pages%";
+        }
+
+        return LegacyComponentSerializer.legacyAmpersand().deserialize(headerRaw
+                .replace("%header%", getCommandHelpHeader(command))
                 .replace("%page%", String.valueOf(page))
                 .replace("%pages%", String.valueOf(maxPage))
         );
+    }
+
+    public String getCommandHelpHeader(String command) {
+        String commandHelpHeader = getString("commands." + command + ".help_header");
+
+        if (commandHelpHeader == null) {
+            commandHelpHeader = command;
+        }
+
+        return commandHelpHeader;
     }
 
     @Override

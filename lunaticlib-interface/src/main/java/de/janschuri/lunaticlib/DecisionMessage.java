@@ -18,6 +18,8 @@ public class DecisionMessage {
     private final String confirmCommand;
     private final String denyCommand;
 
+    private boolean executeFromBackend = false;
+
     public DecisionMessage(Component prefix, Component question, Component confirmText, Component denyText, Component confirmHover, Component denyHover, String confirmCommand, String denyCommand) {
         this.prefix = prefix;
         this.question = question;
@@ -38,6 +40,14 @@ public class DecisionMessage {
         this.denyHover = denyHover;
         this.confirmCommand = confirmCommand;
         this.denyCommand = denyCommand;
+    }
+
+    public void setExecuteFromBackend(boolean executeFromBackend) {
+        this.executeFromBackend = executeFromBackend;
+    }
+
+    public boolean isExecuteFromBackend() {
+        return executeFromBackend;
     }
 
     public Component getPrefix() {

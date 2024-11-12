@@ -1,7 +1,11 @@
 package de.janschuri.lunaticlib.platform.bukkit.inventorygui;
 
 import de.janschuri.lunaticlib.DecisionMessage;
+import de.janschuri.lunaticlib.common.futurerequests.requests.GetNameRequest;
+import de.janschuri.lunaticlib.common.futurerequests.requests.RunCommandRequest;
+import de.janschuri.lunaticlib.common.logger.Logger;
 import de.janschuri.lunaticlib.common.utils.Utils;
+import de.janschuri.lunaticlib.platform.bukkit.BukkitLunaticLib;
 import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
@@ -10,7 +14,9 @@ import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
+import java.util.List;
 import java.util.UUID;
+import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.TimeUnit;
 
 public class DecisionGUI extends InventoryGUI {
@@ -72,8 +78,16 @@ public class DecisionGUI extends InventoryGUI {
                         command = command.substring(1);
                     }
 
-                    player.performCommand(command);
-                    player.closeInventory();
+                    String commandToExecute = command;
+
+                    performCommand(player, commandToExecute)
+                            .thenAccept(success -> {
+                                if (success) {
+                                    Bukkit.getScheduler().runTask(BukkitLunaticLib.getInstance(), player::closeInventory);
+                                } else {
+                                    Logger.errorLog("Error while executing command: " + commandToExecute);
+                                }
+                            });
                 });
     }
 
@@ -96,8 +110,16 @@ public class DecisionGUI extends InventoryGUI {
                         command = command.substring(1);
                     }
 
-                    player.performCommand(command);
-                    player.closeInventory();
+                    String commandToExecute = command;
+
+                    performCommand(player, commandToExecute)
+                            .thenAccept(success -> {
+                                if (success) {
+                                    player.closeInventory();
+                                } else {
+                                    Logger.errorLog("Error while executing command: " + commandToExecute);
+                                }
+                            });
                 });
     }
 
@@ -112,5 +134,15 @@ public class DecisionGUI extends InventoryGUI {
 
         return new InventoryButton()
                 .creator(player -> itemStack);
+    }
+
+    private CompletableFuture<Boolean> performCommand(Player player, String command) {
+
+        if (decisionMessage.isExecuteFromBackend()) {
+            return new RunCommandRequest().getAsync(player.getUniqueId(), command);
+        }
+
+        boolean success = player.performCommand(command);
+        return CompletableFuture.completedFuture(success);
     }
 }

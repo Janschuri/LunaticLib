@@ -44,6 +44,7 @@ public final class LunaticLib {
             new HasEnoughMoneyRequest(),
             new WithdrawMoneyRequest(),
             new OpenDecisionGUIRequest(),
+            new RunCommandRequest(),
     };
 
     static void registerRequests() {
