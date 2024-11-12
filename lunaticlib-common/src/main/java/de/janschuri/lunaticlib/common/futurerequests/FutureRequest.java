@@ -106,6 +106,36 @@ public abstract class FutureRequest<R> {
         }
     }
 
+    protected CompletableFuture<R> sendRequestAsync(byte[] data) {
+        CompletableFuture<R> responseFuture = new CompletableFuture<>();
+        int requestId = requestIdGenerator.incrementAndGet();
+        requestMap.put(requestId, responseFuture);
+
+        ByteArrayDataOutput out = ByteStreams.newDataOutput();
+        out.writeUTF(requestName);
+        out.writeUTF(REQUEST);
+        out.writeInt(requestId);
+        out.write(data);
+
+        // Logging
+        Logger.debugLog("Sending request: " + requestName + " with id: " + requestId + " from " + getStackTrace());
+
+        if (!LunaticLib.getPlatform().sendPluginMessage(out.toByteArray())) {
+            Logger.debugLog("Cannot send plugin message: " + requestName + "-Request with id: " + requestId);
+            responseFuture.completeExceptionally(new RuntimeException("Failed to send plugin message"));
+        }
+
+        // Set timeout
+        return responseFuture.orTimeout(timeout, UNIT).whenComplete((result, throwable) -> {
+            if (throwable != null) {
+                if (!suppressTimeoutException) {
+                    Logger.errorLog("Error while waiting for response: " + requestName + " with id: " + requestId);
+                }
+                requestMap.remove(requestId);
+            }
+        });
+    }
+
     protected R sendRequest(String serverName, byte[] data) {
         CompletableFuture<R> responseFuture = new CompletableFuture<>();
         int requestId = requestIdGenerator.incrementAndGet();
@@ -170,5 +200,17 @@ public abstract class FutureRequest<R> {
             future.complete(null);
         }
         requestMap.clear();
+    }
+
+    private String getStackTrace() {
+        StackTraceElement[] stackTraceElements = Thread.currentThread().getStackTrace();
+        StringBuilder stackTrace = new StringBuilder();
+        for (int i = 0; i < stackTraceElements.length && i < 5; i++) {
+            stackTrace.append(" to ").append(stackTraceElements[i].getClassName())
+                    .append(" in ").append(stackTraceElements[i].getMethodName())
+                    .append(" at ").append(stackTraceElements[i].getLineNumber())
+                    .append("\n");
+        }
+        return stackTrace.toString();
     }
 }

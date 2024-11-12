@@ -49,10 +49,21 @@ public class RunCommandRequest extends FutureRequest<Boolean> {
         completeRequest(requestId, success);
     }
 
-    public boolean get(UUID uuid, String command) {
+    public CompletableFuture<Boolean> getAsync(UUID uuid, String command) {
         ByteArrayDataOutput out = ByteStreams.newDataOutput();
         out.writeUTF(uuid.toString());
         out.writeUTF(command);
-        return sendRequest(out.toByteArray());
+
+        // Send the request asynchronously
+        return sendRequestAsync(out.toByteArray()).thenApply(response -> {
+            if (response == null || !(response instanceof Boolean)) {
+                Logger.errorLog("RunCommandRequest: Error while running command.");
+                return false; // Indicate failure if the response is invalid
+            }
+            return (Boolean) response; // Return the actual success/failure response from Velocity
+        }).exceptionally(ex -> {
+            Logger.errorLog("RunCommandRequest: Exception occurred - " + ex.getMessage());
+            return false; // Indicate failure on exception
+        });
     }
 }
