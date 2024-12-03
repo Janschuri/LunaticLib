@@ -11,8 +11,15 @@ import java.util.*;
 
 public class LunaticLanguageConfigImpl extends LunaticConfigImpl implements de.janschuri.lunaticlib.LunaticLanguageConfig {
 
+    private final String language;
+
     public LunaticLanguageConfigImpl(Path dataDirectory, String language) {
-        super(dataDirectory, "lang.yml", "lang/" + language + ".yml");
+        super(dataDirectory, "lang.yml");
+        this.language = language;
+    }
+
+    public void load() {
+        super.load("lang/" + language + ".yml");
     }
 
     @Override

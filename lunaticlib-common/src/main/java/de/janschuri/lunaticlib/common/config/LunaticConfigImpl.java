@@ -17,30 +17,49 @@ import java.util.*;
 
 public class LunaticConfigImpl implements de.janschuri.lunaticlib.LunaticConfig {
 
-    private final String filePath;
-    private final String defaultFilePath;
-    private final Path dataDirectory;
+    private final Path path;
     private Map<String, Object> yamlMap = new LinkedHashMap<>();
 
-    public LunaticConfigImpl(Path dataDirectory, String filepath, String defaultFilePath) {
-        this.filePath = filepath;
-        this.defaultFilePath = defaultFilePath;
-        this.dataDirectory = dataDirectory;
+    public LunaticConfigImpl(Path dataDirectory, String filePath) {
+        this.path = Path.of(dataDirectory.toString(), filePath);
     }
+
+    public LunaticConfigImpl(Path path) {
+        this.path = path;
+    }
+
+
 
     @Override
     public void load() {
+        File file = path.toFile();
 
-        File file = new File(dataDirectory.toFile(), filePath);
+        if (!file.exists()) {
+            return;
+        }
 
-        if (!dataDirectory.resolve(filePath).getParent().toFile().exists()) {
+        try {
+            Node root = getNode(file);
+
+            yamlMap = loadYamlMap(root);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    @Override
+    public void load(String defaultFilePath) {
+
+        if (!path.getParent().toFile().exists()) {
             try {
-                Files.createDirectories(dataDirectory.resolve(filePath).getParent().toFile().toPath());
+                Files.createDirectories(path.getParent().toFile().toPath());
             } catch (IOException e) {
                 e.printStackTrace();
                 return;
             }
         }
+
+        File file = path.toFile();
 
         if (!file.exists()) {
             try (InputStream inputStream = getClass().getClassLoader().getResourceAsStream(defaultFilePath)) {
@@ -55,46 +74,24 @@ public class LunaticConfigImpl implements de.janschuri.lunaticlib.LunaticConfig 
         }
 
         try {
+            Node root = getNode(file);
 
-            LoaderOptions loaderOptions = new LoaderOptions();
-            loaderOptions.setProcessComments(true);
-            DumperOptions dumperOptions = new DumperOptions();
-            dumperOptions.setProcessComments(true);
-            dumperOptions.setSplitLines(false); // remove the line breaks
-            dumperOptions.setDefaultFlowStyle(DumperOptions.FlowStyle.BLOCK); // remove quotes
-            dumperOptions.setIndent(2);
-            Yaml yaml = new Yaml(new Constructor(loaderOptions), new Representer(dumperOptions), dumperOptions, loaderOptions);
-            Node root;
-
-            try (FileInputStream inputStream = new FileInputStream(file)) {
-                try (InputStreamReader reader = new InputStreamReader(inputStream, StandardCharsets.UTF_8)) {
-                    root = yaml.compose(reader);
-                }
-            }
-
-            Node defaultRoot = null;
-
-            try (InputStream inputStream = getClass().getClassLoader().getResourceAsStream(defaultFilePath)) {
-                if (inputStream != null) {
-                    try (InputStreamReader reader = new InputStreamReader(inputStream, StandardCharsets.UTF_8)) {
-                        defaultRoot = yaml.compose(reader);
-                    }
-                }
-            }
+            Node defaultRoot = getDefaultNode(defaultFilePath);
 
             Node newNode;
 
             if (root == null) {
-                Logger.errorLog("Error while loading config file: " + dataDirectory.resolve(filePath).getParent() + "/" + file.getName());
+                Logger.errorLog("Error while loading config file: " + path.getParent() + "/" + file.getName());
                 newNode = defaultRoot;
             } else {
-                Logger.infoLog("Loaded config file: " + dataDirectory.resolve(filePath).getParent() + "/" + file.getName());
+                Logger.infoLog("Loaded config file: " + path.getParent() + "/" + file.getName());
                 newNode = mergeNodes(root, defaultRoot);
             }
 
             try (FileOutputStream fos = new FileOutputStream(file);
                  OutputStreamWriter osw = new OutputStreamWriter(fos, StandardCharsets.UTF_8);
                  BufferedWriter writer = new BufferedWriter(osw)) {
+                Yaml yaml = getYaml();
                  yaml.serialize(newNode, writer);
             }
 
@@ -102,6 +99,50 @@ public class LunaticConfigImpl implements de.janschuri.lunaticlib.LunaticConfig 
 
         } catch (IOException e) {
             e.printStackTrace();
+        }
+    }
+
+    private static Yaml getYaml() {
+        LoaderOptions loaderOptions = new LoaderOptions();
+        loaderOptions.setProcessComments(true);
+        DumperOptions dumperOptions = new DumperOptions();
+        dumperOptions.setProcessComments(true);
+        dumperOptions.setSplitLines(false); // remove the line breaks
+        dumperOptions.setDefaultFlowStyle(DumperOptions.FlowStyle.BLOCK); // remove quotes
+        dumperOptions.setIndent(2);
+        return new Yaml(new Constructor(loaderOptions), new Representer(dumperOptions), dumperOptions, loaderOptions);
+    }
+
+    private Node getNode(File file) throws IOException {
+        Yaml yaml = getYaml();
+
+        try (FileInputStream inputStream = new FileInputStream(file)) {
+            try (InputStreamReader reader = new InputStreamReader(inputStream, StandardCharsets.UTF_8)) {
+                return yaml.compose(reader);
+            } catch (IOException e) {
+                e.printStackTrace();
+                return null;
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+    private Node getDefaultNode(String defaultFilePath) throws IOException {
+        Yaml yaml = getYaml();
+
+        try (InputStream inputStream = getClass().getClassLoader().getResourceAsStream(defaultFilePath)) {
+            if (inputStream != null) {
+                try (InputStreamReader reader = new InputStreamReader(inputStream, StandardCharsets.UTF_8)) {
+                    return yaml.compose(reader);
+                }
+            } else {
+                throw new IOException("Resource '" + defaultFilePath + "' not found");
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+            return null;
         }
     }
 
@@ -116,16 +157,9 @@ public class LunaticConfigImpl implements de.janschuri.lunaticlib.LunaticConfig 
     }
 
     private void save() {
-        File file = new File(dataDirectory.toFile(), filePath);
+        File file = path.toFile();
 
-        LoaderOptions loaderOptions = new LoaderOptions();
-        loaderOptions.setProcessComments(true);
-        DumperOptions dumperOptions = new DumperOptions();
-        dumperOptions.setProcessComments(true);
-        dumperOptions.setSplitLines(false); // remove the line breaks
-        dumperOptions.setDefaultFlowStyle(DumperOptions.FlowStyle.BLOCK); // remove quotes
-        dumperOptions.setIndent(2);
-        Yaml yaml = new Yaml(new Constructor(loaderOptions), new Representer(dumperOptions), dumperOptions, loaderOptions);
+        Yaml yaml = getYaml();
         Node root = null;
 
         yaml.dump(yamlMap);
@@ -142,10 +176,10 @@ public class LunaticConfigImpl implements de.janschuri.lunaticlib.LunaticConfig 
         Node newNode;
 
         if (root == null) {
-            Logger.errorLog("Error while loading config file: " + filePath);
+            Logger.errorLog("Error while loading config file: " + path);
             newNode = savingValues;
         } else {
-            Logger.infoLog("Loaded config file: " + filePath);
+            Logger.infoLog("Loaded config file: " + path);
             newNode = mergeNodes(savingValues, root);
         }
 

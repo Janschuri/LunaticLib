@@ -6,6 +6,7 @@ import java.util.Map;
 public interface LunaticConfig {
 
     void load();
+    void load(String defaultConfig);
 
     String getString(String path, String defaultValue);
     String getString(String path);
