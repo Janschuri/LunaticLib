@@ -18,18 +18,14 @@ public class GUIManager {
     private static final Map<Inventory, InventoryHandler> activeInventories = new HashMap<>();
 
     public static void openGUI(InventoryGUI gui, Player player) {
-        openGUI(gui, player, true);
-    }
-
-    public static void openGUI(InventoryGUI gui, Player player, boolean openInventory) {
         registerHandledInventory(gui.getInventory(), gui);
 
-
-        if (openInventory) {
+        if (player.getOpenInventory().getTopInventory().equals(gui.getInventory())) {
+            return;
+        }
                 Bukkit.getScheduler().runTask(BukkitLunaticLib.getInstance(), () -> {
                     player.openInventory(gui.getInventory());
                 });
-        }
 
     }
 
