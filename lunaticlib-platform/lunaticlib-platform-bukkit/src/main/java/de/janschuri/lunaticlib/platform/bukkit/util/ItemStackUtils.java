@@ -101,14 +101,31 @@ public class ItemStackUtils {
 
     public static ItemStack mapToItemStack(Map<String, Object> map) {
         Logger.debugLog("Map: " + map);
-        Object obj = ConfigurationSerialization.deserializeObject(map);
 
+        for (Map.Entry<String, Object> entry : map.entrySet()) {
+            if (entry.getValue() instanceof String) {
+                try {
+                    map.put(entry.getKey(), Integer.parseInt((String) entry.getValue()));
+                } catch (NumberFormatException ignored) {}
+            }
+        }
+
+        Object obj = ConfigurationSerialization.deserializeObject(map);
         try {
             ItemStack item = (ItemStack) obj;
 
             if (map.containsKey("meta")) {
                 try {
                     Map<String, Object> metaMap = (Map<String, Object>) map.get("meta");
+
+                    for (Map.Entry<String, Object> entry : metaMap.entrySet()) {
+                        if (entry.getValue() instanceof String) {
+                            try {
+                                metaMap.put(entry.getKey(), Integer.parseInt((String) entry.getValue()));
+                            } catch (NumberFormatException ignored) {}
+                        }
+                    }
+
                     Object metaObj = ConfigurationSerialization.deserializeObject(metaMap);
                     ItemMeta meta = (ItemMeta) metaObj;
                     assert item != null;
@@ -124,4 +141,5 @@ public class ItemStackUtils {
             return null;
         }
     }
+
 }
