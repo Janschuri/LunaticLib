@@ -21,6 +21,7 @@ public class GUIManager {
         registerHandledInventory(gui.getInventory(), gui);
 
         if (player.getOpenInventory().getTopInventory().equals(gui.getInventory())) {
+            gui.decorate(player);
             return;
         }
                 Bukkit.getScheduler().runTask(BukkitLunaticLib.getInstance(), () -> {

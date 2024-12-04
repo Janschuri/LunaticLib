@@ -24,13 +24,8 @@ public class DecisionGUI extends InventoryGUI {
     private final DecisionMessage decisionMessage;
 
     public DecisionGUI(DecisionMessage decisionMessage) {
-        super(createInventory(decisionMessage));
+        super(9, LegacyComponentSerializer.legacySection().serialize(decisionMessage.getPrefix()));
         this.decisionMessage = decisionMessage;
-    }
-
-    private static Inventory createInventory(DecisionMessage decisionMessage) {
-        String title = LegacyComponentSerializer.legacySection().serialize(decisionMessage.getPrefix());
-        return Bukkit.createInventory(null, 9, title);
     }
 
     @Override

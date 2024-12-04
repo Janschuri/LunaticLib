@@ -4,6 +4,7 @@ import de.janschuri.lunaticlib.common.logger.Logger;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.configuration.serialization.ConfigurationSerialization;
+import org.bukkit.entity.EntityType;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.inventory.meta.SkullMeta;
@@ -140,6 +141,11 @@ public class ItemStackUtils {
             Logger.debugLog("Error: " + e.getMessage());
             return null;
         }
+    }
+
+    public static ItemStack getSpawnEgg(EntityType entityType) {
+        Material material = Material.getMaterial(entityType.name() + "_SPAWN_EGG");
+        return material == null ? new ItemStack(Material.GHAST_SPAWN_EGG) : new ItemStack(material);
     }
 
 }

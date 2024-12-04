@@ -1,10 +1,12 @@
 package de.janschuri.lunaticlib.platform.bukkit.inventorygui;
 
+import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.inventory.*;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -20,9 +22,28 @@ public abstract class InventoryGUI implements InventoryHandler {
     public InventoryGUI(Inventory inventory) {
         this.inventory = inventory;
     }
+    public InventoryGUI() {
+        this.inventory = createInventory();
+    }
+    public InventoryGUI(int size, @NotNull String title) {
+        this.inventory = createInventory();
+    }
+    public InventoryGUI(InventoryGUI gui) {
+        this.inventory = gui.getInventory();
+    }
 
     public Inventory getInventory() {
         return this.inventory;
+    }
+
+    protected Inventory createInventory(int size, @NotNull String title)
+    {
+        return Bukkit.createInventory(null, size, title);
+    }
+
+    protected Inventory createInventory()
+    {
+        return Bukkit.createInventory(null, 54, this.getClass().getSimpleName());
     }
 
     public void addButton(int slot, InventoryButton button) {
@@ -90,5 +111,9 @@ public abstract class InventoryGUI implements InventoryHandler {
     @Override
     public int getSize() {
         return this.inventory.getSize();
+    }
+
+    protected void reloadGui(Player player) {
+        GUIManager.openGUI(this, player);
     }
 }
