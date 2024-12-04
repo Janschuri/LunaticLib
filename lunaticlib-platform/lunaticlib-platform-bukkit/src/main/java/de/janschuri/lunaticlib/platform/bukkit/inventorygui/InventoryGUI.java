@@ -1,6 +1,7 @@
 package de.janschuri.lunaticlib.platform.bukkit.inventorygui;
 
 import org.bukkit.Bukkit;
+import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.inventory.*;
@@ -55,10 +56,16 @@ public abstract class InventoryGUI implements InventoryHandler {
     }
 
     public void decorate(Player player) {
-        this.buttonMap.forEach((slot, button) -> {
-            ItemStack icon = button.getIconCreator().apply(player);
-            this.inventory.setItem(slot, icon);
-        });
+        for (int i = 0; i < this.inventory.getSize(); i++) {
+            InventoryButton button = this.buttonMap.get(i);
+            if (button != null) {
+                ItemStack icon = button.getIconCreator().apply(player);
+                this.inventory.setItem(i, icon);
+            } else {
+                ItemStack item = emptyButton(i).getIconCreator().apply(player);
+                this.inventory.setItem(i, item);
+            }
+        }
     }
 
     @Override
@@ -115,5 +122,11 @@ public abstract class InventoryGUI implements InventoryHandler {
 
     protected void reloadGui(Player player) {
         GUIManager.openGUI(this, player);
+    }
+
+    protected InventoryButton emptyButton(int slot) {
+        return new InventoryButton()
+                .creator((player) -> new ItemStack(Material.GRAY_STAINED_GLASS_PANE))
+                .consumer(event -> {});
     }
 }
