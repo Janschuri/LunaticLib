@@ -78,9 +78,11 @@ public class PlatformImpl implements Platform<JavaPlugin, CommandSender> {
             Logger.debugLog("Registering command " + lunaticCommand.getName() + " with aliases " + aliases.toString());
             Logger.debugLog("Command: " + cmd.toString());
 
-            aliases.forEach(alias -> {
-                commandMap.register(alias, plugin.getName(), cmd);
-            });
+            synchronized (aliases) {
+                aliases.forEach(alias -> {
+                    commandMap.register(alias, plugin.getName(), cmd);
+                });
+            }
         } catch (NoSuchFieldException | IllegalAccessException e) {
             e.printStackTrace();
         }

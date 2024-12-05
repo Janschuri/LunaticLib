@@ -103,6 +103,10 @@ public class ItemStackUtils {
     public static ItemStack mapToItemStack(Map<String, Object> map) {
         Logger.debugLog("Map: " + map);
 
+        if (map == null) {
+            return null;
+        }
+
         for (Map.Entry<String, Object> entry : map.entrySet()) {
             if (entry.getValue() instanceof String) {
                 try {
