@@ -64,7 +64,7 @@ public class GUIManager {
 
         if (handler != null) {
 
-            int guiSize = handler.getSize();
+            int guiSize = event.getView().getTopInventory().getSize();
 
             Logger.infoLog("GUI size: " + guiSize);
 

@@ -1,5 +1,7 @@
 package de.janschuri.lunaticlib.platform.bukkit.inventorygui;
 
+import de.janschuri.lunaticlib.common.logger.Logger;
+import de.janschuri.lunaticlib.common.utils.Utils;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
@@ -7,44 +9,39 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.inventory.*;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
-import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
 
 public abstract class InventoryGUI implements InventoryHandler {
 
     private final Inventory inventory;
+    private final static Map<Inventory, Boolean> processingClickEvent = new HashMap<>();
     private final Map<Integer, InventoryButton> buttonMap = new HashMap<>();
     private final List<PlayerInvButton> playerInvButtons = new ArrayList<>();
 
     public InventoryGUI(Inventory inventory) {
-        this.inventory = inventory;
+        if (inventory != null && inventory.getSize() == getSize()) {
+            this.inventory = inventory;
+        } else {
+            Logger.debugLog("Inventory is null or has wrong size. Creating new inventory.");
+            this.inventory = createInventory();
+        }
     }
+
     public InventoryGUI() {
         this.inventory = createInventory();
-    }
-    public InventoryGUI(int size, @NotNull String title) {
-        this.inventory = createInventory();
-    }
-    public InventoryGUI(InventoryGUI gui) {
-        this.inventory = gui.getInventory();
     }
 
     public Inventory getInventory() {
         return this.inventory;
     }
 
-    protected Inventory createInventory(int size, @NotNull String title)
-    {
-        return Bukkit.createInventory(null, size, title);
-    }
-
-    protected Inventory createInventory()
-    {
-        return Bukkit.createInventory(null, 54, this.getClass().getSimpleName());
+    private Inventory createInventory() {
+        return Bukkit.createInventory(null, getSize(), getTitle());
     }
 
     public void addButton(int slot, InventoryButton button) {
@@ -56,14 +53,22 @@ public abstract class InventoryGUI implements InventoryHandler {
     }
 
     public void decorate(Player player) {
+        Logger.debugLog("Decorating:" + this.buttonMap);
+
         for (int i = 0; i < this.inventory.getSize(); i++) {
             InventoryButton button = this.buttonMap.get(i);
+            ItemStack icon = null;
+
             if (button != null) {
-                ItemStack icon = button.getIconCreator().apply(player);
-                this.inventory.setItem(i, icon);
+                icon = button.getIconCreator().apply(player);
             } else {
-                ItemStack item = emptyButton(i).getIconCreator().apply(player);
-                this.inventory.setItem(i, item);
+                icon = emptyButton(i).getIconCreator().apply(player);
+            }
+
+            ItemStack item = this.inventory.getItem(i);
+
+            if (!icon.equals(item)) {
+                this.inventory.setItem(i, icon);
             }
         }
     }
@@ -115,12 +120,16 @@ public abstract class InventoryGUI implements InventoryHandler {
     public void onPlayerInvDrag(InventoryDragEvent event) {
     }
 
-    @Override
     public int getSize() {
-        return this.inventory.getSize();
+        return 54;
+    }
+
+    public String getTitle() {
+        return this.getClass().getSimpleName();
     }
 
     protected void reloadGui(Player player) {
+        this.buttonMap.clear();
         GUIManager.openGUI(this, player);
     }
 
@@ -128,5 +137,17 @@ public abstract class InventoryGUI implements InventoryHandler {
         return new InventoryButton()
                 .creator((player) -> new ItemStack(Material.GRAY_STAINED_GLASS_PANE))
                 .consumer(event -> {});
+    }
+
+    protected boolean processingClickEvent() {
+        boolean result = processingClickEvent.getOrDefault(this.inventory, false);
+
+        processingClickEvent.put(this.inventory, true);
+        Runnable runnable = () -> {
+            processingClickEvent.remove(this.inventory);
+        };
+
+        Utils.scheduleTask(runnable, 100, TimeUnit.MILLISECONDS);
+        return result;
     }
 }

@@ -18,14 +18,14 @@ import java.util.Map;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
-public class SelectMobGUI extends InventoryGUI {
+public class SelectMobGUI extends ListGUI<EntityType> {
 
-    private Inventory inventory;
+    private final Inventory inventory;
     private static final Map<Inventory, Consumer<EntityType>> consumerMap = new HashMap<>();
 
     public SelectMobGUI(Inventory inventory) {
         super(inventory);
-        this.inventory = inventory;
+        this.inventory = getInventory();
     }
 
     public SelectMobGUI() {
@@ -43,31 +43,7 @@ public class SelectMobGUI extends InventoryGUI {
     }
 
     @Override
-    public void decorate(Player player) {
-        List<EntityType> killableMobs = getKillableMobs();
-
-        Logger.debugLog("Killable mobs: " + killableMobs);
-
-        for (int i = 0; i < killableMobs.size(); i++) {
-            if (i >= 54) {
-                break;
-            }
-
-            EntityType entityType = killableMobs.get(i);
-            InventoryButton button = createMobButton(entityType);
-            addButton(i, button);
-        }
-
-        super.decorate(player);
-    }
-
-    public static List<EntityType> getKillableMobs() {
-        return Arrays.stream(EntityType.values())
-                .filter(EntityType::isAlive)
-                .collect(Collectors.toList());
-    }
-
-    private InventoryButton createMobButton(EntityType entityType) {
+    protected InventoryButton listItemButton(EntityType entityType) {
         ItemStack itemStack = ItemStackUtils.getSpawnEgg(entityType);
 
         SpawnEggMeta meta = (SpawnEggMeta) itemStack.getItemMeta();
@@ -82,5 +58,12 @@ public class SelectMobGUI extends InventoryGUI {
                 .consumer(event -> {
                     getConsumer().accept(entityType);
                 });
+    }
+
+    @Override
+    protected List<EntityType> getItems() {
+        return Arrays.stream(EntityType.values())
+                .filter(EntityType::isAlive)
+                .collect(Collectors.toList());
     }
 }

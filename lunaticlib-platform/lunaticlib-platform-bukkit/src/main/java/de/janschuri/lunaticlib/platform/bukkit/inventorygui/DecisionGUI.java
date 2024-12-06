@@ -24,7 +24,7 @@ public class DecisionGUI extends InventoryGUI {
     private final DecisionMessage decisionMessage;
 
     public DecisionGUI(DecisionMessage decisionMessage) {
-        super(9, LegacyComponentSerializer.legacySection().serialize(decisionMessage.getPrefix()));
+        super();
         this.decisionMessage = decisionMessage;
     }
 
@@ -139,5 +139,13 @@ public class DecisionGUI extends InventoryGUI {
 
         boolean success = player.performCommand(command);
         return CompletableFuture.completedFuture(success);
+    }
+
+    public int getSize() {
+        return 9;
+    }
+
+    public String getTitle() {
+        return LegacyComponentSerializer.legacySection().serialize(decisionMessage.getPrefix());
     }
 }
