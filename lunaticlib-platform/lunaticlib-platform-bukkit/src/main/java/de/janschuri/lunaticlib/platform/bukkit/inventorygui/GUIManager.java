@@ -11,7 +11,6 @@ import org.bukkit.event.inventory.InventoryDragEvent;
 import org.bukkit.event.inventory.InventoryOpenEvent;
 import org.bukkit.inventory.Inventory;
 
-import javax.security.auth.login.LoginException;
 import java.util.*;
 
 public class GUIManager {
@@ -23,7 +22,7 @@ public class GUIManager {
         registerHandledInventory(inventory, gui);
 
         if (player.getOpenInventory().getTopInventory().equals(inventory)) {
-            gui.decorate(player);
+            gui.init(player);
             return;
         }
                 Bukkit.getScheduler().runTask(BukkitLunaticLib.getInstance(), () -> {

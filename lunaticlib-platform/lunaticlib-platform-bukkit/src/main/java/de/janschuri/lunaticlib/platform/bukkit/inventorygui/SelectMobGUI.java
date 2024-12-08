@@ -1,8 +1,8 @@
 package de.janschuri.lunaticlib.platform.bukkit.inventorygui;
 
+import de.janschuri.lunaticlib.platform.bukkit.inventorygui.list.ListGUI;
 import de.janschuri.lunaticlib.platform.bukkit.util.ItemStackUtils;
 import org.bukkit.entity.EntityType;
-import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.SpawnEggMeta;
 
@@ -35,7 +35,7 @@ public class SelectMobGUI extends ListGUI<EntityType> {
     }
 
     @Override
-    protected InventoryButton listItemButton(EntityType entityType) {
+    public InventoryButton listItemButton(EntityType entityType) {
         ItemStack itemStack = ItemStackUtils.getSpawnEgg(entityType);
 
         SpawnEggMeta meta = (SpawnEggMeta) itemStack.getItemMeta();
@@ -53,7 +53,7 @@ public class SelectMobGUI extends ListGUI<EntityType> {
     }
 
     @Override
-    protected List<EntityType> getItems() {
+    public List<EntityType> getItems() {
         return Arrays.stream(EntityType.values())
                 .filter(EntityType::isAlive)
                 .collect(Collectors.toList());

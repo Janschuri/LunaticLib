@@ -1,6 +1,5 @@
 package de.janschuri.lunaticlib.platform.bukkit.inventorygui;
 
-import de.janschuri.lunaticlib.common.logger.Logger;
 import de.janschuri.lunaticlib.common.utils.Utils;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
@@ -60,15 +59,18 @@ public abstract class InventoryGUI implements InventoryHandler {
         return Bukkit.createInventory(null, getSize(), getTitle());
     }
 
+    @Override
     public void addButton(int slot, InventoryButton button) {
         this.buttonMap.put(slot, button);
     }
 
+    @Override
     public void addButton(PlayerInvButton button) {
         this.playerInvButtons.add(button);
     }
 
-    public void decorate(Player player) {
+    @Override
+    public void init(Player player) {
         for (int i = 0; i < getInventory().getSize(); i++) {
             InventoryButton button = this.buttonMap.get(i);
             ItemStack icon;
@@ -96,7 +98,8 @@ public abstract class InventoryGUI implements InventoryHandler {
             }
 
             if (item.getType() == icon.getType()) {
-                icon.setItemMeta(item.getItemMeta());
+                item.setItemMeta(icon.getItemMeta());
+                getInventory().setItem(i, item);
                 continue;
             }
 
@@ -118,7 +121,7 @@ public abstract class InventoryGUI implements InventoryHandler {
 
     @Override
     public void onOpen(InventoryOpenEvent event) {
-        this.decorate((Player) event.getPlayer());
+        this.init((Player) event.getPlayer());
     }
 
     @Override
@@ -160,7 +163,7 @@ public abstract class InventoryGUI implements InventoryHandler {
         return this.getClass().getSimpleName();
     }
 
-    protected void reloadGui(Player player) {
+    public void reloadGui(Player player) {
         this.buttonMap.clear();
         GUIManager.openGUI(this, player);
     }
@@ -171,7 +174,7 @@ public abstract class InventoryGUI implements InventoryHandler {
                 .consumer(event -> {});
     }
 
-    protected boolean processingClickEvent() {
+    public boolean processingClickEvent() {
         boolean result = processingClickEvent.getOrDefault(this.id, false);
 
         processingClickEvent.put(this.id, true);
