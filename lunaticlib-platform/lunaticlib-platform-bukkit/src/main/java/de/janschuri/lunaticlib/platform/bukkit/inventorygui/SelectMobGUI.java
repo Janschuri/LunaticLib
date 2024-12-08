@@ -1,13 +1,8 @@
 package de.janschuri.lunaticlib.platform.bukkit.inventorygui;
 
-import de.janschuri.lunaticlib.common.logger.Logger;
 import de.janschuri.lunaticlib.platform.bukkit.util.ItemStackUtils;
-import org.bukkit.Material;
-import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
-import org.bukkit.event.inventory.InventoryClickEvent;
-import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.SpawnEggMeta;
 
@@ -20,26 +15,23 @@ import java.util.stream.Collectors;
 
 public class SelectMobGUI extends ListGUI<EntityType> {
 
-    private final Inventory inventory;
-    private static final Map<Inventory, Consumer<EntityType>> consumerMap = new HashMap<>();
-
-    public SelectMobGUI(Inventory inventory) {
-        super(inventory);
-        this.inventory = getInventory();
-    }
+    private static final Map<Integer, Consumer<EntityType>> consumerMap = new HashMap<>();
 
     public SelectMobGUI() {
         super();
-        this.inventory = getInventory();
+    }
+
+    public SelectMobGUI(int id) {
+        super(id);
     }
 
     public SelectMobGUI consumer(Consumer<EntityType> consumer) {
-        consumerMap.put(this.inventory, consumer);
+        consumerMap.put(getId(), consumer);
         return this;
     }
 
     public Consumer<EntityType> getConsumer() {
-        return consumerMap.get(this.inventory);
+        return consumerMap.get(getId());
     }
 
     @Override

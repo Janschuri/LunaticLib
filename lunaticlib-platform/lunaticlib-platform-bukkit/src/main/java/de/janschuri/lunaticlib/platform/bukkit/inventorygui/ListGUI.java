@@ -15,14 +15,14 @@ import java.util.Map;
 
 public abstract class ListGUI<T> extends InventoryGUI {
 
-    private static final Map<Inventory, Integer> pageMap = new HashMap<>();
+    private static final Map<Integer, Integer> pageMap = new HashMap<>();
 
     public ListGUI() {
         super();
     }
 
-    public ListGUI(Inventory inventory) {
-        super(inventory);
+    public ListGUI(int id) {
+        super(id);
     }
 
     @Override
@@ -44,7 +44,6 @@ public abstract class ListGUI<T> extends InventoryGUI {
             addButton(i+9, button);
         }
 
-        Logger.debugLog("Page: " + page + " Pages: " + pageCount);
         if (page > 0) {
             addButton(48, previousPageButton());
         }
@@ -63,13 +62,13 @@ public abstract class ListGUI<T> extends InventoryGUI {
     protected abstract List<T> getItems();
 
     protected int getPage() {
-        return pageMap.getOrDefault(getInventory(), 0);
+        return pageMap.getOrDefault(getId(), 0);
     }
 
     protected void nextPage(Player player) {
         if (getPage() < getPageCount()) {
             int newPage = getPage() + 1;
-            pageMap.put(getInventory(), newPage);
+            pageMap.put(getId(), newPage);
             reloadGui(player);
         }
     }
@@ -77,7 +76,7 @@ public abstract class ListGUI<T> extends InventoryGUI {
     protected void previousPage(Player player) {
         if (getPage() > 0) {
             int newPage = getPage() - 1;
-            pageMap.put(getInventory(), newPage);
+            pageMap.put(getId(), newPage);
             reloadGui(player);
         }
     }

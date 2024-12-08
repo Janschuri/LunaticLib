@@ -4,6 +4,7 @@ import de.janschuri.lunaticlib.common.logger.Logger;
 import de.janschuri.lunaticlib.common.utils.Utils;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
+import org.bukkit.entity.HumanEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.inventory.*;
@@ -15,29 +16,44 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicInteger;
 
 public abstract class InventoryGUI implements InventoryHandler {
 
-    private final Inventory inventory;
-    private final static Map<Inventory, Boolean> processingClickEvent = new HashMap<>();
+    private final int id;
+    private final static AtomicInteger idCreator = new AtomicInteger(0);
+    private final static Map<Integer, Inventory> inventoryMap = new HashMap<>();
+    private final static Map<Integer, Boolean> processingClickEvent = new HashMap<>();
+
     private final Map<Integer, InventoryButton> buttonMap = new HashMap<>();
     private final List<PlayerInvButton> playerInvButtons = new ArrayList<>();
 
-    public InventoryGUI(Inventory inventory) {
-        if (inventory != null && inventory.getSize() == getSize()) {
-            this.inventory = inventory;
-        } else {
-            Logger.debugLog("Inventory is null or has wrong size. Creating new inventory.");
-            this.inventory = createInventory();
+    public InventoryGUI() {
+        this(idCreator.getAndIncrement());
+    }
+
+    public InventoryGUI(int id) {
+        this.id = id == -1 ? idCreator.getAndIncrement() : id;
+
+        if (!inventoryMap.containsKey(this.id)) {
+            inventoryMap.put(this.id, createInventory());
         }
     }
 
-    public InventoryGUI() {
-        this.inventory = createInventory();
+    public InventoryGUI inventory(Inventory inventory) {
+        if (inventory != getInventory()) {
+            getInventory().getViewers().forEach(HumanEntity::closeInventory);
+            inventoryMap.put(this.id, inventory);
+        }
+        return this;
+    }
+
+    public int getId() {
+        return this.id;
     }
 
     public Inventory getInventory() {
-        return this.inventory;
+        return inventoryMap.get(this.id);
     }
 
     private Inventory createInventory() {
@@ -53,11 +69,9 @@ public abstract class InventoryGUI implements InventoryHandler {
     }
 
     public void decorate(Player player) {
-        Logger.debugLog("Decorating:" + this.buttonMap);
-
-        for (int i = 0; i < this.inventory.getSize(); i++) {
+        for (int i = 0; i < getInventory().getSize(); i++) {
             InventoryButton button = this.buttonMap.get(i);
-            ItemStack icon = null;
+            ItemStack icon;
 
             if (button != null) {
                 icon = button.getIconCreator().apply(player);
@@ -65,11 +79,28 @@ public abstract class InventoryGUI implements InventoryHandler {
                 icon = emptyButton(i).getIconCreator().apply(player);
             }
 
-            ItemStack item = this.inventory.getItem(i);
+            ItemStack item = getInventory().getItem(i);
 
-            if (!icon.equals(item)) {
-                this.inventory.setItem(i, icon);
+            if (item == null) {
+                getInventory().setItem(i, icon);
+                continue;
             }
+
+            if (item.equals(icon)) {
+                continue;
+            }
+
+            if (item.isSimilar(icon)) {
+                icon.setAmount(item.getAmount());
+                continue;
+            }
+
+            if (item.getType() == icon.getType()) {
+                icon.setItemMeta(item.getItemMeta());
+                continue;
+            }
+
+            getInventory().setItem(i, icon);
         }
     }
 
@@ -112,6 +143,7 @@ public abstract class InventoryGUI implements InventoryHandler {
         for (PlayerInvButton playerInvButton : this.playerInvButtons) {
             if (playerInvButton.getCondition().apply(event)) {
                 playerInvButton.getEventConsumer().accept(event);
+                break;
             }
         }
     }
@@ -140,11 +172,11 @@ public abstract class InventoryGUI implements InventoryHandler {
     }
 
     protected boolean processingClickEvent() {
-        boolean result = processingClickEvent.getOrDefault(this.inventory, false);
+        boolean result = processingClickEvent.getOrDefault(this.id, false);
 
-        processingClickEvent.put(this.inventory, true);
+        processingClickEvent.put(this.id, true);
         Runnable runnable = () -> {
-            processingClickEvent.remove(this.inventory);
+            processingClickEvent.remove(this.id);
         };
 
         Utils.scheduleTask(runnable, 100, TimeUnit.MILLISECONDS);
