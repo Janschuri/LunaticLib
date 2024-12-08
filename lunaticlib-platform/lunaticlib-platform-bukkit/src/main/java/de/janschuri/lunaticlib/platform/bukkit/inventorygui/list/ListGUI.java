@@ -28,17 +28,22 @@ public abstract class ListGUI<T> extends InventoryGUI implements ListHandler<T> 
     public void init(Player player) {
         int pageSize = getPageSize();
 
-        if (this instanceof SearchableList<?>) {
-            ((SearchableList<T>) this).addSearchButtons(player);
-            ((SearchableList<T>) this).addSearchFilter(player);
+        if (this instanceof SearchableList<?> searchableList) {
+            searchableList.addSearchButtons(player);
+            searchableList.addSearchFilter(player);
         }
 
         loadProcessedItems(player);
 
         List<T> items = getProcessedItems();
 
-        if (this instanceof PaginatedList<?>) {
-            items = (List<T>) ((PaginatedList<?>) this).paginate(items);
+        if (this instanceof SortedList<?> sortedList) {
+            items = (List<T>) sortedList.sortItems(player, items);
+            sortedList.addSorterButtons(player);
+        }
+
+        if (this instanceof PaginatedList<?> paginatedList) {
+            items = (List<T>) paginatedList.paginate(items);
             ((PaginatedList<?>) this).addPaginateButtons(player);
         }
 
