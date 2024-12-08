@@ -1,21 +1,24 @@
 package de.janschuri.lunaticlib.platform.bukkit.inventorygui;
 
-import com.mysql.cj.log.Log;
-import de.janschuri.lunaticlib.common.logger.Logger;
+import de.janschuri.lunaticlib.platform.bukkit.BukkitLunaticLib;
 import de.janschuri.lunaticlib.platform.bukkit.util.ItemStackUtils;
+import de.rapha149.signgui.SignGUI;
+import de.rapha149.signgui.SignGUIAction;
+import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
-import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Predicate;
 
 public abstract class ListGUI<T> extends InventoryGUI {
 
     private static final Map<Integer, Integer> pageMap = new HashMap<>();
+    private final static Map<Integer, String> searchMap = new HashMap<>();
 
     public ListGUI() {
         super();
@@ -30,7 +33,7 @@ public abstract class ListGUI<T> extends InventoryGUI {
         int page = getPage();
         int pageCount = getPageCount();
         int pageSize = getPageSize();
-        List<T> paginatedItems = getItems(page);
+        List<T> paginatedItems = getProcessedItems(player);
 
 
         for (int i = 0; i < pageSize; i++) {
@@ -44,14 +47,18 @@ public abstract class ListGUI<T> extends InventoryGUI {
             addButton(i+9, button);
         }
 
-        if (page > 0) {
-            addButton(48, previousPageButton());
+        if (getSearchFilter(player) != null) {
+            addButton(getSearchSlot(), createSearchButton());
         }
 
-        addButton(49, currentPageButton());
+        if (page > 0) {
+            addButton(previousPageSlot(), previousPageButton());
+        }
+
+        addButton(currentPageSlot(), currentPageButton());
 
         if (page < pageCount) {
-            addButton(50, createNextPageButton());
+            addButton(nextPageSlot(), createNextPageButton());
         }
 
         super.decorate(player);
@@ -85,6 +92,15 @@ public abstract class ListGUI<T> extends InventoryGUI {
         return 36;
     }
 
+    public String getSearch() {
+        searchMap.putIfAbsent(getId(), "");
+        return searchMap.get(getId());
+    }
+
+    public void setSearch(String search) {
+        searchMap.put(getId(), search);
+    }
+
     protected InventoryButton previousPageButton() {
         return new InventoryButton()
                 .creator(this::previousPageItem)
@@ -111,7 +127,11 @@ public abstract class ListGUI<T> extends InventoryGUI {
                 .creator(this::currentPageItem);
     }
 
-    protected ItemStack currentPageItem(Player player) {
+    public int currentPageSlot() {
+        return 49;
+    }
+
+    public ItemStack currentPageItem(Player player) {
         ItemStack item = new ItemStack(Material.YELLOW_STAINED_GLASS_PANE);
         ItemMeta meta = item.getItemMeta();
         assert meta != null;
@@ -120,7 +140,11 @@ public abstract class ListGUI<T> extends InventoryGUI {
         return item;
     }
 
-    protected ItemStack nextPageItem(Player player) {
+    public int nextPageSlot() {
+        return 50;
+    }
+
+    public ItemStack nextPageItem(Player player) {
         ItemStack item = ItemStackUtils.getSkullFromURL("https://textures.minecraft.net/texture/8aa187fede88de002cbd930575eb7ba48d3b1a06d961bdc535800750af764926");
         ItemMeta meta = item.getItemMeta();
         assert meta != null;
@@ -129,7 +153,11 @@ public abstract class ListGUI<T> extends InventoryGUI {
         return item;
     }
 
-    protected ItemStack previousPageItem(Player player) {
+    public int previousPageSlot() {
+        return 48;
+    }
+
+    public ItemStack previousPageItem(Player player) {
         ItemStack item = ItemStackUtils.getSkullFromURL("https://textures.minecraft.net/texture/f6dab7271f4ff04d5440219067a109b5c0c1d1e01ec602c0020476f7eb612180");
         ItemMeta meta = item.getItemMeta();
         assert meta != null;
@@ -143,14 +171,69 @@ public abstract class ListGUI<T> extends InventoryGUI {
                 .creator(player -> new ItemStack(Material.AIR));
     }
 
-    protected List<T> getItems(int page) {
-        List<T> items = getItems();
-        int fromIndex = page * getPageSize();
-        int toIndex = Math.min(fromIndex + getPageSize(), items.size());
-        return items.subList(fromIndex, toIndex);
+    protected List<T> getProcessedItems(Player player) {
+        int fromIndex = getPage() * getPageSize(); // Calculate starting index
+
+        return getItems()
+                .stream()
+                .filter(getSearchFilter(player))
+                .skip(fromIndex)
+                .limit(getPageSize())
+                .toList();
     }
 
     protected int getPageCount() {
         return getItems().size() / getPageSize();
+    }
+
+    public Predicate<T> getSearchFilter(Player player) {
+        return null;
+    }
+
+    private InventoryButton createSearchButton() {
+        return new InventoryButton()
+                .creator(this::getSearchItem)
+                .consumer(event -> {
+                    if (processingClickEvent()) {
+                        return;
+                    }
+
+                    Player player = (Player) event.getWhoClicked();
+                    player.closeInventory();
+
+                    SignGUI gui = SignGUI.builder()
+                            .setType(Material.DARK_OAK_SIGN)
+                            .setHandler((p, result) -> {
+                                StringBuilder search = new StringBuilder();
+                                for (int i = 0; i < 4; i++) {
+                                    search.append(result.getLine(i));
+                                }
+
+                                return List.of(
+                                        SignGUIAction.run(() ->{
+                                            Bukkit.getScheduler().runTask(BukkitLunaticLib.getInstance(), () -> {
+                                                setSearch(search.toString());
+                                                reloadGui(player);
+                                            });
+                                        })
+                                );
+                            })
+                            .build();
+
+                    gui.open(player);
+                });
+    }
+
+    public int getSearchSlot() {
+        return 0;
+    }
+
+    public ItemStack getSearchItem(Player player) {
+        ItemStack item = new ItemStack(Material.COMPASS);
+        ItemMeta meta = item.getItemMeta();
+        assert meta != null;
+        meta.setDisplayName("Search");
+        item.setItemMeta(meta);
+        return item;
     }
 }
