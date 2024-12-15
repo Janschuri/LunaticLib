@@ -94,7 +94,8 @@ public class GUIManager {
         InventoryHandler handler = activeInventories.get(inventory);
         if (handler != null) {
             handler.onClose(event);
-            unregisterInventory(inventory);
+            activeInventories.remove(inventory);
+            inventory.clear();
         }
     }
 
