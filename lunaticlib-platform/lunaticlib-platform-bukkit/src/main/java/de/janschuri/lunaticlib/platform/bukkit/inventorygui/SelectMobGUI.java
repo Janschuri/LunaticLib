@@ -1,8 +1,11 @@
 package de.janschuri.lunaticlib.platform.bukkit.inventorygui;
 
 import de.janschuri.lunaticlib.platform.bukkit.inventorygui.list.ListGUI;
+import de.janschuri.lunaticlib.platform.bukkit.inventorygui.list.PaginatedList;
+import de.janschuri.lunaticlib.platform.bukkit.inventorygui.list.SearchableList;
 import de.janschuri.lunaticlib.platform.bukkit.util.ItemStackUtils;
 import org.bukkit.entity.EntityType;
+import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.SpawnEggMeta;
 
@@ -11,11 +14,14 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Consumer;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
-public class SelectMobGUI extends ListGUI<EntityType> {
+public class SelectMobGUI extends ListGUI<EntityType> implements PaginatedList<EntityType>, SearchableList<EntityType> {
 
     private static final Map<Integer, Consumer<EntityType>> consumerMap = new HashMap<>();
+    private static final Map<Integer, String> searchMap = new HashMap<>();
+    private static final Map<Integer, Integer> pageMap = new HashMap<>();
 
     public SelectMobGUI() {
         super();
@@ -57,5 +63,31 @@ public class SelectMobGUI extends ListGUI<EntityType> {
         return Arrays.stream(EntityType.values())
                 .filter(EntityType::isAlive)
                 .collect(Collectors.toList());
+    }
+
+    @Override
+    public int getPage() {
+        pageMap.putIfAbsent(getId(), 0);
+        return pageMap.get(getId());
+    }
+
+    @Override
+    public void setPage(int page) {
+        pageMap.put(getId(), page);
+    }
+
+    @Override
+    public Predicate<EntityType> getSearchFilter(Player player) {
+        return entityType -> entityType.name().toLowerCase().contains(getSearch().toLowerCase());
+    }
+
+    @Override
+    public String getSearch() {
+        return searchMap.getOrDefault(getId(), "");
+    }
+
+    @Override
+    public void setSearch(String search) {
+        searchMap.put(getId(), search);
     }
 }
