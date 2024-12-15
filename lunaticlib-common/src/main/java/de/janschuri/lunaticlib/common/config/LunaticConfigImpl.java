@@ -18,20 +18,34 @@ import java.util.*;
 public class LunaticConfigImpl implements de.janschuri.lunaticlib.LunaticConfig {
 
     private final Path path;
+    private final String defaultFilePath;
     private Map<String, Object> yamlMap = new LinkedHashMap<>();
+
+    @Deprecated
+    public LunaticConfigImpl(Path dataDirectory, String filePath, String defaultFilePath) {
+        this.path = Path.of(dataDirectory.toString(), filePath);
+        this.defaultFilePath = defaultFilePath;
+    }
 
     public LunaticConfigImpl(Path dataDirectory, String filePath) {
         this.path = Path.of(dataDirectory.toString(), filePath);
+        this.defaultFilePath = null;
     }
 
     public LunaticConfigImpl(Path path) {
         this.path = path;
+        this.defaultFilePath = null;
     }
 
 
 
     @Override
     public void load() {
+        if (defaultFilePath != null) {
+            load(defaultFilePath);
+            return;
+        }
+
         File file = path.toFile();
 
         if (!file.exists()) {
