@@ -18,18 +18,16 @@ public class GUIManager {
     private static final Map<Inventory, InventoryHandler> activeInventories = new HashMap<>();
 
     public static void openGUI(InventoryGUI gui, Player player) {
-        openGUI(gui, player, true);
-    }
+        Inventory inventory = gui.getInventory();
+        registerHandledInventory(inventory, gui);
 
-    public static void openGUI(InventoryGUI gui, Player player, boolean openInventory) {
-        registerHandledInventory(gui.getInventory(), gui);
-
-
-        if (openInventory) {
-                Bukkit.getScheduler().runTask(BukkitLunaticLib.getInstance(), () -> {
-                    player.openInventory(gui.getInventory());
-                });
+        if (player.getOpenInventory().getTopInventory().equals(inventory)) {
+            gui.init(player);
+            return;
         }
+                Bukkit.getScheduler().runTask(BukkitLunaticLib.getInstance(), () -> {
+                    player.openInventory(inventory);
+                });
 
     }
 
@@ -38,6 +36,11 @@ public class GUIManager {
     }
 
     public static void unregisterInventory(Inventory inventory) {
+        List<HumanEntity> viewers = new ArrayList<>(inventory.getViewers());
+        for (HumanEntity viewer : viewers) {
+            viewer.closeInventory();
+        }
+        inventory.clear();
         activeInventories.remove(inventory);
     }
 
@@ -67,7 +70,7 @@ public class GUIManager {
 
         if (handler != null) {
 
-            int guiSize = handler.getSize();
+            int guiSize = event.getView().getTopInventory().getSize();
 
             Logger.infoLog("GUI size: " + guiSize);
 

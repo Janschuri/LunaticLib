@@ -15,7 +15,6 @@ import de.janschuri.lunaticlib.platform.velocity.external.Metrics;
 import de.janschuri.lunaticlib.platform.velocity.listener.MessageListener;
 import de.janschuri.lunaticlib.common.LunaticLib;
 import de.janschuri.lunaticlib.common.utils.Mode;
-import org.slf4j.Logger;
 
 import java.nio.file.Path;
 
@@ -24,7 +23,7 @@ import static de.janschuri.lunaticlib.common.LunaticLib.IDENTIFIER;
 @Plugin(
         id = "lunaticlib",
         name = "LunaticLib",
-        version = "1.2.3",
+        version = "1.3.0",
         authors = "janschuri"
 )
 public class VelocityLunaticLib {

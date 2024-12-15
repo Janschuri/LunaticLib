@@ -3,7 +3,6 @@ package de.janschuri.lunaticlib.platform.bukkit;
 import de.janschuri.lunaticlib.nms.Version;
 import de.janschuri.lunaticlib.platform.Vault;
 import de.janschuri.lunaticlib.platform.bukkit.external.AdventureAPI;
-import de.janschuri.lunaticlib.platform.bukkit.external.LogBlock;
 import de.janschuri.lunaticlib.platform.bukkit.external.Metrics;
 import de.janschuri.lunaticlib.platform.bukkit.external.VaultImpl;
 import de.janschuri.lunaticlib.platform.bukkit.inventorygui.GUIListener;
