@@ -23,6 +23,8 @@ public interface ListHandler<T> extends InventoryHandler {
 
     int getPageSize();
 
+    int getStartIndex();
+
     InventoryButton emptyListItemButton(int slot);
 
     List<T> getProcessedItems();

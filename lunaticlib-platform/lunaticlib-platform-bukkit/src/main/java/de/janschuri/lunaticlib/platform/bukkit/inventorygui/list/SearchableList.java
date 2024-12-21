@@ -4,6 +4,7 @@ import de.janschuri.lunaticlib.platform.bukkit.BukkitLunaticLib;
 import de.janschuri.lunaticlib.platform.bukkit.inventorygui.InventoryButton;
 import de.rapha149.signgui.SignGUI;
 import de.rapha149.signgui.SignGUIAction;
+import de.rapha149.signgui.exception.SignGUIVersionException;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
@@ -41,24 +42,29 @@ public interface SearchableList<T> extends ListHandler<T> {
                     Player player = (Player) event.getWhoClicked();
                     player.closeInventory();
 
-                    SignGUI gui = SignGUI.builder()
-                            .setType(Material.DARK_OAK_SIGN)
-                            .setHandler((p, result) -> {
-                                StringBuilder search = new StringBuilder();
-                                for (int i = 0; i < 4; i++) {
-                                    search.append(result.getLine(i));
-                                }
+                    SignGUI gui = null;
+                    try {
+                        gui = SignGUI.builder()
+                                .setType(Material.DARK_OAK_SIGN)
+                                .setHandler((p, result) -> {
+                                    StringBuilder search = new StringBuilder();
+                                    for (int i = 0; i < 4; i++) {
+                                        search.append(result.getLine(i));
+                                    }
 
-                                return List.of(
-                                        SignGUIAction.run(() ->{
-                                            Bukkit.getScheduler().runTask(BukkitLunaticLib.getInstance(), () -> {
-                                                setSearch(search.toString());
-                                                reloadGui(player);
-                                            });
-                                        })
-                                );
-                            })
-                            .build();
+                                    return List.of(
+                                            SignGUIAction.run(() ->{
+                                                Bukkit.getScheduler().runTask(BukkitLunaticLib.getInstance(), () -> {
+                                                    setSearch(search.toString());
+                                                    reloadGui(player);
+                                                });
+                                            })
+                                    );
+                                })
+                                .build();
+                    } catch (SignGUIVersionException e) {
+                        throw new RuntimeException(e);
+                    }
 
                     gui.open(player);
                 });

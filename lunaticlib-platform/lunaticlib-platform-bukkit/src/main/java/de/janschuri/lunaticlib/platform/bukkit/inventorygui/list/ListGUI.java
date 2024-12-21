@@ -47,16 +47,19 @@ public abstract class ListGUI<T> extends InventoryGUI implements ListHandler<T> 
             ((PaginatedList<?>) this).addPaginateButtons(player);
         }
 
+        int startIndex = getStartIndex();
+
+        Logger.debugLog("Start index: " + startIndex);
 
         for (int i = 0; i < pageSize; i++) {
             if (i >= items.size()) {
-                addButton(i+9, emptyListItemButton(i+9));
+                addButton(i+startIndex, emptyListItemButton(i+startIndex));
                 continue;
             }
 
             T item = items.get(i);
             InventoryButton button = listItemButton(item);
-            addButton(i+9, button);
+            addButton(i+startIndex, button);
         }
 
         super.init(player);
@@ -81,6 +84,11 @@ public abstract class ListGUI<T> extends InventoryGUI implements ListHandler<T> 
     @Override
     public int getPageSize() {
         return 36;
+    }
+
+    @Override
+    public int getStartIndex() {
+        return 9;
     }
 
     @Override
