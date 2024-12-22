@@ -20,10 +20,6 @@ public abstract class ListGUI<T> extends InventoryGUI implements ListHandler<T> 
         super();
     }
 
-    public ListGUI(int id) {
-        super(id);
-    }
-
     @Override
     public void init(Player player) {
         int pageSize = getPageSize();

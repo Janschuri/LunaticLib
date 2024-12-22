@@ -1,5 +1,6 @@
 package de.janschuri.lunaticlib.platform.bukkit.inventorygui;
 
+import de.janschuri.lunaticlib.common.logger.Logger;
 import de.janschuri.lunaticlib.common.utils.Utils;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
@@ -19,27 +20,22 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 public abstract class InventoryGUI implements InventoryHandler {
 
-    private final int id;
     private final static AtomicInteger idCreator = new AtomicInteger(0);
-    private final static Map<Integer, Inventory> inventoryMap = new HashMap<>();
-    private final static Map<Integer, Boolean> processingClickEvent = new HashMap<>();
-    private final static Map<Integer, String> titleMap = new HashMap<>();
-    private final static Map<Integer, Boolean> changedTitleMap = new HashMap<>();
 
-    private final Map<Integer, InventoryButton> buttonMap = new HashMap<>();
-    private final List<PlayerInvButton> playerInvButtons = new ArrayList<>();
+    private final int id;
+    private Inventory inventory;
+    private boolean processingClickEvent;
+    private String title;
+    private final Map<Integer, InventoryButton> buttonMap;
+    private final List<PlayerInvButton> playerInvButtonList;
 
     public InventoryGUI() {
-        this(idCreator.getAndIncrement());
-    }
-
-    public InventoryGUI(int id) {
-        this.id = id == -1 ? idCreator.getAndIncrement() : id;
-
-        if (!inventoryMap.containsKey(this.id) || changedTitleMap.containsKey(this.id)) {
-            changedTitleMap.remove(this.id);
-            inventoryMap.put(this.id, createInventory());
-        }
+        this.id = idCreator.getAndIncrement();
+        this.processingClickEvent = false;
+        this.title = getDefaultTitle();
+        this.inventory = createInventory();
+        this.buttonMap = new HashMap<>();
+        this.playerInvButtonList = new ArrayList<>();
     }
 
     public int getId() {
@@ -47,7 +43,7 @@ public abstract class InventoryGUI implements InventoryHandler {
     }
 
     public Inventory getInventory() {
-        return inventoryMap.get(this.id);
+        return this.inventory;
     }
 
     private Inventory createInventory() {
@@ -61,7 +57,7 @@ public abstract class InventoryGUI implements InventoryHandler {
 
     @Override
     public void addButton(PlayerInvButton button) {
-        this.playerInvButtons.add(button);
+        this.playerInvButtonList.add(button);
     }
 
     @Override
@@ -138,7 +134,7 @@ public abstract class InventoryGUI implements InventoryHandler {
             event.setCancelled(true);
         }
 
-        for (PlayerInvButton playerInvButton : this.playerInvButtons) {
+        for (PlayerInvButton playerInvButton : this.playerInvButtonList) {
             if (playerInvButton.getCondition().apply(event)) {
                 playerInvButton.getEventConsumer().accept(event);
                 break;
@@ -155,9 +151,7 @@ public abstract class InventoryGUI implements InventoryHandler {
     }
 
     public void setTitle(String title) {
-        titleMap.put(this.id, title);
-        changedTitleMap.put(this.id, true);
-        reloadGui();
+        this.title = title;
     }
 
     public String getDefaultTitle() {
@@ -165,21 +159,30 @@ public abstract class InventoryGUI implements InventoryHandler {
     }
 
     public final String getTitle() {
-        return titleMap.getOrDefault(this.id, getDefaultTitle());
+        return title;
     }
 
     public void reloadGui() {
+        reloadGui(false);
+    }
+
+    public void reloadGui(boolean forceNewInventory) {
         this.buttonMap.clear();
 
-        List<HumanEntity> players = getInventory().getViewers();
+        List<HumanEntity> humanEntities = getInventory().getViewers();
 
-        if (players.isEmpty()) {
+        if (humanEntities.isEmpty()) {
             return;
         }
 
-        for (HumanEntity player : players) {
-            if (player instanceof Player) {
-                GUIManager.openGUI(this, (Player) player);
+        if (forceNewInventory) {
+            this.inventory = createInventory();
+        }
+
+        for (HumanEntity humanEntity : humanEntities) {
+
+            if (humanEntity instanceof Player p) {
+                GUIManager.openGUI(this, p);
             }
         }
     }
@@ -191,11 +194,11 @@ public abstract class InventoryGUI implements InventoryHandler {
     }
 
     public boolean processingClickEvent() {
-        boolean result = processingClickEvent.getOrDefault(this.id, false);
+        boolean result = processingClickEvent;
 
-        processingClickEvent.put(this.id, true);
+        processingClickEvent = true;
         Runnable runnable = () -> {
-            processingClickEvent.remove(this.id);
+            processingClickEvent = false;
         };
 
         Utils.scheduleTask(runnable, 100, TimeUnit.MILLISECONDS);

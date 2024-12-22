@@ -30,4 +30,8 @@ public interface InventoryHandler {
     void reloadGui();
 
     boolean processingClickEvent();
+
+    String getTitle();
+
+    void setTitle(String title);
 }

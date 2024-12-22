@@ -17,25 +17,21 @@ import java.util.stream.Collectors;
 
 public class SelectBlockGUI extends ListGUI<Material> implements PaginatedList<Material>, SearchableList<Material> {
 
-    private static final Map<Integer, Consumer<Material>> consumerMap = new HashMap<>();
-    private static final Map<Integer, String> searchMap = new HashMap<>();
-    private static final Map<Integer, Integer> pageMap = new HashMap<>();
+    private Consumer<Material> consumer;
+    private String search = "";
+    private Integer page = 0;
 
     public SelectBlockGUI() {
         super();
     }
 
-    public SelectBlockGUI(int id) {
-        super(id);
-    }
-
     public SelectBlockGUI consumer(Consumer<Material> consumer) {
-        consumerMap.put(getId(), consumer);
+        this.consumer = consumer;
         return this;
     }
 
     public Consumer<Material> getConsumer() {
-        return consumerMap.get(getId());
+        return consumer;
     }
 
     @Override
@@ -59,13 +55,12 @@ public class SelectBlockGUI extends ListGUI<Material> implements PaginatedList<M
 
     @Override
     public int getPage() {
-        pageMap.putIfAbsent(getId(), 0);
-        return pageMap.get(getId());
+        return page;
     }
 
     @Override
     public void setPage(int page) {
-        pageMap.put(getId(), page);
+        this.page = page;
     }
 
     @Override
@@ -75,11 +70,11 @@ public class SelectBlockGUI extends ListGUI<Material> implements PaginatedList<M
 
     @Override
     public String getSearch() {
-        return searchMap.getOrDefault(getId(), "");
+        return search;
     }
 
     @Override
     public void setSearch(String search) {
-        searchMap.put(getId(), search);
+        this.search = search;
     }
 }

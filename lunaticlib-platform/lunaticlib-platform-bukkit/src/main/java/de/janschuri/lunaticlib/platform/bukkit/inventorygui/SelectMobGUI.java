@@ -19,25 +19,21 @@ import java.util.stream.Collectors;
 
 public class SelectMobGUI extends ListGUI<EntityType> implements PaginatedList<EntityType>, SearchableList<EntityType> {
 
-    private static final Map<Integer, Consumer<EntityType>> consumerMap = new HashMap<>();
-    private static final Map<Integer, String> searchMap = new HashMap<>();
-    private static final Map<Integer, Integer> pageMap = new HashMap<>();
+    private Consumer<EntityType> consumerMap;
+    private String search = "";
+    private int page = 0;
 
     public SelectMobGUI() {
         super();
     }
 
-    public SelectMobGUI(int id) {
-        super(id);
-    }
-
     public SelectMobGUI consumer(Consumer<EntityType> consumer) {
-        consumerMap.put(getId(), consumer);
+        consumerMap = consumer;
         return this;
     }
 
     public Consumer<EntityType> getConsumer() {
-        return consumerMap.get(getId());
+        return consumerMap;
     }
 
     @Override
@@ -67,13 +63,12 @@ public class SelectMobGUI extends ListGUI<EntityType> implements PaginatedList<E
 
     @Override
     public int getPage() {
-        pageMap.putIfAbsent(getId(), 0);
-        return pageMap.get(getId());
+        return page;
     }
 
     @Override
     public void setPage(int page) {
-        pageMap.put(getId(), page);
+        this.page = page;
     }
 
     @Override
@@ -83,11 +78,11 @@ public class SelectMobGUI extends ListGUI<EntityType> implements PaginatedList<E
 
     @Override
     public String getSearch() {
-        return searchMap.getOrDefault(getId(), "");
+        return search;
     }
 
     @Override
     public void setSearch(String search) {
-        searchMap.put(getId(), search);
+        this.search = search;
     }
 }
