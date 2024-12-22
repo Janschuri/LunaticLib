@@ -23,6 +23,8 @@ public abstract class InventoryGUI implements InventoryHandler {
     private final static AtomicInteger idCreator = new AtomicInteger(0);
     private final static Map<Integer, Inventory> inventoryMap = new HashMap<>();
     private final static Map<Integer, Boolean> processingClickEvent = new HashMap<>();
+    private final static Map<Integer, String> titleMap = new HashMap<>();
+    private final static Map<Integer, Boolean> changedTitleMap = new HashMap<>();
 
     private final Map<Integer, InventoryButton> buttonMap = new HashMap<>();
     private final List<PlayerInvButton> playerInvButtons = new ArrayList<>();
@@ -34,17 +36,10 @@ public abstract class InventoryGUI implements InventoryHandler {
     public InventoryGUI(int id) {
         this.id = id == -1 ? idCreator.getAndIncrement() : id;
 
-        if (!inventoryMap.containsKey(this.id)) {
+        if (!inventoryMap.containsKey(this.id) || changedTitleMap.containsKey(this.id)) {
+            changedTitleMap.remove(this.id);
             inventoryMap.put(this.id, createInventory());
         }
-    }
-
-    public InventoryGUI inventory(Inventory inventory) {
-        if (inventory != getInventory()) {
-            getInventory().getViewers().forEach(HumanEntity::closeInventory);
-            inventoryMap.put(this.id, inventory);
-        }
-        return this;
     }
 
     public int getId() {
@@ -159,13 +154,34 @@ public abstract class InventoryGUI implements InventoryHandler {
         return 54;
     }
 
-    public String getTitle() {
+    public void setTitle(String title) {
+        titleMap.put(this.id, title);
+        changedTitleMap.put(this.id, true);
+        reloadGui();
+    }
+
+    public String getDefaultTitle() {
         return this.getClass().getSimpleName();
     }
 
-    public void reloadGui(Player player) {
+    public final String getTitle() {
+        return titleMap.getOrDefault(this.id, getDefaultTitle());
+    }
+
+    public void reloadGui() {
         this.buttonMap.clear();
-        GUIManager.openGUI(this, player);
+
+        List<HumanEntity> players = getInventory().getViewers();
+
+        if (players.isEmpty()) {
+            return;
+        }
+
+        for (HumanEntity player : players) {
+            if (player instanceof Player) {
+                GUIManager.openGUI(this, (Player) player);
+            }
+        }
     }
 
     protected InventoryButton emptyButton(int slot) {

@@ -139,7 +139,7 @@ public class DecisionGUI extends InventoryGUI {
         return 9;
     }
 
-    public String getTitle() {
+    public String getDefaultTitle() {
         return LegacyComponentSerializer.legacySection().serialize(decisionMessage.getPrefix());
     }
 }

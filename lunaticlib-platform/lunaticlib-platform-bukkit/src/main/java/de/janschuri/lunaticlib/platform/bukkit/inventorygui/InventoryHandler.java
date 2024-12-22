@@ -27,7 +27,7 @@ public interface InventoryHandler {
     void onPlayerInvClick(InventoryClickEvent event);
     void onPlayerInvDrag(InventoryDragEvent event);
 
-    void reloadGui(Player player);
+    void reloadGui();
 
     boolean processingClickEvent();
 }

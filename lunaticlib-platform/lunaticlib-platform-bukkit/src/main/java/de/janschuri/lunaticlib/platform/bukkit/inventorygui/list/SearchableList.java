@@ -56,7 +56,7 @@ public interface SearchableList<T> extends ListHandler<T> {
                                             SignGUIAction.run(() ->{
                                                 Bukkit.getScheduler().runTask(BukkitLunaticLib.getInstance(), () -> {
                                                     setSearch(search.toString());
-                                                    reloadGui(player);
+                                                    reloadGui();
                                                 });
                                             })
                                     );

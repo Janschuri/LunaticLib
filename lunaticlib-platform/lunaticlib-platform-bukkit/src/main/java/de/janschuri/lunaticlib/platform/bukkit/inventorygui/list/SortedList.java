@@ -44,7 +44,7 @@ public interface SortedList<T> extends ListHandler<T> {
 
     default void nextSorter(Player player) {
         setSorterIndex((getSorterIndex() + 1) % getSorters().size());
-        reloadGui(player);
+        reloadGui();
     }
 
     default InventoryButton createSorterButton() {
@@ -91,7 +91,7 @@ public interface SortedList<T> extends ListHandler<T> {
 
                     toggleDescending();
 
-                    reloadGui(player);
+                    reloadGui();
                 });
     }
 

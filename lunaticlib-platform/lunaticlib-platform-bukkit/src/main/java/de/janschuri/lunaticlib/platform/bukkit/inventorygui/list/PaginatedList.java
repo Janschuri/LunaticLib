@@ -57,7 +57,7 @@ public interface PaginatedList<T> extends ListHandler<T> {
         if (getPage() < getPageCount()) {
             int newPage = getPage() + 1;
             setPage(newPage);
-            reloadGui(player);
+            reloadGui();
         }
     }
 
@@ -65,7 +65,7 @@ public interface PaginatedList<T> extends ListHandler<T> {
         if (getPage() > 0) {
             int newPage = getPage() - 1;
             setPage(newPage);
-            reloadGui(player);
+            reloadGui();
         }
     }
 

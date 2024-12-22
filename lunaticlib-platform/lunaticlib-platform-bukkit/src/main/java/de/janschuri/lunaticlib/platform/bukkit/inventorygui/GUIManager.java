@@ -21,10 +21,10 @@ public class GUIManager {
         Inventory inventory = gui.getInventory();
         registerHandledInventory(inventory, gui);
 
-        if (player.getOpenInventory().getTopInventory().equals(inventory)) {
-            gui.init(player);
-            return;
-        }
+//        if (player.getOpenInventory().getTopInventory().equals(inventory)) {
+//            gui.init(player);
+//            return;
+//        }
                 Bukkit.getScheduler().runTask(BukkitLunaticLib.getInstance(), () -> {
                     player.openInventory(inventory);
                 });
