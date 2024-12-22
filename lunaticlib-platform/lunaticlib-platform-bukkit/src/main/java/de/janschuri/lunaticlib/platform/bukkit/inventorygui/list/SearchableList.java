@@ -1,6 +1,7 @@
 package de.janschuri.lunaticlib.platform.bukkit.inventorygui.list;
 
 import de.janschuri.lunaticlib.platform.bukkit.BukkitLunaticLib;
+import de.janschuri.lunaticlib.platform.bukkit.inventorygui.GUIManager;
 import de.janschuri.lunaticlib.platform.bukkit.inventorygui.InventoryButton;
 import de.rapha149.signgui.SignGUI;
 import de.rapha149.signgui.SignGUIAction;
@@ -56,7 +57,7 @@ public interface SearchableList<T> extends ListHandler<T> {
                                             SignGUIAction.run(() ->{
                                                 Bukkit.getScheduler().runTask(BukkitLunaticLib.getInstance(), () -> {
                                                     setSearch(search.toString());
-                                                    reloadGui();
+                                                    GUIManager.openGUI(this, player);
                                                 });
                                             })
                                     );

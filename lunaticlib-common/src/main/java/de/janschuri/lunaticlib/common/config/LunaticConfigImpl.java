@@ -470,6 +470,16 @@ public class LunaticConfigImpl implements de.janschuri.lunaticlib.LunaticConfig 
         }
     }
 
+    @Override
+    public List<Map<String, Object>> getMapList(String path) {
+        try {
+            return (List<Map<String, Object>>) get(path);
+        } catch (Exception e) {
+            Logger.errorLog("Error while getting config value: " + path);
+            return null;
+        }
+    }
+
     public void setStringList(String path, List<String> value) {
         String[] parts = path.split("\\.");
         Map<String, Object> current = yamlMap;

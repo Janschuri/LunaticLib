@@ -5,12 +5,15 @@ import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.event.inventory.InventoryDragEvent;
 import org.bukkit.event.inventory.InventoryOpenEvent;
+import org.bukkit.inventory.Inventory;
 
 public interface InventoryHandler {
 
     int getId();
 
     void init(Player player);
+
+    Inventory getInventory();
 
     void addButton(int slot, InventoryButton button);
 
