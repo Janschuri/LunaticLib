@@ -4,8 +4,11 @@ import de.janschuri.lunaticlib.platform.bukkit.inventorygui.list.ListGUI;
 import de.janschuri.lunaticlib.platform.bukkit.inventorygui.list.PaginatedList;
 import de.janschuri.lunaticlib.platform.bukkit.inventorygui.list.SearchableList;
 import org.bukkit.Material;
+import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.ItemMeta;
 
 import java.util.Arrays;
 import java.util.HashMap;
@@ -36,7 +39,19 @@ public class SelectBlockGUI extends ListGUI<Material> implements PaginatedList<M
 
     @Override
     public InventoryButton listItemButton(Material block) {
-        ItemStack itemStack = new ItemStack(block);
+        ItemStack itemStack;
+
+        if (!block.isItem()) {
+            itemStack = new ItemStack(Material.BARRIER);
+            ItemMeta itemMeta = itemStack.getItemMeta();
+            itemMeta.setDisplayName("§r" + block.name());
+            itemMeta.addEnchant(Enchantment.MENDING, 1, true);
+            itemMeta.addItemFlags(ItemFlag.HIDE_ENCHANTS);
+            itemStack.setItemMeta(itemMeta);
+        } else {
+            itemStack = new ItemStack(block);
+        }
+
 
         return new InventoryButton()
                 .creator(player -> itemStack)
@@ -49,7 +64,6 @@ public class SelectBlockGUI extends ListGUI<Material> implements PaginatedList<M
     public List<Material> getItems() {
         return Arrays.stream(Material.values())
                 .filter(Material::isBlock)
-                .filter(Material::isItem)
                 .collect(Collectors.toList());
     }
 
