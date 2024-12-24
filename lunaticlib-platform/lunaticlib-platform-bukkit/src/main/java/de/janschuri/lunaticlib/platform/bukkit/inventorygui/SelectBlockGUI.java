@@ -3,6 +3,7 @@ package de.janschuri.lunaticlib.platform.bukkit.inventorygui;
 import de.janschuri.lunaticlib.platform.bukkit.inventorygui.list.ListGUI;
 import de.janschuri.lunaticlib.platform.bukkit.inventorygui.list.PaginatedList;
 import de.janschuri.lunaticlib.platform.bukkit.inventorygui.list.SearchableList;
+import de.janschuri.lunaticlib.platform.bukkit.util.ItemStackUtils;
 import org.bukkit.Material;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
@@ -39,18 +40,7 @@ public class SelectBlockGUI extends ListGUI<Material> implements PaginatedList<M
 
     @Override
     public InventoryButton listItemButton(Material block) {
-        ItemStack itemStack;
-
-        if (!block.isItem()) {
-            itemStack = new ItemStack(Material.BARRIER);
-            ItemMeta itemMeta = itemStack.getItemMeta();
-            itemMeta.setDisplayName("§r" + block.name());
-            itemMeta.addEnchant(Enchantment.MENDING, 1, true);
-            itemMeta.addItemFlags(ItemFlag.HIDE_ENCHANTS);
-            itemStack.setItemMeta(itemMeta);
-        } else {
-            itemStack = new ItemStack(block);
-        }
+        ItemStack itemStack = ItemStackUtils.getItemStack(block);
 
 
         return new InventoryButton()

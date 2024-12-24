@@ -110,4 +110,37 @@ public class Utils {
     public static DecisionMessage getClickableDecisionMessage(Component prefix, Component message, Component confirmHoverText, String confirmCommand, Component cancelHoverText, String cancelCommand) {
         return new DecisionMessage(prefix, message, confirmHoverText, cancelHoverText, confirmCommand, cancelCommand);
     }
+
+    public static String underscoreToCamelCase(String underscore) {
+        StringBuilder camelCase = new StringBuilder();
+        boolean upperCase = true;
+        for (char c : underscore.toCharArray()) {
+            if (c == '_') {
+                upperCase = true;
+            } else {
+                if (upperCase) {
+                    camelCase.append(Character.toUpperCase(c));
+                    upperCase = false;
+                } else {
+                    camelCase.append(Character.toLowerCase(c));
+                }
+            }
+        }
+        return camelCase.toString();
+    }
+
+    public static String camelCaseToSpace(String camelCase) {
+        StringBuilder space = new StringBuilder();
+        for (char c : camelCase.toCharArray()) {
+            if (Character.isUpperCase(c)) {
+                space.append(" ");
+            }
+            space.append(c);
+        }
+        return space.toString();
+    }
+
+    public static String underscoreToSpace(String underscore) {
+        return camelCaseToSpace(underscoreToCamelCase(underscore));
+    }
 }
