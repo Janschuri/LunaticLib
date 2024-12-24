@@ -127,6 +127,22 @@ public class ItemStackUtils {
                 try {
                     Map<String, Object> metaMap = (Map<String, Object>) map.get("meta");
 
+                    if (metaMap == null) {
+                        return item;
+                    }
+
+                    if (metaMap.containsKey("enchants")) {
+                        Map<String, Object> enchants = (Map<String, Object>) metaMap.get("enchants");
+                        for (Map.Entry<String, Object> entry : enchants.entrySet()) {
+                            if (entry.getValue() instanceof String) {
+                                try {
+                                    enchants.put(entry.getKey(), Integer.parseInt((String) entry.getValue()));
+                                } catch (NumberFormatException ignored) {}
+                            }
+                        }
+                        metaMap.put("enchants", enchants);
+                    }
+
                     for (Map.Entry<String, Object> entry : metaMap.entrySet()) {
                         if (entry.getValue() instanceof String) {
                             try {
@@ -137,6 +153,7 @@ public class ItemStackUtils {
 
                     Object metaObj = ConfigurationSerialization.deserializeObject(metaMap);
                     ItemMeta meta = (ItemMeta) metaObj;
+
                     assert item != null;
                     item.setItemMeta(meta);
                 } catch (Exception e) {
@@ -337,18 +354,6 @@ public class ItemStackUtils {
                 beetrootsMeta.setDisplayName("§r" + Utils.underscoreToSpace(material.name()));
                 beetroots.setItemMeta(beetrootsMeta);
                 return beetroots;
-            case PITCHER_CROP:
-                ItemStack pitcherCrop = new ItemStack(Material.PITCHER_POD);
-                ItemMeta pitcherCropMeta = pitcherCrop.getItemMeta();
-                pitcherCropMeta.setDisplayName("§r" + Utils.underscoreToSpace(material.name()));
-                pitcherCrop.setItemMeta(pitcherCropMeta);
-                return pitcherCrop;
-            case TORCHFLOWER_CROP:
-                ItemStack torchflowerCrop = new ItemStack(Material.TORCHFLOWER);
-                ItemMeta torchflowerCropMeta = torchflowerCrop.getItemMeta();
-                torchflowerCropMeta.setDisplayName("§r" + Utils.underscoreToSpace(material.name()));
-                torchflowerCrop.setItemMeta(torchflowerCropMeta);
-                return torchflowerCrop;
             case END_GATEWAY:
                 ItemStack endGateway = new ItemStack(Material.END_PORTAL_FRAME);
                 ItemMeta endGatewayMeta = endGateway.getItemMeta();
@@ -433,6 +438,21 @@ public class ItemStackUtils {
                 pottedFloweringAzaleaBushMeta.setDisplayName("§r" + Utils.underscoreToSpace(material.name()));
                 pottedFloweringAzaleaBush.setItemMeta(pottedFloweringAzaleaBushMeta);
                 return pottedFloweringAzaleaBush;
+        }
+
+        switch (material.name()) {
+            case "PITCHER_CROP":
+                ItemStack pitcherCrop = new ItemStack(Material.valueOf("PITCHER_POD"));
+                ItemMeta pitcherCropMeta = pitcherCrop.getItemMeta();
+                pitcherCropMeta.setDisplayName("§r" + Utils.underscoreToSpace(material.name()));
+                pitcherCrop.setItemMeta(pitcherCropMeta);
+                return pitcherCrop;
+            case "TORCHFLOWER_CROP":
+                ItemStack torchflowerCrop = new ItemStack(Material.valueOf("TORCHFLOWER"));
+                ItemMeta torchflowerCropMeta = torchflowerCrop.getItemMeta();
+                torchflowerCropMeta.setDisplayName("§r" + Utils.underscoreToSpace(material.name()));
+                torchflowerCrop.setItemMeta(torchflowerCropMeta);
+                return torchflowerCrop;
         }
 
         return fallbackItemStack;

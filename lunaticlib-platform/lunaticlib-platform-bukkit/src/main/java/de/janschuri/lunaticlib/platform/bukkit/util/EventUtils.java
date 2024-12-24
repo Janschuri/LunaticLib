@@ -98,7 +98,7 @@ public final class EventUtils {
         return simulatedView;
     }
 
-    private static class SimulatedInventoryView implements InventoryView {
+    private static class SimulatedInventoryView extends InventoryView {
         private final Player player;
         private final Inventory inventory;
 
@@ -138,64 +138,10 @@ public final class EventUtils {
             return null;
         }
 
-        @Override
-        public void setCursor(@Nullable ItemStack itemStack) {
-
-        }
-
-        @Nullable
-        @Override
-        public ItemStack getCursor() {
-            return null;
-        }
-
-        @Nullable
-        @Override
-        public Inventory getInventory(int i) {
-            return null;
-        }
-
-        @Override
-        public int convertSlot(int i) {
-            return 0;
-        }
-
-        @NotNull
-        @Override
-        public InventoryType.SlotType getSlotType(int i) {
-            return null;
-        }
-
-        @Override
-        public void close() {
-
-        }
-
-        @Override
-        public int countSlots() {
-            return 0;
-        }
-
-        @Override
-        public boolean setProperty(@NotNull InventoryView.Property property, int i) {
-            return false;
-        }
-
         @NotNull
         @Override
         public String getTitle() {
             return "";
-        }
-
-        @NotNull
-        @Override
-        public String getOriginalTitle() {
-            return "";
-        }
-
-        @Override
-        public void setTitle(@NotNull String s) {
-
         }
     }
 }

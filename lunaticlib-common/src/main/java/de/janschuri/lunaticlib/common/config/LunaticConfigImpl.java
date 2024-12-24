@@ -267,14 +267,12 @@ public class LunaticConfigImpl implements de.janschuri.lunaticlib.LunaticConfig 
         }
 
         for (String key : index) {
-            Logger.debugLog("Merging key: " + key);
 
             if (!map.containsKey(key)) {
                 Logger.errorLog("Missing key in config: " + key);
                 Logger.errorLog("Using default value: " + loadNodeTuple(defaultMap.get(key)));
                 mergedList.add(defaultMap.get(key));
             } else {
-                Logger.debugLog("Key found in map: " + key);
                 if (!defaultMap.containsKey(key)) {
                     mergedList.add(map.get(key));
                 } else {
