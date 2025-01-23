@@ -128,19 +128,7 @@ public final class EventUtils {
         }
 
         @Override
-        public void setItem(int i, @Nullable ItemStack itemStack) {
-
-        }
-
-        @Nullable
-        @Override
-        public ItemStack getItem(int i) {
-            return null;
-        }
-
-        @NotNull
-        @Override
-        public String getTitle() {
+        public @NotNull String getTitle() {
             return "";
         }
     }

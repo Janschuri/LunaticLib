@@ -3,13 +3,6 @@ package de.janschuri.lunaticlib.common.utils;
 import de.janschuri.lunaticlib.DecisionMessage;
 import de.janschuri.lunaticlib.common.logger.Logger;
 import net.kyori.adventure.text.Component;
-import net.kyori.adventure.text.TextComponent;
-import net.kyori.adventure.text.event.ClickEvent;
-import net.kyori.adventure.text.event.HoverEvent;
-import net.kyori.adventure.text.format.NamedTextColor;
-import net.kyori.adventure.text.format.TextColor;
-import net.kyori.adventure.text.format.TextDecoration;
-import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 
 import java.awt.*;
 import java.util.Base64;
