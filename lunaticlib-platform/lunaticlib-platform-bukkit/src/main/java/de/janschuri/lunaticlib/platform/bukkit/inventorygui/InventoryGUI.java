@@ -21,6 +21,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 public abstract class InventoryGUI implements InventoryHandler {
 
     private final static AtomicInteger idCreator = new AtomicInteger(0);
+    private static final Map<Integer, InventoryGUI> guiMap = new HashMap<>();
 
     private final int id;
     private Inventory inventory;
@@ -36,6 +37,12 @@ public abstract class InventoryGUI implements InventoryHandler {
         this.inventory = createInventory();
         this.buttonMap = new HashMap<>();
         this.playerInvButtonList = new ArrayList<>();
+
+        guiMap.put(this.id, this);
+    }
+
+    protected static InventoryGUI getGUI(int id) {
+        return guiMap.get(id);
     }
 
     public int getId() {
