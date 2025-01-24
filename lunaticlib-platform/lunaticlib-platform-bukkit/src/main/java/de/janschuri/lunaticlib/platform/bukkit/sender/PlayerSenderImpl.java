@@ -3,10 +3,8 @@ package de.janschuri.lunaticlib.platform.bukkit.sender;
 import de.janschuri.lunaticlib.DecisionMessage;
 import de.janschuri.lunaticlib.PlayerSender;
 import de.janschuri.lunaticlib.common.logger.Logger;
-import de.janschuri.lunaticlib.platform.bukkit.external.AdventureAPI;
 import de.janschuri.lunaticlib.platform.bukkit.inventorygui.DecisionGUI;
 import de.janschuri.lunaticlib.platform.bukkit.inventorygui.GUIManager;
-import de.janschuri.lunaticlib.platform.bukkit.nms.PlayerSkin;
 import de.janschuri.lunaticlib.platform.bukkit.util.BukkitUtils;
 import de.janschuri.lunaticlib.platform.bukkit.util.ItemStackUtils;
 import net.kyori.adventure.inventory.Book;
@@ -142,7 +140,7 @@ public class PlayerSenderImpl extends SenderImpl implements PlayerSender {
     @Override
     public String getSkinURL() {
         if (Bukkit.getPlayer(uuid) != null) {
-            return PlayerSkin.getSkinURL(Bukkit.getPlayer(uuid));
+            return Bukkit.getPlayer(uuid).getPlayerProfile().getTextures().getSkin().toString();
         }
         return null;
     }
@@ -156,7 +154,7 @@ public class PlayerSenderImpl extends SenderImpl implements PlayerSender {
     @Override
     public boolean openBook(Book.Builder book) {
         if (Bukkit.getPlayer(uuid) != null) {
-            AdventureAPI.sendBook(Bukkit.getPlayer(uuid), book);
+            Bukkit.getPlayer(uuid).openBook(book.build());
         }
         return false;
     }

@@ -85,7 +85,6 @@ public class MySQL extends Database {
                 sqlBuilder.append(";");
 
                 String sql = sqlBuilder.toString();
-                Logger.debugLog(sql);
 
                 stmt.execute(sql);
             }
@@ -188,8 +187,6 @@ public class MySQL extends Database {
                     }
 
                     sqlBuilder.append(";");
-
-                    Logger.debugLog(sqlBuilder.toString());
 
                     PreparedStatement ps = connection.prepareStatement(sqlBuilder.toString());
                     ps.execute();

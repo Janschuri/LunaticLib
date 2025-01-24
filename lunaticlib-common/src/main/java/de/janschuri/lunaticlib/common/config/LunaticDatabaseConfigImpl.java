@@ -12,16 +12,18 @@ public class LunaticDatabaseConfigImpl extends LunaticConfigImpl implements de.j
     private int port;
     private boolean useMySQL;
     private final Path dataDirectory;
+    private final String DEFAULT_DATABASE_FILE;
 
     protected LunaticDatabaseConfigImpl(String name, Path dataDirectory, String DATABASE_FILE, String DEFAULT_DATABASE_FILE) {
-        super(dataDirectory, DATABASE_FILE, DEFAULT_DATABASE_FILE);
+        super(dataDirectory, DATABASE_FILE);
+        this.DEFAULT_DATABASE_FILE = DEFAULT_DATABASE_FILE;
         this.NAME = name;
         this.dataDirectory = dataDirectory;
     }
 
     @Override
     public void load() {
-        super.load();
+        super.load(DEFAULT_DATABASE_FILE);
         host = getString("MySQL.host", "localhost");
         port = getInt("MySQL.port", 3306);
         database = getString("MySQL.database", NAME);

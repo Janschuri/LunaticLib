@@ -1,9 +1,6 @@
 package de.janschuri.lunaticlib.platform.bukkit;
 
-import de.janschuri.lunaticlib.nms.Version;
 import de.janschuri.lunaticlib.platform.Vault;
-import de.janschuri.lunaticlib.platform.bukkit.external.AdventureAPI;
-import de.janschuri.lunaticlib.platform.bukkit.external.LogBlock;
 import de.janschuri.lunaticlib.platform.bukkit.external.Metrics;
 import de.janschuri.lunaticlib.platform.bukkit.external.VaultImpl;
 import de.janschuri.lunaticlib.platform.bukkit.inventorygui.GUIListener;
@@ -25,7 +22,6 @@ public class BukkitLunaticLib extends JavaPlugin {
     private static BukkitLunaticLib instance;
     private static boolean installedVault = false;
     private static boolean installedLogBlock = false;
-    private static Version version;
     private static Vault vault;
 
     private GUIManager guiManager;
@@ -33,15 +29,7 @@ public class BukkitLunaticLib extends JavaPlugin {
     @Override
     public void onEnable() {
         instance = this;
-        version = getServerVersion();
         guiManager = new GUIManager();
-
-        if (version == null) {
-            disable();
-            return;
-        }
-
-        AdventureAPI.initialize(this);
 
         getServer().getMessenger().registerIncomingPluginChannel(this, IDENTIFIER, new MessageListener());
         getServer().getMessenger().registerOutgoingPluginChannel(this, IDENTIFIER);
@@ -75,7 +63,6 @@ public class BukkitLunaticLib extends JavaPlugin {
     @Override
     public void onDisable() {
         GUIManager.closeAll();
-        AdventureAPI.close();
         LunaticLib.onDisable();
     }
 
@@ -91,21 +78,6 @@ public class BukkitLunaticLib extends JavaPlugin {
 
     public static void sendConsoleCommand(String command) {
         Bukkit.getServer().dispatchCommand(Bukkit.getServer().getConsoleSender(), command);
-    }
-
-    public static Version getServerVersion() {
-        Logger.infoLog("Server version: " + Bukkit.getBukkitVersion());
-        String string = Bukkit.getBukkitVersion().split("-")[0];
-        string = string.replace(".", "_");
-        string = "v" + string;
-
-        try {
-            return (Version) Class.forName("de.janschuri.lunaticlib.nms." + string + ".VersionImpl").getConstructor().newInstance();
-        } catch (Exception e) {
-            Logger.errorLog("Error: " + e);
-            Logger.errorLog("Unsupported server version: " + string);
-            return null;
-        }
     }
 
     public static boolean isInstalledVault() {
@@ -126,9 +98,5 @@ public class BukkitLunaticLib extends JavaPlugin {
 
     public static GUIManager getGUIManager() {
         return getInstance().guiManager;
-    }
-
-    public static Version getVersion() {
-        return version;
     }
 }
