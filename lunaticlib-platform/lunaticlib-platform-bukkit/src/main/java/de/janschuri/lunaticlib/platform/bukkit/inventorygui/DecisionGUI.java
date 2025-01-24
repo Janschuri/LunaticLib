@@ -1,40 +1,29 @@
 package de.janschuri.lunaticlib.platform.bukkit.inventorygui;
 
 import de.janschuri.lunaticlib.DecisionMessage;
-import de.janschuri.lunaticlib.common.futurerequests.requests.GetNameRequest;
 import de.janschuri.lunaticlib.common.futurerequests.requests.RunCommandRequest;
 import de.janschuri.lunaticlib.common.logger.Logger;
-import de.janschuri.lunaticlib.common.utils.Utils;
 import de.janschuri.lunaticlib.platform.bukkit.BukkitLunaticLib;
 import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
-import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
-import java.util.List;
-import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.TimeUnit;
 
 public class DecisionGUI extends InventoryGUI {
 
     private final DecisionMessage decisionMessage;
 
     public DecisionGUI(DecisionMessage decisionMessage) {
-        super(createInventory(decisionMessage));
+        super();
         this.decisionMessage = decisionMessage;
     }
 
-    private static Inventory createInventory(DecisionMessage decisionMessage) {
-        String title = LegacyComponentSerializer.legacySection().serialize(decisionMessage.getPrefix());
-        return Bukkit.createInventory(null, 9, title);
-    }
-
     @Override
-    public void decorate(Player player) {
+    public void init(Player player) {
         int inventorySize = this.getInventory().getSize();
 
         for (int i = 0; i < inventorySize; i++) {
@@ -49,7 +38,7 @@ public class DecisionGUI extends InventoryGUI {
             }
         }
 
-        super.decorate(player);
+        super.init(player);
     }
     private InventoryButton createGrayButton() {
         return new InventoryButton()
@@ -83,7 +72,7 @@ public class DecisionGUI extends InventoryGUI {
                     performCommand(player, commandToExecute)
                             .thenAccept(success -> {
                                 if (success) {
-                                    Bukkit.getScheduler().runTask(BukkitLunaticLib.getInstance(), player::closeInventory);
+                                    Bukkit.getScheduler().runTask(BukkitLunaticLib.getInstance(), () -> player.closeInventory());
                                 } else {
                                     Logger.errorLog("Error while executing command: " + commandToExecute);
                                 }
@@ -144,5 +133,13 @@ public class DecisionGUI extends InventoryGUI {
 
         boolean success = player.performCommand(command);
         return CompletableFuture.completedFuture(success);
+    }
+
+    public int getSize() {
+        return 9;
+    }
+
+    public String getDefaultTitle() {
+        return LegacyComponentSerializer.legacySection().serialize(decisionMessage.getPrefix());
     }
 }

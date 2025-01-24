@@ -1,6 +1,5 @@
 package de.janschuri.lunaticlib.platform.bukkit.sender;
 
-import de.janschuri.lunaticlib.platform.bukkit.external.AdventureAPI;
 import de.janschuri.lunaticlib.Sender;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.TextComponent;
@@ -31,7 +30,8 @@ public class SenderImpl implements Sender {
         }
 
         TextComponent msg = LegacyComponentSerializer.legacy('§').deserialize(message);
-        return AdventureAPI.sendMessage(sender, msg);
+        sender.sendMessage(msg);
+        return true;
     }
 
     @Override
@@ -40,6 +40,7 @@ public class SenderImpl implements Sender {
             return false;
         }
 
-        return AdventureAPI.sendMessage(sender, message);
+        sender.sendMessage(message);
+        return true;
     }
 }

@@ -109,7 +109,7 @@ public abstract class AbstractLunaticCommand implements LunaticCommand {
         if (list.isEmpty()) {
             list.add(getName());
         }
-        Logger.debugLog("Aliases: " + list.toString());
+
         return list;
     }
 

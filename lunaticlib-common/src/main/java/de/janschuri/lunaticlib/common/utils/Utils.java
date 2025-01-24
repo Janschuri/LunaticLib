@@ -3,13 +3,6 @@ package de.janschuri.lunaticlib.common.utils;
 import de.janschuri.lunaticlib.DecisionMessage;
 import de.janschuri.lunaticlib.common.logger.Logger;
 import net.kyori.adventure.text.Component;
-import net.kyori.adventure.text.TextComponent;
-import net.kyori.adventure.text.event.ClickEvent;
-import net.kyori.adventure.text.event.HoverEvent;
-import net.kyori.adventure.text.format.NamedTextColor;
-import net.kyori.adventure.text.format.TextColor;
-import net.kyori.adventure.text.format.TextDecoration;
-import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 
 import java.awt.*;
 import java.util.Base64;
@@ -109,5 +102,38 @@ public class Utils {
 
     public static DecisionMessage getClickableDecisionMessage(Component prefix, Component message, Component confirmHoverText, String confirmCommand, Component cancelHoverText, String cancelCommand) {
         return new DecisionMessage(prefix, message, confirmHoverText, cancelHoverText, confirmCommand, cancelCommand);
+    }
+
+    public static String underscoreToCamelCase(String underscore) {
+        StringBuilder camelCase = new StringBuilder();
+        boolean upperCase = true;
+        for (char c : underscore.toCharArray()) {
+            if (c == '_') {
+                upperCase = true;
+            } else {
+                if (upperCase) {
+                    camelCase.append(Character.toUpperCase(c));
+                    upperCase = false;
+                } else {
+                    camelCase.append(Character.toLowerCase(c));
+                }
+            }
+        }
+        return camelCase.toString();
+    }
+
+    public static String camelCaseToSpace(String camelCase) {
+        StringBuilder space = new StringBuilder();
+        for (char c : camelCase.toCharArray()) {
+            if (Character.isUpperCase(c)) {
+                space.append(" ");
+            }
+            space.append(c);
+        }
+        return space.toString();
+    }
+
+    public static String underscoreToSpace(String underscore) {
+        return camelCaseToSpace(underscoreToCamelCase(underscore));
     }
 }
