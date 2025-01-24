@@ -27,9 +27,11 @@ public class LunaticLanguageConfigImpl extends LunaticConfigImpl implements de.j
         String keyString = key.toString().toLowerCase();
 
         String message = getString(keyString);
-        message = message == null ? key.getDefaultMessage() : message;
         if (message == null) {
             Logger.warnLog("Message not found: " + keyString);
+            message = key.getDefaultMessage();
+        }
+        if (message == null) {
             message = "Message not found: " + keyString;
         }
 
