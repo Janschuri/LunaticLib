@@ -1,6 +1,5 @@
 package de.janschuri.lunaticlib.platform.bukkit.inventorygui.list;
 
-import com.mysql.cj.log.Log;
 import de.janschuri.lunaticlib.common.logger.Logger;
 import de.janschuri.lunaticlib.platform.bukkit.inventorygui.InventoryButton;
 import de.janschuri.lunaticlib.platform.bukkit.inventorygui.InventoryGUI;

@@ -72,7 +72,7 @@ public class DecisionGUI extends InventoryGUI {
                     performCommand(player, commandToExecute)
                             .thenAccept(success -> {
                                 if (success) {
-                                    Bukkit.getScheduler().runTask(BukkitLunaticLib.getInstance(), player::closeInventory);
+                                    Bukkit.getScheduler().runTask(BukkitLunaticLib.getInstance(), () -> player.closeInventory());
                                 } else {
                                     Logger.errorLog("Error while executing command: " + commandToExecute);
                                 }

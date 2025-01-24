@@ -70,8 +70,8 @@
 
     <dependencies>
         <dependency>
-            <groupId>org.spigotmc</groupId>
-            <artifactId>spigot-api</artifactId>
+            <groupId>io.papermc.paper</groupId>
+            <artifactId>paper-api</artifactId>
             <version>1.19-R0.1-SNAPSHOT</version>
             <scope>provided</scope>
         </dependency>
@@ -80,18 +80,6 @@
             <artifactId>VaultAPI</artifactId>
             <version>1.7</version>
             <scope>provided</scope>
-        </dependency>
-        <dependency>
-            <groupId>net.kyori</groupId>
-            <artifactId>adventure-platform-bukkit</artifactId>
-            <version>4.3.3</version>
-            <scope>compile</scope>
-        </dependency>
-        <dependency>
-            <groupId>de.janschuri</groupId>
-            <artifactId>lunaticlib-nms-all</artifactId>
-            <version>1.0.0</version>
-            <scope>compile</scope>
         </dependency>
         <dependency>
             <groupId>de.diddiz</groupId>
@@ -115,12 +103,6 @@
             <groupId>io.netty</groupId>
             <artifactId>netty-transport</artifactId>
             <version>4.1.106.Final</version>
-            <scope>provided</scope>
-        </dependency>
-        <dependency>
-            <groupId>de.janschuri</groupId>
-            <artifactId>lunaticlib-nms-interface</artifactId>
-            <version>1.0.0</version>
             <scope>provided</scope>
         </dependency>
         <dependency>
