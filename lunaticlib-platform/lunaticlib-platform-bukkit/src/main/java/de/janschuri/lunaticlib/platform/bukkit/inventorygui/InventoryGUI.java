@@ -27,13 +27,19 @@ public abstract class InventoryGUI implements InventoryHandler {
     private Inventory inventory;
     private boolean processingClickEvent;
     private String title;
+    private int size;
     private final Map<Integer, InventoryButton> buttonMap;
     private final List<PlayerInvButton> playerInvButtonList;
 
     public InventoryGUI() {
+        this(null, 54);
+    }
+
+    public InventoryGUI(String title, int size) {
         this.id = idCreator.getAndIncrement();
         this.processingClickEvent = false;
-        this.title = getDefaultTitle();
+        this.title = title == null ? getDefaultTitle() : title;
+        this.size = size;
         this.inventory = createInventory();
         this.buttonMap = new HashMap<>();
         this.playerInvButtonList = new ArrayList<>();
@@ -154,7 +160,7 @@ public abstract class InventoryGUI implements InventoryHandler {
     }
 
     public int getSize() {
-        return 54;
+        return size;
     }
 
     public void setTitle(String title) {
@@ -166,6 +172,10 @@ public abstract class InventoryGUI implements InventoryHandler {
     }
 
     public final String getTitle() {
+        if (title == null) {
+            title = "InventoryGUI";
+        }
+
         return title;
     }
 
