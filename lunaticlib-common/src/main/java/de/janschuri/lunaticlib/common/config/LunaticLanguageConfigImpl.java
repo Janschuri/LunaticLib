@@ -35,6 +35,14 @@ public class LunaticLanguageConfigImpl extends LunaticConfigImpl implements de.j
             message = "Message not found: " + keyString;
         }
 
+        Map<String, String> placeholders = key.getPlaceholders();
+
+        if (!placeholders.isEmpty()) {
+            for (Map.Entry<String, String> entry : placeholders.entrySet()) {
+                message = message.replace("%" + entry.getKey() + "%", entry.getValue());
+            }
+        }
+
         if (withPrefix) {
             return getPrefix().append(LegacyComponentSerializer.legacyAmpersand().deserialize(message));
         }
