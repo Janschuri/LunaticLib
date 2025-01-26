@@ -4,22 +4,81 @@ import de.janschuri.lunaticlib.DecisionMessage;
 import de.janschuri.lunaticlib.common.futurerequests.requests.RunCommandRequest;
 import de.janschuri.lunaticlib.common.logger.Logger;
 import de.janschuri.lunaticlib.platform.bukkit.BukkitLunaticLib;
+import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
+import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
 import java.util.concurrent.CompletableFuture;
+import java.util.function.Consumer;
 
 public class DecisionGUI extends InventoryGUI {
 
-    private final DecisionMessage decisionMessage;
+    private Consumer<InventoryClickEvent> acceptConsumer;
+    private Consumer<InventoryClickEvent> denyConsumer;
+    private String question = "Are you sure?";
+    private String confirmText = "Yes";
+    private String denyText = "No";
+    private boolean executeFromBackend = false;
+
+    public DecisionGUI(String title) {
+        super(title, 9);
+    }
+
+    public DecisionGUI(Component title) {
+        super(LegacyComponentSerializer.legacySection().serialize(title), 9);
+    }
 
     public DecisionGUI(DecisionMessage decisionMessage) {
-        super();
-        this.decisionMessage = decisionMessage;
+        super(LegacyComponentSerializer.legacySection().serialize(decisionMessage.getPrefix()), 9);
+
+        this.question = LegacyComponentSerializer.legacySection().serialize(decisionMessage.getQuestion());
+        this.confirmText = LegacyComponentSerializer.legacySection().serialize(decisionMessage.getConfirmText());
+        this.denyText = LegacyComponentSerializer.legacySection().serialize(decisionMessage.getDenyText());
+
+        this.acceptConsumer = event -> {
+            Player player = (Player) event.getWhoClicked();
+
+            String command = decisionMessage.getConfirmCommand();
+            if (command.startsWith("/")) {
+                command = command.substring(1);
+            }
+
+            String commandToExecute = command;
+
+            performCommand(player, commandToExecute)
+                    .thenAccept(success -> {
+                        if (success) {
+                            Bukkit.getScheduler().runTask(BukkitLunaticLib.getInstance(), () -> player.closeInventory());
+                        } else {
+                            Logger.errorLog("Error while executing command: " + commandToExecute);
+                        }
+                    });
+        };
+
+        this.denyConsumer = event -> {
+            Player player = (Player) event.getWhoClicked();
+
+            String command = decisionMessage.getDenyCommand();
+            if (command.startsWith("/")) {
+                command = command.substring(1);
+            }
+
+            String commandToExecute = command;
+
+            performCommand(player, commandToExecute)
+                    .thenAccept(success -> {
+                        if (success) {
+                            player.closeInventory();
+                        } else {
+                            Logger.errorLog("Error while executing command: " + commandToExecute);
+                        }
+                    });
+        };
     }
 
     @Override
@@ -47,10 +106,7 @@ public class DecisionGUI extends InventoryGUI {
 
     private InventoryButton createGreenButton() {
         ItemStack itemStack = new ItemStack(Material.LIME_STAINED_GLASS_PANE);
-        String confirmText = LegacyComponentSerializer.legacySection().serialize(decisionMessage.getConfirmText());
         ItemMeta itemMeta = itemStack.getItemMeta();
-
-
 
         if (itemMeta != null) {
             itemMeta.setDisplayName(confirmText);
@@ -59,30 +115,11 @@ public class DecisionGUI extends InventoryGUI {
 
         return new InventoryButton()
                 .creator(player -> itemStack)
-                .consumer(event -> {
-                    Player player = (Player) event.getWhoClicked();
-
-                    String command = decisionMessage.getConfirmCommand();
-                    if (command.startsWith("/")) {
-                        command = command.substring(1);
-                    }
-
-                    String commandToExecute = command;
-
-                    performCommand(player, commandToExecute)
-                            .thenAccept(success -> {
-                                if (success) {
-                                    Bukkit.getScheduler().runTask(BukkitLunaticLib.getInstance(), () -> player.closeInventory());
-                                } else {
-                                    Logger.errorLog("Error while executing command: " + commandToExecute);
-                                }
-                            });
-                });
+                .consumer(acceptConsumer);
     }
 
     private InventoryButton createRedButton() {
         ItemStack itemStack = new ItemStack(Material.RED_STAINED_GLASS_PANE);
-        String denyText = LegacyComponentSerializer.legacySection().serialize(decisionMessage.getDenyText());
         ItemMeta itemMeta = itemStack.getItemMeta();
         if (itemMeta != null) {
             itemMeta.setDisplayName(denyText);
@@ -91,33 +128,14 @@ public class DecisionGUI extends InventoryGUI {
 
         return new InventoryButton()
                 .creator(player -> itemStack)
-                .consumer(event -> {
-                    Player player = (Player) event.getWhoClicked();
-
-                    String command = decisionMessage.getDenyCommand();
-                    if (command.startsWith("/")) {
-                        command = command.substring(1);
-                    }
-
-                    String commandToExecute = command;
-
-                    performCommand(player, commandToExecute)
-                            .thenAccept(success -> {
-                                if (success) {
-                                    player.closeInventory();
-                                } else {
-                                    Logger.errorLog("Error while executing command: " + commandToExecute);
-                                }
-                            });
-                });
+                .consumer(denyConsumer);
     }
 
     private InventoryButton createWhiteButton() {
         ItemStack itemStack = new ItemStack(Material.WHITE_STAINED_GLASS_PANE);
-        String text = LegacyComponentSerializer.legacySection().serialize(decisionMessage.getQuestion());
         ItemMeta itemMeta = itemStack.getItemMeta();
         if (itemMeta != null) {
-            itemMeta.setDisplayName(text);
+            itemMeta.setDisplayName(question);
         }
         itemStack.setItemMeta(itemMeta);
 
@@ -127,7 +145,7 @@ public class DecisionGUI extends InventoryGUI {
 
     private CompletableFuture<Boolean> performCommand(Player player, String command) {
 
-        if (decisionMessage.isExecuteFromBackend()) {
+        if (executeFromBackend) {
             return new RunCommandRequest().getAsync(player.getUniqueId(), command);
         }
 
@@ -135,11 +153,18 @@ public class DecisionGUI extends InventoryGUI {
         return CompletableFuture.completedFuture(success);
     }
 
+    @Override
     public int getSize() {
         return 9;
     }
 
-    public String getDefaultTitle() {
-        return LegacyComponentSerializer.legacySection().serialize(decisionMessage.getPrefix());
+    public DecisionGUI accept(Consumer<InventoryClickEvent> consumer) {
+        this.acceptConsumer = consumer;
+        return this;
+    }
+
+    public DecisionGUI deny(Consumer<InventoryClickEvent> consumer) {
+        this.denyConsumer = consumer;
+        return this;
     }
 }
