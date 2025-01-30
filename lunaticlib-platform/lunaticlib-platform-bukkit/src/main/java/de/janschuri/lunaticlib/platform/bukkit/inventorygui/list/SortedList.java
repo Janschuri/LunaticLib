@@ -1,14 +1,11 @@
 package de.janschuri.lunaticlib.platform.bukkit.inventorygui.list;
 
-import de.janschuri.lunaticlib.common.logger.Logger;
 import de.janschuri.lunaticlib.platform.bukkit.inventorygui.InventoryButton;
 import de.janschuri.lunaticlib.platform.bukkit.util.ItemStackUtils;
-import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
-import java.io.File;
 import java.util.Comparator;
 import java.util.List;
 import java.util.function.Function;
@@ -67,19 +64,9 @@ public interface SortedList<T> extends ListHandler<T> {
         return new InventoryButton()
                 .creator(player -> {
                     if (isDescending()) {
-                        ItemStack arrow = ItemStackUtils.getSkullFromURL("https://textures.minecraft.net/texture/a3852bf616f31ed67c37de4b0baa2c5f8d8fca82e72dbcafcba66956a81c4");
-                        ItemMeta meta = arrow.getItemMeta();
-                        assert meta != null;
-                        meta.setDisplayName("Descended");
-                        arrow.setItemMeta(meta);
-                        return arrow;
+                        return getDescendingIcon();
                     } else {
-                        ItemStack arrow = ItemStackUtils.getSkullFromURL("https://textures.minecraft.net/texture/b221da4418bd3bfb42eb64d2ab429c61decb8f4bf7d4cfb77a162be3dcb0b927");
-                        ItemMeta meta = arrow.getItemMeta();
-                        assert meta != null;
-                        meta.setDisplayName("Ascended");
-                        arrow.setItemMeta(meta);
-                        return arrow;
+                        return getAscendingIcon();
                     }
                 })
                 .consumer(event -> {
@@ -111,6 +98,26 @@ public interface SortedList<T> extends ListHandler<T> {
 
     default void toggleDescending() {
         setDescending(!isDescending());
+    }
+
+    default ItemStack getAscendingIcon() {
+        ItemStack arrow = ItemStackUtils.getSkullFromURL("https://textures.minecraft.net/texture/b221da4418bd3bfb42eb64d2ab429c61decb8f4bf7d4cfb77a162be3dcb0b927");
+        ItemMeta meta = arrow.getItemMeta();
+        assert meta != null;
+        meta.setDisplayName("Ascended");
+        arrow.setItemMeta(meta);
+
+        return getItemWithGuiId(arrow, "ascending");
+    }
+
+    default ItemStack getDescendingIcon() {
+        ItemStack arrow = ItemStackUtils.getSkullFromURL("https://textures.minecraft.net/texture/a3852bf616f31ed67c37de4b0baa2c5f8d8fca82e72dbcafcba66956a81c4");
+        ItemMeta meta = arrow.getItemMeta();
+        assert meta != null;
+        meta.setDisplayName("Descended");
+        arrow.setItemMeta(meta);
+
+        return getItemWithGuiId(arrow, "descending");
     }
 
     class Sorter<T> {

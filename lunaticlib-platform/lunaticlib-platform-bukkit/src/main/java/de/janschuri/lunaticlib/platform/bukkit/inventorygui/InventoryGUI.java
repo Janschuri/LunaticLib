@@ -1,15 +1,19 @@
 package de.janschuri.lunaticlib.platform.bukkit.inventorygui;
 
-import de.janschuri.lunaticlib.common.logger.Logger;
 import de.janschuri.lunaticlib.common.utils.Utils;
+import de.janschuri.lunaticlib.platform.bukkit.BukkitLunaticLib;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
+import org.bukkit.NamespacedKey;
 import org.bukkit.entity.HumanEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.inventory.*;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.ItemMeta;
+import org.bukkit.persistence.PersistentDataContainer;
+import org.bukkit.persistence.PersistentDataType;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -87,23 +91,7 @@ public abstract class InventoryGUI implements InventoryHandler {
 
             ItemStack item = getInventory().getItem(i);
 
-            if (item == null) {
-                getInventory().setItem(i, icon);
-                continue;
-            }
-
-            if (item.equals(icon)) {
-                continue;
-            }
-
-            if (item.isSimilar(icon)) {
-                icon.setAmount(item.getAmount());
-                continue;
-            }
-
-            if (item.getType() == icon.getType()) {
-                item.setItemMeta(icon.getItemMeta());
-                getInventory().setItem(i, item);
+            if (isSameButton(item, icon)) {
                 continue;
             }
 
@@ -220,5 +208,48 @@ public abstract class InventoryGUI implements InventoryHandler {
 
         Utils.scheduleTask(runnable, 100, TimeUnit.MILLISECONDS);
         return result;
+    }
+
+    @Override
+    public final NamespacedKey getGuiIdKey() {
+        return new NamespacedKey(BukkitLunaticLib.getInstance(), "item-gui-id");
+    }
+
+    @Override
+    public final ItemStack getItemWithGuiId(ItemStack item, String name) {
+        ItemMeta meta = item.getItemMeta();
+        assert meta != null;
+
+        NamespacedKey key = getGuiIdKey();
+
+        PersistentDataContainer container = meta.getPersistentDataContainer();
+        container.set(key, PersistentDataType.STRING, name);
+
+        item.setItemMeta(meta);
+        return item;
+    }
+
+    @Override
+    public boolean isSameButton(ItemStack button1, ItemStack button2) {
+        if (button1 == null || button2 == null) {
+            return false;
+        }
+
+        ItemMeta itemMeta = button1.getItemMeta();
+        ItemMeta buttonMeta = button2.getItemMeta();
+
+        if (itemMeta == null || buttonMeta == null) {
+            return false;
+        }
+
+        NamespacedKey key = getGuiIdKey();
+
+        PersistentDataContainer button1Container = itemMeta.getPersistentDataContainer();
+        PersistentDataContainer button2Container = buttonMeta.getPersistentDataContainer();
+
+        String button1Name = button1Container.get(key, PersistentDataType.STRING);
+        String button2Name = button2Container.get(key, PersistentDataType.STRING);
+
+        return button1Name != null && button1Name.equals(button2Name);
     }
 }
