@@ -30,4 +30,6 @@ public interface ListHandler<T> extends InventoryHandler {
     List<T> getProcessedItems();
 
     void loadProcessedItems(Player player);
+
+
 }

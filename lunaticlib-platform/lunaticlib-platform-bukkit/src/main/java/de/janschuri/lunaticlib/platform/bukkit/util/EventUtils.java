@@ -34,6 +34,9 @@ public final class EventUtils {
     }
 
     public static boolean isAllowedInteract(Player player, Block block) {
+        if (player == null) {
+            return true;
+        }
         PlayerInteractEvent event = new PlayerInteractEvent(player, Action.RIGHT_CLICK_BLOCK, new ItemStack(Material.AIR), block, BlockFace.UP);
         fakeEvents.add(event);
         Bukkit.getPluginManager().callEvent(event);
@@ -46,6 +49,9 @@ public final class EventUtils {
     }
 
     public static boolean isAllowedTakeItem(Player player, Inventory inventory) {
+        if (player == null) {
+            return true;
+        }
         InventoryView view = simulateInventoryView(player, inventory);
 
         InventoryClickEvent event = new InventoryClickEvent(view, InventoryType.SlotType.CONTAINER, 0, ClickType.LEFT, InventoryAction.PICKUP_ALL);
@@ -60,6 +66,9 @@ public final class EventUtils {
     }
 
     public static boolean isAllowedPutItem(Player player, Inventory inventory) {
+        if (player == null) {
+            return true;
+        }
         InventoryView view = simulateInventoryView(player, inventory);
 
         InventoryClickEvent event = new InventoryClickEvent(view, InventoryType.SlotType.CONTAINER, 0, ClickType.RIGHT, InventoryAction.PLACE_ALL);
@@ -74,6 +83,9 @@ public final class EventUtils {
     }
 
     public static boolean isAllowedPlaceBlock(Player player, Block block) {
+        if (player == null) {
+            return true;
+        }
         BlockPlaceEvent event = new BlockPlaceEvent(block, block.getState(), block, new ItemStack(block.getType()), player, false, EquipmentSlot.HAND);
         fakeEvents.add(event);
         Bukkit.getPluginManager().callEvent(event);

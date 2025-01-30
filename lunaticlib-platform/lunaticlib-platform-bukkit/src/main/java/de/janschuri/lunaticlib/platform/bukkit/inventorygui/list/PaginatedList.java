@@ -131,7 +131,8 @@ public interface PaginatedList<T> extends ListHandler<T> {
         assert meta != null;
         meta.setDisplayName(">>>");
         item.setItemMeta(meta);
-        return item;
+
+        return getItemWithGuiId(item, "next-page");
     }
 
     default ItemStack previousPageItem(Player player) {
@@ -140,6 +141,7 @@ public interface PaginatedList<T> extends ListHandler<T> {
         assert meta != null;
         meta.setDisplayName("<<<");
         item.setItemMeta(meta);
-        return item;
+
+        return getItemWithGuiId(item, "previous-page");
     }
 }

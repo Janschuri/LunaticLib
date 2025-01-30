@@ -94,8 +94,6 @@ public abstract class ListGUI<T> extends InventoryGUI implements ListHandler<T> 
 
     @Override
     public void loadProcessedItems(Player player) {
-        Logger.debugLog("Filters: " + getFilters().size());
-
         Predicate<T> combinedFilter = getFilters().stream()
                 .reduce(Predicate::and)
                 .orElse(t -> true);
