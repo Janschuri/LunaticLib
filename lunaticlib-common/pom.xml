@@ -24,12 +24,6 @@
                     <target>${java.version}</target>
                 </configuration>
             </plugin>
-            <plugin> <!-- perform ebean enhancement -->
-                <groupId>io.ebean</groupId>
-                <artifactId>ebean-maven-plugin</artifactId>
-                <version>14.1.0</version>
-                <extensions>true</extensions>
-            </plugin>
         </plugins>
         <resources>
             <resource>

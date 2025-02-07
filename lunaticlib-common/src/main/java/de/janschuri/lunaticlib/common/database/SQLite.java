@@ -13,7 +13,7 @@ import java.nio.file.Path;
 import java.sql.*;
 
 
-public class SQLite extends Database {
+public class SQLite extends DatabaseRepository {
     private final String filename;
     private final Path dataDirectory;
     private final Table[] tables;

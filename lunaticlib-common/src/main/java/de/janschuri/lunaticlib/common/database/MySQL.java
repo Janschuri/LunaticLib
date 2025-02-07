@@ -4,12 +4,10 @@ import de.janschuri.lunaticlib.common.database.columns.Column;
 import de.janschuri.lunaticlib.common.database.columns.ForeignKey;
 import de.janschuri.lunaticlib.common.database.columns.PrimaryKey;
 import de.janschuri.lunaticlib.common.config.LunaticDatabaseConfigImpl;
-import de.janschuri.lunaticlib.common.logger.Logger;
 
-import java.nio.file.LinkOption;
 import java.sql.*;
 
-public class MySQL extends Database {
+public class MySQL extends DatabaseRepository {
     private final String host, database, username, password;
     private final int port;
     private final Table[] tables;
