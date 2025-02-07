@@ -77,6 +77,11 @@ public class PlatformImpl implements Platform<Plugin, CommandSender> {
     }
 
     @Override
+    public Plugin getPlugin() {
+        return BungeeLunaticLib.getInstance();
+    }
+
+    @Override
     public Collection<PlayerSender> getOnlinePlayers() {
         Collection<ProxiedPlayer> proyiedPlayers = BungeeLunaticLib.getInstance().getProxy().getPlayers();
 

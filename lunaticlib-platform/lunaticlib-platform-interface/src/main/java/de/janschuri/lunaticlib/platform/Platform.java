@@ -6,7 +6,6 @@ import de.janschuri.lunaticlib.LunaticCommand;
 
 import java.util.Collection;
 import java.util.UUID;
-import java.util.stream.Collector;
 
 public interface Platform<P, T> {
 
@@ -18,5 +17,6 @@ public interface Platform<P, T> {
     Vault getVault();
     Sender getSender(T sender);
     void registerCommand(P plugin, LunaticCommand lunaticCommand);
+    P getPlugin();
     Collection<PlayerSender> getOnlinePlayers();
 }

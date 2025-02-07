@@ -94,6 +94,11 @@ public class PlatformImpl implements Platform<JavaPlugin, CommandSender> {
     }
 
     @Override
+    public JavaPlugin getPlugin() {
+        return BukkitLunaticLib.getInstance();
+    }
+
+    @Override
     public Collection<PlayerSender> getOnlinePlayers() {
         Collection<? extends Player> bukkitPlayers = Bukkit.getOnlinePlayers();
 
