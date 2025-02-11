@@ -222,6 +222,7 @@ public abstract class AbstractLunaticCommand implements LunaticCommand {
         return list;
     }
 
+    @Deprecated
     protected TextReplacementConfig getTextReplacementConfig(String match, String replacement) {
         return TextReplacementConfig.builder()
                 .match(match)
