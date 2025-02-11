@@ -38,6 +38,10 @@ public class LunaticDatabaseConfigImpl extends LunaticConfigImpl implements de.j
         }
     }
 
+    public String getType() {
+        return useMySQL ? "mysql" : "sqlite";
+    }
+
     public String getHost() {
         return host;
     }
