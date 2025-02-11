@@ -73,6 +73,11 @@ public class PlatformImpl implements Platform<PluginContainer, CommandSource> {
     }
 
     @Override
+    public PluginContainer getPlugin() {
+        return VelocityLunaticLib.getProxy().getPluginManager().getPlugin("lunaticlib").orElse(null);
+    }
+
+    @Override
     public Collection<PlayerSender> getOnlinePlayers() {
         Collection<Player> proxyPlayers = VelocityLunaticLib.getProxy().getAllPlayers();
 
