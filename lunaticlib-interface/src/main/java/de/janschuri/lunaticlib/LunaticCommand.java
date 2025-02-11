@@ -13,8 +13,7 @@ public interface LunaticCommand {
 
     Map<CommandMessageKey, String> getHelpMessages();
 
-    Component getMessage(MessageKey key);
-    Component getMessage(MessageKey key, boolean withPrefix);
+    Component getMessage(MessageKey key, Placeholder... placeholders);
 
     Component getPrefix();
 
@@ -56,4 +55,12 @@ public interface LunaticCommand {
     List<Component> getFormattedParamsList(Sender sender, int paramIndex);
 
     List<Component> getFormattedAliasesList(Sender sender);
+
+    default Placeholder placeholder(String key, String value) {
+        return new Placeholder(key, Component.text(value));
+    }
+
+    default Placeholder placeholder(String key, Component value) {
+        return new Placeholder(key, value);
+    }
 }

@@ -23,7 +23,7 @@ public class DecisionGUI extends InventoryGUI {
     private String question = "Are you sure?";
     private String confirmText = "Yes";
     private String denyText = "No";
-    private boolean executeFromBackend = false;
+    private final boolean executeFromBackend = false;
 
     public DecisionGUI(String title) {
         super(title, 9);

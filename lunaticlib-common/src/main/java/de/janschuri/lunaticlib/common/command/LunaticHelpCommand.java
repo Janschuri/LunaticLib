@@ -117,14 +117,14 @@ public class LunaticHelpCommand extends AbstractLunaticCommand {
 
                 if (subcommand.hasHelpCommand()) {
                     if (sender.hasPermission(subcommand.getHelpCommand().getPermission())) {
-                        Component m = getMessage(new CommandMessageKey(subcommand.getHelpCommand(), "help"), false);
+                        Component m = getMessage(new CommandMessageKey(subcommand.getHelpCommand(), "help").noPrefix());
                         m = getReplacedComponent(m, sender, subcommand);
                         messages.add(m);
                     }
                 } else if (!subcommand.getHelpMessages().isEmpty()) {
                     for (Map.Entry<CommandMessageKey, String> entry : subcommand.getHelpMessages().entrySet()) {
                         if (sender.hasPermission(entry.getValue())) {
-                            Component m = subcommand.getMessage(entry.getKey(), false);
+                            Component m = subcommand.getMessage(entry.getKey().noPrefix());
                             m = getReplacedComponent(m, sender, subcommand);
                             messages.add(m);
                         }

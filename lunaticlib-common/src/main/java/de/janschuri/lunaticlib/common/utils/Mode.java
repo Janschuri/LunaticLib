@@ -4,6 +4,6 @@ public enum Mode {
 
     PROXY,
     BACKEND,
-    STANDALONE;
+    STANDALONE
 
 }

@@ -55,8 +55,7 @@ public class PlatformImpl implements Platform<JavaPlugin, CommandSender> {
 
     @Override
     public de.janschuri.lunaticlib.Sender getSender(CommandSender sender) {
-        if (sender instanceof Player) {
-            Player player = (Player) sender;
+        if (sender instanceof Player player) {
             PlayerSenderImpl playerSender = new PlayerSenderImpl(player);
             return playerSender;
         }
@@ -76,7 +75,7 @@ public class PlatformImpl implements Platform<JavaPlugin, CommandSender> {
             List<String> aliases = lunaticCommand.getAliases();
 
             Logger.debugLog("Registering command " + lunaticCommand.getName() + " with aliases " + aliases.toString());
-            Logger.debugLog("Command: " + cmd.toString());
+            Logger.debugLog("Command: " + cmd);
 
             synchronized (aliases) {
                 aliases.forEach(alias -> {

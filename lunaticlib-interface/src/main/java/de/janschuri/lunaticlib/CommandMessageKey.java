@@ -2,8 +2,8 @@ package de.janschuri.lunaticlib;
 
 public class CommandMessageKey extends MessageKey {
 
-    private LunaticCommand command;
-    private String key;
+    private final LunaticCommand command;
+    private final String key;
 
     public CommandMessageKey(LunaticCommand command, String key) {
         super(key);

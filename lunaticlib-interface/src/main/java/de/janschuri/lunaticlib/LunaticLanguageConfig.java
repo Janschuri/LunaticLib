@@ -6,11 +6,9 @@ import java.util.List;
 
 public interface LunaticLanguageConfig extends LunaticConfig {
 
-    Component getMessage(MessageKey key, boolean withPrefix);
-    Component getMessage(MessageKey key);
+    Component getMessage(MessageKey key, Placeholder... placeholders);
 
-    String getMessageAsString(MessageKey key);
-    String getMessageAsString(MessageKey key, boolean withPrefix);
+    String getMessageAsString(MessageKey key, Placeholder... placeholders);
 
     List<String> getAliases(String command);
 

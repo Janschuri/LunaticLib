@@ -21,12 +21,6 @@ public class LunaticConfigImpl implements de.janschuri.lunaticlib.LunaticConfig 
     private final String defaultFilePath;
     private Map<String, Object> yamlMap = new LinkedHashMap<>();
 
-    @Deprecated
-    public LunaticConfigImpl(Path dataDirectory, String filePath, String defaultFilePath) {
-        this.path = Path.of(dataDirectory.toString(), filePath);
-        this.defaultFilePath = defaultFilePath;
-    }
-
     public LunaticConfigImpl(Path dataDirectory, String filePath) {
         this.path = Path.of(dataDirectory.toString(), filePath);
         this.defaultFilePath = null;
@@ -207,9 +201,8 @@ public class LunaticConfigImpl implements de.janschuri.lunaticlib.LunaticConfig 
     }
 
     private static Object loadNodeTuple(NodeTuple nodeTuple) {
-        if (nodeTuple.getValueNode() instanceof MappingNode) {
+        if (nodeTuple.getValueNode() instanceof MappingNode mappingNode) {
             Map<String, Object> yamlMap = new HashMap<>();
-            MappingNode mappingNode = (MappingNode) nodeTuple.getValueNode();
             List<NodeTuple> list = mappingNode.getValue();
             for (NodeTuple node : list) {
                 yamlMap.put(((ScalarNode) node.getKeyNode()).getValue(), loadNodeTuple(node));
@@ -236,9 +229,7 @@ public class LunaticConfigImpl implements de.janschuri.lunaticlib.LunaticConfig 
     }
 
     private static Node mergeNodes (Node node, Node defaultNode) {
-        if (node instanceof MappingNode && defaultNode instanceof MappingNode) {
-            MappingNode mappingNode = (MappingNode) node;
-            MappingNode defaultMappingNode = (MappingNode) defaultNode;
+        if (node instanceof MappingNode mappingNode && defaultNode instanceof MappingNode defaultMappingNode) {
             List<NodeTuple> list = mappingNode.getValue();
             List<NodeTuple> defaultList = defaultMappingNode.getValue();
 
@@ -278,9 +269,7 @@ public class LunaticConfigImpl implements de.janschuri.lunaticlib.LunaticConfig 
                 } else {
                     Node node = map.get(key).getValueNode();
                     Node defaultNode = defaultMap.get(key).getValueNode();
-                    if (node instanceof MappingNode && defaultNode instanceof MappingNode) {
-                        MappingNode newMappingNode = (MappingNode) node;
-                        MappingNode newDefaultMappingNode = (MappingNode) defaultNode;
+                    if (node instanceof MappingNode newMappingNode && defaultNode instanceof MappingNode newDefaultMappingNode) {
                         List<NodeTuple> newList = newMappingNode.getValue();
                         List<NodeTuple> newDefaultList = newDefaultMappingNode.getValue();
 

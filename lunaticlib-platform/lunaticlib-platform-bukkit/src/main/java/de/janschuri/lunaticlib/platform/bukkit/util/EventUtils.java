@@ -28,7 +28,7 @@ import java.util.List;
 
 public final class EventUtils {
 
-    private static List<Event> fakeEvents = new ArrayList<>();
+    private static final List<Event> fakeEvents = new ArrayList<>();
 
     private EventUtils() {
     }

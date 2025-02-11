@@ -1,9 +1,11 @@
 package de.janschuri.lunaticlib.common.config;
 
 import de.janschuri.lunaticlib.MessageKey;
+import de.janschuri.lunaticlib.Placeholder;
 import de.janschuri.lunaticlib.common.logger.Logger;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.TextComponent;
+import net.kyori.adventure.text.TextReplacementConfig;
 import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 
 import java.nio.file.Path;
@@ -23,7 +25,7 @@ public class LunaticLanguageConfigImpl extends LunaticConfigImpl implements de.j
     }
 
     @Override
-    public Component getMessage(MessageKey key, boolean withPrefix) {
+    public Component getMessage(MessageKey key, Placeholder... placeholders) {
         String keyString = key.toString().toLowerCase();
 
         String message = getString(keyString);
@@ -35,42 +37,30 @@ public class LunaticLanguageConfigImpl extends LunaticConfigImpl implements de.j
             message = "Message not found: " + keyString;
         }
 
-        Map<String, String> placeholders = key.getPlaceholders();
+        Component messageComponent = LegacyComponentSerializer.legacyAmpersand().deserialize(message);
 
-        if (!placeholders.isEmpty()) {
-            for (Map.Entry<String, String> entry : placeholders.entrySet()) {
-                message = message.replace("%" + entry.getKey() + "%", entry.getValue());
-            }
+        for (Placeholder placeholder : placeholders) {
+            messageComponent = messageComponent.replaceText(TextReplacementConfig.builder()
+                    .match(placeholder.getKey())
+                    .replacement(placeholder.getValue())
+                    .build());
         }
 
-        if (withPrefix) {
-            return getPrefix().append(LegacyComponentSerializer.legacyAmpersand().deserialize(message));
+        if (key.isWithPrefix()) {
+            return getPrefix().append(messageComponent);
         }
 
         return LegacyComponentSerializer.legacyAmpersand().deserialize(message);
     }
 
-    @Override
-    public Component getMessage(MessageKey key) {
-        return getMessage(key, true);
-    }
 
     @Override
-    public String getMessageAsString(MessageKey key) {
-        return getMessageAsString(key, false);
+    public String getMessageAsString(MessageKey key, Placeholder... placeholders) {
+        return ((TextComponent) getMessage(key, placeholders)).content();
     }
 
-    @Override
-    public String getMessageAsString(MessageKey key, boolean withPrefix) {
-        return ((TextComponent) getMessage(key, withPrefix)).content();
-    }
-
-    public String getMessageAsLegacyString(MessageKey key, boolean withPrefix) {
-        return LegacyComponentSerializer.legacySection().serialize(getMessage(key, withPrefix));
-    }
-
-    public String getMessageAsLegacyString(MessageKey key) {
-        return getMessageAsLegacyString(key, false);
+    public String getMessageAsLegacyString(MessageKey key, Placeholder... placeholders) {
+        return LegacyComponentSerializer.legacySection().serialize(getMessage(key, placeholders));
     }
 
     @Override

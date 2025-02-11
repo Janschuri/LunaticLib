@@ -31,7 +31,7 @@ public abstract class InventoryGUI implements InventoryHandler {
     private Inventory inventory;
     private boolean processingClickEvent;
     private String title;
-    private int size;
+    private final int size;
     private final Map<Integer, InventoryButton> buttonMap;
     private final List<PlayerInvButton> playerInvButtonList;
 

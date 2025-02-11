@@ -79,17 +79,8 @@ public abstract class AbstractLunaticCommand implements LunaticCommand {
     }
 
     @Override
-    public Component getMessage(MessageKey key) {
-        return getMessage(key, true);
-    }
-
-    @Override
-    public Component getMessage(MessageKey key, boolean withPrefix) {
-        if (isPrimaryCommand()) {
-            return getLanguageConfig().getMessage(key, withPrefix);
-        } else {
-            return getLanguageConfig().getMessage(key, withPrefix);
-        }
+    public Component getMessage(MessageKey key, Placeholder... placeholders) {
+        return getLanguageConfig().getMessage(key, placeholders);
     }
 
     @Override
@@ -220,14 +211,6 @@ public abstract class AbstractLunaticCommand implements LunaticCommand {
                 list.add(Component.text(alias));
         }
         return list;
-    }
-
-    @Deprecated
-    protected TextReplacementConfig getTextReplacementConfig(String match, String replacement) {
-        return TextReplacementConfig.builder()
-                .match(match)
-                .replacement(replacement)
-                .build();
     }
 
     protected Map<String, String> getOnlinePlayersParam() {

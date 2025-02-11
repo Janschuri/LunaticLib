@@ -60,7 +60,7 @@ public class RunCommandRequest extends FutureRequest<Boolean> {
                 Logger.errorLog("RunCommandRequest: Error while running command.");
                 return false; // Indicate failure if the response is invalid
             }
-            return (Boolean) response; // Return the actual success/failure response from Velocity
+            return response; // Return the actual success/failure response from Velocity
         }).exceptionally(ex -> {
             Logger.errorLog("RunCommandRequest: Exception occurred - " + ex.getMessage());
             return false; // Indicate failure on exception
