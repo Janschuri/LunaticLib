@@ -21,4 +21,16 @@ public class LunaticCommandMessageKey extends LunaticMessageKey implements Comma
             return "commands." + command.getName() + ".messages." + key;
         }
     }
+
+    @Override
+    public LunaticCommandMessageKey defaultMessage(String lang, String defaultMessage) {
+        super.defaultMessage(lang, defaultMessage);
+        return this;
+    }
+
+    @Override
+    public LunaticCommandMessageKey defaultMessage(String defaultMessage) {
+        super.defaultMessage(defaultMessage);
+        return this;
+    }
 }

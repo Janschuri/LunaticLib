@@ -83,6 +83,11 @@ public class LunaticHelpCommand extends LunaticCommand implements HasParentComma
     }
 
     @Override
+    public Component noConsoleCommandMessage(Sender sender, String[] args) {
+        return command.noConsoleCommandMessage(sender, args);
+    }
+
+    @Override
     public String getName() {
         return "help";
     }

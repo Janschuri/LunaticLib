@@ -27,12 +27,12 @@ public class LunaticMessageKey implements MessageKey {
     }
 
     public LunaticMessageKey defaultMessage(String lang, String defaultMessage) {
-        defaultMessages.put(lang, defaultMessage);
+        defaultMessages.put(lang.toLowerCase(), defaultMessage);
         return this;
     }
 
     public String getDefaultMessage(String lang) {
-        return defaultMessages.get(lang);
+        return defaultMessages.get(lang.toLowerCase());
     }
 
     public LunaticMessageKey noPrefix() {

@@ -12,28 +12,20 @@ public interface Command {
 
     String getPermission();
 
-    default boolean checkPermission(Sender commandSender, String[] args) {
-        if (commandSender.hasPermission(getPermission())) {
-            return true;
-        } else {
-            commandSender.sendMessage(noPermissionMessage(commandSender, args));
-            return false;
-        }
-    }
+    boolean checkPermission(Sender commandSender, String[] args);
 
     Component noPermissionMessage(Sender sender, String[] args);
 
-    default boolean checkSource(Sender commandSender, String[] args) {
-        return true;
-    }
+    boolean checkSource(Sender commandSender, String[] args);
+
+    boolean isConsoleCommand();
 
     Component wrongUsageMessage(Sender sender, String[] args);
+    Component noConsoleCommandMessage(Sender sender, String[] args);
 
     String getFullCommand();
 
-    default boolean checkAndExecute(Sender commandSender, String[] args) {
-        return false;
-    }
+    boolean checkAndExecute(Sender commandSender, String[] args);
 
     boolean execute(Sender commandSender, String[] args);
 

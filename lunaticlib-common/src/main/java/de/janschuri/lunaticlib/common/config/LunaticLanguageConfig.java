@@ -29,11 +29,15 @@ public class LunaticLanguageConfig extends LunaticConfig {
 
         String message = getString(keyString);
         if (message == null) {
-            Logger.warnLog("Message not found: " + keyString);
-            message = key.getDefaultMessage();
-        }
-        if (message == null) {
-            message = "Message not found: " + keyString;
+            message = key.getDefaultMessage(language);
+
+            Logger.debugLog("Missing message for key: " + keyString);
+            if (message != null) {
+                setString(keyString, message);
+                save();
+            } else {
+                Logger.errorLog("Missing message for key without default: " + keyString);
+            }
         }
 
         Component messageComponent = LegacyComponentSerializer.legacyAmpersand().deserialize(message);

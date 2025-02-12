@@ -2,9 +2,11 @@ package de.janschuri.lunaticlib.common.config;
 
 import com.google.common.base.Preconditions;
 import de.janschuri.lunaticlib.common.logger.Logger;
+import org.checkerframework.checker.units.qual.A;
 import org.yaml.snakeyaml.DumperOptions;
 import org.yaml.snakeyaml.LoaderOptions;
 import org.yaml.snakeyaml.Yaml;
+import org.yaml.snakeyaml.comments.CommentLine;
 import org.yaml.snakeyaml.constructor.Constructor;
 import org.yaml.snakeyaml.nodes.*;
 import org.yaml.snakeyaml.representer.Representer;
@@ -19,6 +21,7 @@ public class LunaticConfig {
 
     private final Path path;
     private Map<String, Object> yamlMap = new LinkedHashMap<>();
+    private Node node;
     private final Path dataDirectory;
     private final String filePath;
 
@@ -71,11 +74,14 @@ public class LunaticConfig {
             try (FileOutputStream fos = new FileOutputStream(file);
                  OutputStreamWriter osw = new OutputStreamWriter(fos, StandardCharsets.UTF_8);
                  BufferedWriter writer = new BufferedWriter(osw)) {
-                Yaml yaml = getYaml();
+                 Yaml yaml = getYaml();
                  yaml.serialize(newNode, writer);
             }
 
             yamlMap = loadYamlMap(newNode);
+            node = newNode;
+
+
 
         } catch (IOException e) {
             e.printStackTrace();
@@ -148,7 +154,7 @@ public class LunaticConfig {
         return yamlMap;
     }
 
-    private void save() {
+    protected void save() {
         File file = path.toFile();
 
         Yaml yaml = getYaml();
@@ -244,30 +250,66 @@ public class LunaticConfig {
         for (String key : index) {
 
             if (!map.containsKey(key)) {
-                Logger.errorLog("Missing key in config: " + key);
-                Logger.errorLog("Using default value: " + loadNodeTuple(defaultMap.get(key)));
                 mergedList.add(defaultMap.get(key));
             } else {
                 if (!defaultMap.containsKey(key)) {
                     mergedList.add(map.get(key));
                 } else {
-                    Node node = map.get(key).getValueNode();
-                    Node defaultNode = defaultMap.get(key).getValueNode();
+                    NodeTuple nodeTuple = map.get(key);
+                    Node node = nodeTuple.getValueNode();
+                    NodeTuple defaultNodeTuple = defaultMap.get(key);
+                    Node defaultNode = defaultNodeTuple.getValueNode();
                     if (node instanceof MappingNode newMappingNode && defaultNode instanceof MappingNode newDefaultMappingNode) {
                         List<NodeTuple> newList = newMappingNode.getValue();
                         List<NodeTuple> newDefaultList = newDefaultMappingNode.getValue();
 
                         newMappingNode.setValue(mergeMappingNodes(newList, newDefaultList));
 
-                        NodeTuple newNodeTuple = new NodeTuple(defaultMap.get(key).getKeyNode(), newMappingNode);
+
+                        NodeTuple newNodeTuple = mergeComments(nodeTuple, defaultNodeTuple);
                         mergedList.add(newNodeTuple);
                     } else {
-                        mergedList.add(map.get(key));
+                        NodeTuple newNodeTuple = mergeComments(nodeTuple, defaultNodeTuple);
+                        mergedList.add(newNodeTuple);
                     }
                 }
             }
         }
         return mergedList;
+    }
+
+    public static NodeTuple mergeComments(NodeTuple nodeTuple, NodeTuple defaultNodeTuple) {
+        Node node = nodeTuple.getValueNode();
+        Node defaultNode = defaultNodeTuple.getValueNode();
+
+        if (node.getInLineComments() == null || node.getInLineComments().isEmpty()) {
+            node.setInLineComments(defaultNode.getInLineComments());
+        }
+
+        if (node.getBlockComments() == null || node.getBlockComments().isEmpty()) {
+            node.setBlockComments(defaultNode.getBlockComments());
+        }
+
+        if (node.getEndComments() == null || node.getEndComments().isEmpty()) {
+            node.setEndComments(defaultNode.getEndComments());
+        }
+
+        Node keyNode = nodeTuple.getKeyNode();
+        Node defaultKeyNode = defaultNodeTuple.getKeyNode();
+
+        if (keyNode.getInLineComments() == null || keyNode.getInLineComments().isEmpty()) {
+            keyNode.setInLineComments(defaultKeyNode.getInLineComments());
+        }
+
+        if (keyNode.getBlockComments() == null || keyNode.getBlockComments().isEmpty()) {
+            keyNode.setBlockComments(defaultKeyNode.getBlockComments());
+        }
+
+        if (keyNode.getEndComments() == null || keyNode.getEndComments().isEmpty()) {
+            keyNode.setEndComments(defaultKeyNode.getEndComments());
+        }
+
+        return new NodeTuple(keyNode, node);
     }
 
     protected Map<String, Object> getYamlMap() {
@@ -311,7 +353,7 @@ public class LunaticConfig {
         Logger.debugLog("Setting value: " + path + " = " + value);
         String[] parts = path.split("\\.");
         Map<String, Object> current = yamlMap;
-        Logger.debugLog("Current map: " + current.toString());
+
         for (int i = 0; i < parts.length; i++) {
             if (i == parts.length - 1) {
                 current.put(parts[i], value);
@@ -331,8 +373,6 @@ public class LunaticConfig {
                 }
             }
         }
-
-        save();
     }
 
     public Integer getInt(String path, int defaultValue) {
@@ -463,8 +503,6 @@ public class LunaticConfig {
                 }
             }
         }
-
-        save();
     }
 
     public Map<String, Object> getMap(String path) {
@@ -487,8 +525,6 @@ public class LunaticConfig {
                 setString(path + "." + key, obj.toString());
             }
         }
-
-        save();
     }
 
     public Map<String, String> getStringMap(String path) {
@@ -510,8 +546,6 @@ public class LunaticConfig {
             Object obj = value.get(key);
             setString(path + "." + key, obj.toString());
         }
-
-        save();
     }
 
     public Map<String, Double> getDoubleMap(String path) {
@@ -533,8 +567,6 @@ public class LunaticConfig {
             Object obj = value.get(key);
             setString(path + "." + key, obj.toString());
         }
-
-        save();
     }
 
     public Map<String, List<String>> getStringListMap(String path) {
@@ -556,8 +588,6 @@ public class LunaticConfig {
             Object obj = value.get(key);
             setStringList(path + "." + key, (List<String>) obj);
         }
-
-        save();
     }
 
     public Map<String, Integer> getIntMap(String path) {
@@ -579,8 +609,6 @@ public class LunaticConfig {
             Object obj = value.get(key);
             setString(path + "." + key, obj.toString());
         }
-
-        save();
     }
 
     public Map<String, Boolean> getBooleanMap(String path) {
@@ -602,8 +630,6 @@ public class LunaticConfig {
             Object obj = value.get(key);
             setString(path + "." + key, obj.toString());
         }
-
-        save();
     }
 
     public List<String> getKeys(String path) {
