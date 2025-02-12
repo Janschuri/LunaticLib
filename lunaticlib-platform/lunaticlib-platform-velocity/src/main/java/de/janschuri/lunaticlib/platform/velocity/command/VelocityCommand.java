@@ -2,19 +2,19 @@ package de.janschuri.lunaticlib.platform.velocity.command;
 
 import com.velocitypowered.api.command.CommandSource;
 import com.velocitypowered.api.command.SimpleCommand;
+import de.janschuri.lunaticlib.Command;
 import de.janschuri.lunaticlib.Sender;
-import de.janschuri.lunaticlib.LunaticCommand;
 import de.janschuri.lunaticlib.platform.velocity.PlatformImpl;
 
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
 
-public class Command implements SimpleCommand {
+public class VelocityCommand implements SimpleCommand {
 
-    private final LunaticCommand lunaticCommand;
+    private final Command command;
 
-    public Command(LunaticCommand lunaticCommand) {
-        this.lunaticCommand = lunaticCommand;
+    public VelocityCommand(Command command) {
+        this.command = command;
     }
 
 
@@ -24,7 +24,7 @@ public class Command implements SimpleCommand {
         String[] args = invocation.arguments();
 
         Sender commandSender = new PlatformImpl().getSender(source);
-        lunaticCommand.execute(commandSender, args);
+        command.checkAndExecute(commandSender, args);
     }
 
     @Override
@@ -33,11 +33,11 @@ public class Command implements SimpleCommand {
         String[] args = invocation.arguments();
         int newSize = args.length > 0 ? args.length + 1 : 2;
         String[] newArgs = new String[newSize];
-        newArgs[0] = lunaticCommand.getName();
+        newArgs[0] = command.getName();
         if (args.length == 0) {
             newArgs[1] = "";
         }
         System.arraycopy(args, 0, newArgs, 1, args.length);
-        return CompletableFuture.completedFuture(lunaticCommand.tabComplete(new PlatformImpl().getSender(source), newArgs));
+        return CompletableFuture.completedFuture(command.tabComplete(new PlatformImpl().getSender(source), newArgs));
     }
 }

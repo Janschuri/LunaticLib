@@ -4,6 +4,7 @@ import com.velocitypowered.api.command.CommandManager;
 import com.velocitypowered.api.proxy.Player;
 import com.velocitypowered.api.util.GameProfile;
 import de.janschuri.lunaticlib.DecisionMessage;
+import de.janschuri.lunaticlib.common.command.LunaticDecisionMessage;
 import de.janschuri.lunaticlib.common.futurerequests.requests.GetSkinURLRequest;
 import de.janschuri.lunaticlib.PlayerSender;
 import de.janschuri.lunaticlib.common.futurerequests.requests.OpenDecisionGUIRequest;

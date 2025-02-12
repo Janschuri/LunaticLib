@@ -5,12 +5,10 @@ import com.velocitypowered.api.command.CommandMeta;
 import com.velocitypowered.api.command.CommandSource;
 import com.velocitypowered.api.plugin.PluginContainer;
 import com.velocitypowered.api.proxy.Player;
-import com.velocitypowered.api.proxy.ProxyServer;
-import de.janschuri.lunaticlib.LunaticCommand;
+import de.janschuri.lunaticlib.Command;
 import de.janschuri.lunaticlib.PlayerSender;
-import de.janschuri.lunaticlib.common.logger.Logger;
 import de.janschuri.lunaticlib.platform.*;
-import de.janschuri.lunaticlib.platform.velocity.command.Command;
+import de.janschuri.lunaticlib.platform.velocity.command.VelocityCommand;
 import de.janschuri.lunaticlib.platform.velocity.external.VaultImpl;
 import de.janschuri.lunaticlib.platform.velocity.sender.PlayerSenderImpl;
 import de.janschuri.lunaticlib.platform.velocity.sender.SenderImpl;
@@ -18,8 +16,6 @@ import de.janschuri.lunaticlib.platform.velocity.sender.SenderImpl;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.UUID;
-
-import static de.janschuri.lunaticlib.platform.velocity.VelocityLunaticLib.MINECRAFT_CHANNEL_IDENTIFIER;
 
 public class PlatformImpl implements Platform<PluginContainer, CommandSource> {
     public boolean sendPluginMessage(String server, byte[] message) {
@@ -60,7 +56,7 @@ public class PlatformImpl implements Platform<PluginContainer, CommandSource> {
     }
 
     @Override
-    public void registerCommand(PluginContainer pluginContainer, LunaticCommand lunaticCommand) {
+    public void registerCommand(PluginContainer pluginContainer, Command lunaticCommand) {
         CommandManager commandManager = VelocityLunaticLib.getProxy().getCommandManager();
 
         CommandMeta commandMeta = commandManager.metaBuilder(lunaticCommand.getName())
@@ -69,7 +65,7 @@ public class PlatformImpl implements Platform<PluginContainer, CommandSource> {
                 .build();
 
 
-        commandManager.register(commandMeta, new Command(lunaticCommand));
+        commandManager.register(commandMeta, new VelocityCommand(lunaticCommand));
     }
 
     @Override

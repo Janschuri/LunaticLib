@@ -1,16 +1,16 @@
 package de.janschuri.lunaticlib.platform.bungee.commands;
 
+import de.janschuri.lunaticlib.Command;
 import de.janschuri.lunaticlib.Sender;
-import de.janschuri.lunaticlib.LunaticCommand;
 import de.janschuri.lunaticlib.platform.bungee.PlatformImpl;
 import net.md_5.bungee.api.CommandSender;
 import net.md_5.bungee.api.plugin.TabExecutor;
 
-public class Command extends net.md_5.bungee.api.plugin.Command implements TabExecutor {
+public class BungeeCommand extends net.md_5.bungee.api.plugin.Command implements TabExecutor {
 
-    private final LunaticCommand lunaticCommand;
+    private final de.janschuri.lunaticlib.Command lunaticCommand;
 
-    public Command(LunaticCommand lunaticCommand) {
+    public BungeeCommand(Command lunaticCommand) {
         super(lunaticCommand.getName(), lunaticCommand.getPermission(), lunaticCommand.getAliases().toArray(new String[0]));
         this.lunaticCommand = lunaticCommand;
     }
@@ -18,7 +18,8 @@ public class Command extends net.md_5.bungee.api.plugin.Command implements TabEx
     @Override
     public void execute(CommandSender sender, String[] args) {
         Sender commandSender = new PlatformImpl().getSender(sender);
-        lunaticCommand.execute(commandSender, args);
+
+        lunaticCommand.checkAndExecute(commandSender, args);
     }
 
     @Override

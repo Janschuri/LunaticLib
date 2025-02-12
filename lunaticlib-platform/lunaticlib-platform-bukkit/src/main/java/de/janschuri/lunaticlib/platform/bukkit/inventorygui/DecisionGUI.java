@@ -1,6 +1,7 @@
 package de.janschuri.lunaticlib.platform.bukkit.inventorygui;
 
 import de.janschuri.lunaticlib.DecisionMessage;
+import de.janschuri.lunaticlib.common.command.LunaticDecisionMessage;
 import de.janschuri.lunaticlib.common.futurerequests.requests.RunCommandRequest;
 import de.janschuri.lunaticlib.common.logger.Logger;
 import de.janschuri.lunaticlib.platform.bukkit.BukkitLunaticLib;

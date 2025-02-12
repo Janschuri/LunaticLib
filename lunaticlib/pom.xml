@@ -70,10 +70,5 @@
             <artifactId>lunaticlib-platform-all</artifactId>
             <version>1.0.0</version>
         </dependency>
-        <dependency>
-            <groupId>de.janschuri</groupId>
-            <artifactId>lunaticlib-interface</artifactId>
-            <version>1.0.0</version>
-        </dependency>
     </dependencies>
 </project>

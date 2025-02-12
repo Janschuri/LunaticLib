@@ -2,20 +2,20 @@ package de.janschuri.lunaticlib.common.config;
 
 import de.janschuri.lunaticlib.MessageKey;
 import de.janschuri.lunaticlib.Placeholder;
-import de.janschuri.lunaticlib.common.logger.Logger;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.TextComponent;
 import net.kyori.adventure.text.TextReplacementConfig;
+import de.janschuri.lunaticlib.common.logger.Logger;
 import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 
 import java.nio.file.Path;
 import java.util.*;
 
-public class LunaticLanguageConfigImpl extends LunaticConfigImpl implements de.janschuri.lunaticlib.LunaticLanguageConfig {
+public class LunaticLanguageConfig extends LunaticConfig {
 
     private final String language;
 
-    public LunaticLanguageConfigImpl(Path dataDirectory, String language) {
+    public LunaticLanguageConfig(Path dataDirectory, String language) {
         super(dataDirectory, "lang.yml");
         this.language = language;
     }
@@ -24,7 +24,6 @@ public class LunaticLanguageConfigImpl extends LunaticConfigImpl implements de.j
         super.load("lang/" + language + ".yml");
     }
 
-    @Override
     public Component getMessage(MessageKey key, Placeholder... placeholders) {
         String keyString = key.toString().toLowerCase();
 
@@ -54,7 +53,6 @@ public class LunaticLanguageConfigImpl extends LunaticConfigImpl implements de.j
     }
 
 
-    @Override
     public String getMessageAsString(MessageKey key, Placeholder... placeholders) {
         return ((TextComponent) getMessage(key, placeholders)).content();
     }
@@ -63,7 +61,6 @@ public class LunaticLanguageConfigImpl extends LunaticConfigImpl implements de.j
         return LegacyComponentSerializer.legacySection().serialize(getMessage(key, placeholders));
     }
 
-    @Override
     public List<String> getAliases(String command) {
         List<String> list;
         list = getStringList("commands." + command + ".aliases");
@@ -74,7 +71,7 @@ public class LunaticLanguageConfigImpl extends LunaticConfigImpl implements de.j
 
         return list;
     }
-    @Override
+
     public List<String> getAliases(String command, String subcommand) {
         List<String> list;
         list = getStringList("commands." + command + ".subcommands." + subcommand + ".aliases");
@@ -86,7 +83,6 @@ public class LunaticLanguageConfigImpl extends LunaticConfigImpl implements de.j
         return list;
     }
 
-    @Override
     public Component getHelpHeader(String command) {
         String headerRaw = getString("help_header");
 
@@ -99,7 +95,6 @@ public class LunaticLanguageConfigImpl extends LunaticConfigImpl implements de.j
         );
     }
 
-    @Override
     public Component getHelpFooter(String command, int page, int maxPage) {
         String headerRaw = getString("help_footer");
 
@@ -124,7 +119,6 @@ public class LunaticLanguageConfigImpl extends LunaticConfigImpl implements de.j
         return commandHelpHeader;
     }
 
-    @Override
     public Component getPrefix() {
         return LegacyComponentSerializer.legacyAmpersand().deserialize(getString("prefix"));
     }

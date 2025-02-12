@@ -4,6 +4,7 @@ import com.google.common.io.ByteArrayDataInput;
 import com.google.common.io.ByteArrayDataOutput;
 import com.google.common.io.ByteStreams;
 import de.janschuri.lunaticlib.DecisionMessage;
+import de.janschuri.lunaticlib.common.command.LunaticDecisionMessage;
 import de.janschuri.lunaticlib.PlayerSender;
 import de.janschuri.lunaticlib.common.LunaticLib;
 import de.janschuri.lunaticlib.common.futurerequests.FutureRequest;
@@ -30,7 +31,7 @@ public class OpenDecisionGUIRequest extends FutureRequest<Boolean> {
             message[i] = in.readUTF();
         }
 
-        DecisionMessage decisionMessage = DecisionMessage.fromStringArray(message);
+        LunaticDecisionMessage decisionMessage = LunaticDecisionMessage.fromStringArray(message);
         decisionMessage.setExecuteFromBackend(true);
         boolean success = player.openDecisionGUI(decisionMessage);
 

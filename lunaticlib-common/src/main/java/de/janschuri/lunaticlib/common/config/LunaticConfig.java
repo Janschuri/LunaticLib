@@ -15,47 +15,19 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.*;
 
-public class LunaticConfigImpl implements de.janschuri.lunaticlib.LunaticConfig {
+public class LunaticConfig {
 
     private final Path path;
-    private final String defaultFilePath;
     private Map<String, Object> yamlMap = new LinkedHashMap<>();
+    private final Path dataDirectory;
+    private final String filePath;
 
-    public LunaticConfigImpl(Path dataDirectory, String filePath) {
+    public LunaticConfig(Path dataDirectory, String filePath) {
         this.path = Path.of(dataDirectory.toString(), filePath);
-        this.defaultFilePath = null;
+        this.dataDirectory = dataDirectory;
+        this.filePath = filePath;
     }
 
-    public LunaticConfigImpl(Path path) {
-        this.path = path;
-        this.defaultFilePath = null;
-    }
-
-
-
-    @Override
-    public void load() {
-        if (defaultFilePath != null) {
-            load(defaultFilePath);
-            return;
-        }
-
-        File file = path.toFile();
-
-        if (!file.exists()) {
-            return;
-        }
-
-        try {
-            Node root = getNode(file);
-
-            yamlMap = loadYamlMap(root);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
-
-    @Override
     public void load(String defaultFilePath) {
 
         if (!path.getParent().toFile().exists()) {
@@ -108,6 +80,18 @@ public class LunaticConfigImpl implements de.janschuri.lunaticlib.LunaticConfig 
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+
+    public Path getDataDirectory() {
+        return dataDirectory;
+    }
+
+    public String getFilePath() {
+        return filePath;
+    }
+
+    public Path getPath() {
+        return path;
     }
 
     private static Yaml getYaml() {
@@ -305,7 +289,6 @@ public class LunaticConfigImpl implements de.janschuri.lunaticlib.LunaticConfig 
         return current;
     }
 
-    @Override
     public String getString(String path, String defaultValue) {
         try {
             return get(path) == null ? defaultValue : Objects.requireNonNull(get(path)).toString();
@@ -315,7 +298,6 @@ public class LunaticConfigImpl implements de.janschuri.lunaticlib.LunaticConfig 
         }
     }
 
-    @Override
     public String getString(String path) {
         try {
             return Objects.requireNonNull(get(path)).toString();
@@ -353,7 +335,6 @@ public class LunaticConfigImpl implements de.janschuri.lunaticlib.LunaticConfig 
         save();
     }
 
-    @Override
     public Integer getInt(String path, int defaultValue) {
         try {
             return get(path) == null ? defaultValue : Integer.parseInt(Objects.requireNonNull(get(path)).toString());
@@ -363,7 +344,6 @@ public class LunaticConfigImpl implements de.janschuri.lunaticlib.LunaticConfig 
         }
     }
 
-    @Override
     public Integer getInt(String path) {
         try {
             return Integer.parseInt(Objects.requireNonNull(get(path)).toString());
@@ -377,7 +357,6 @@ public class LunaticConfigImpl implements de.janschuri.lunaticlib.LunaticConfig 
         setString(path, String.valueOf(value));
     }
 
-    @Override
     public Double getDouble(String path, double defaultValue) {
         try {
             return get(path) == null ? defaultValue : Double.parseDouble(Objects.requireNonNull(get(path)).toString());
@@ -387,7 +366,6 @@ public class LunaticConfigImpl implements de.janschuri.lunaticlib.LunaticConfig 
         }
     }
 
-    @Override
     public Double getDouble(String path) {
         try {
             return Double.parseDouble(Objects.requireNonNull(get(path)).toString());
@@ -401,7 +379,6 @@ public class LunaticConfigImpl implements de.janschuri.lunaticlib.LunaticConfig 
         setString(path, String.valueOf(value));
     }
 
-    @Override
     public Boolean getBoolean(String path, boolean defaultValue) {
         try {
             return get(path) == null ? defaultValue : Boolean.parseBoolean(Objects.requireNonNull(get(path)).toString());
@@ -411,7 +388,6 @@ public class LunaticConfigImpl implements de.janschuri.lunaticlib.LunaticConfig 
         }
     }
 
-    @Override
     public Boolean getBoolean(String path) {
         try {
             return Boolean.parseBoolean(Objects.requireNonNull(get(path)).toString());
@@ -447,7 +423,6 @@ public class LunaticConfigImpl implements de.janschuri.lunaticlib.LunaticConfig 
         setString(path, String.valueOf(value));
     }
 
-    @Override
     public List<String> getStringList(String path) {
         try {
             return (List<String>) get(path);
@@ -457,7 +432,6 @@ public class LunaticConfigImpl implements de.janschuri.lunaticlib.LunaticConfig 
         }
     }
 
-    @Override
     public List<Map<String, Object>> getMapList(String path) {
         try {
             return (List<Map<String, Object>>) get(path);
@@ -493,7 +467,6 @@ public class LunaticConfigImpl implements de.janschuri.lunaticlib.LunaticConfig 
         save();
     }
 
-    @Override
     public Map<String, Object> getMap(String path) {
         try {
             return (Map<String, Object>) get(path);
@@ -518,7 +491,6 @@ public class LunaticConfigImpl implements de.janschuri.lunaticlib.LunaticConfig 
         save();
     }
 
-    @Override
     public Map<String, String> getStringMap(String path) {
         try {
             Map<String, Object> map = getMap(path);
@@ -542,7 +514,6 @@ public class LunaticConfigImpl implements de.janschuri.lunaticlib.LunaticConfig 
         save();
     }
 
-    @Override
     public Map<String, Double> getDoubleMap(String path) {
         try {
             Map<String, Object> map = getMap(path);
@@ -566,7 +537,6 @@ public class LunaticConfigImpl implements de.janschuri.lunaticlib.LunaticConfig 
         save();
     }
 
-    @Override
     public Map<String, List<String>> getStringListMap(String path) {
         try {
             Map<String, Object> map = getMap(path);
@@ -590,7 +560,6 @@ public class LunaticConfigImpl implements de.janschuri.lunaticlib.LunaticConfig 
         save();
     }
 
-    @Override
     public Map<String, Integer> getIntMap(String path) {
         try {
             Map<String,Object> map = getMap(path);
@@ -614,7 +583,6 @@ public class LunaticConfigImpl implements de.janschuri.lunaticlib.LunaticConfig 
         save();
     }
 
-    @Override
     public Map<String, Boolean> getBooleanMap(String path) {
         try {
             Map<String,Object> map = getMap(path);
@@ -638,7 +606,6 @@ public class LunaticConfigImpl implements de.janschuri.lunaticlib.LunaticConfig 
         save();
     }
 
-    @Override
     public List<String> getKeys(String path) {
         try {
             return new ArrayList<>(((Map<String, Object>) get(path)).keySet());

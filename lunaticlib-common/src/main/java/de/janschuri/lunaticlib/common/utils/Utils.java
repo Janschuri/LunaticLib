@@ -1,6 +1,6 @@
 package de.janschuri.lunaticlib.common.utils;
 
-import de.janschuri.lunaticlib.DecisionMessage;
+import de.janschuri.lunaticlib.common.command.LunaticDecisionMessage;
 import de.janschuri.lunaticlib.common.logger.Logger;
 import net.kyori.adventure.text.Component;
 
@@ -100,8 +100,8 @@ public class Utils {
         return parts[19];
     }
 
-    public static DecisionMessage getClickableDecisionMessage(Component prefix, Component message, Component confirmHoverText, String confirmCommand, Component cancelHoverText, String cancelCommand) {
-        return new DecisionMessage(prefix, message, confirmHoverText, cancelHoverText, confirmCommand, cancelCommand);
+    public static LunaticDecisionMessage getClickableDecisionMessage(Component prefix, Component message, Component confirmHoverText, String confirmCommand, Component cancelHoverText, String cancelCommand) {
+        return new LunaticDecisionMessage(prefix, message, confirmHoverText, cancelHoverText, confirmCommand, cancelCommand);
     }
 
     public static String underscoreToCamelCase(String underscore) {
