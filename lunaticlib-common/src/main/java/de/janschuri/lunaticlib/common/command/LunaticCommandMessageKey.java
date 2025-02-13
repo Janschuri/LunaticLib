@@ -22,14 +22,14 @@ public class LunaticCommandMessageKey extends LunaticMessageKey implements Comma
     }
 
     @Override
-    public CommandMessageKey defaultValue(String lang, String defaultMessage) {
-        super.defaultValue(lang, defaultMessage);
+    public LunaticCommandMessageKey defaultMessage(String lang, String defaultMessage) {
+        super.defaultMessage(lang, defaultMessage);
         return this;
     }
 
     @Override
-    public CommandMessageKey defaultValue(String defaultMessage) {
-        super.defaultValue(defaultMessage);
+    public LunaticCommandMessageKey defaultMessage(String defaultMessage) {
+        super.defaultMessage(defaultMessage);
         return this;
     }
 

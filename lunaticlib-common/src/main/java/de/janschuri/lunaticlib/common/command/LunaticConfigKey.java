@@ -34,31 +34,26 @@ public class LunaticConfigKey implements ConfigKey {
         return key;
     }
 
-    @Override
     public ConfigKey defaultValue(Object defaultValue) {
         this.defaultValue = defaultValue;
         return this;
     }
 
-    @Override
     public ConfigKey keyInlineComment(String comment) {
         keyInlineComments.add(comment);
         return this;
     }
 
-    @Override
     public ConfigKey keyBlockComment(String comment) {
         keyBlockComments.add(comment);
         return this;
     }
 
-    @Override
     public ConfigKey valueInlineComment(String comment) {
         valueInlineComments.add(comment);
         return this;
     }
 
-    @Override
     public ConfigKey valueBlockComment(String comment) {
         valueBlockComments.add(comment);
         return this;

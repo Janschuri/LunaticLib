@@ -1,5 +1,6 @@
 package de.janschuri.lunaticlib.common.config;
 
+import de.janschuri.lunaticlib.CommandMessageKey;
 import de.janschuri.lunaticlib.MessageKey;
 import de.janschuri.lunaticlib.Placeholder;
 import net.kyori.adventure.text.Component;
@@ -25,21 +26,23 @@ public class LunaticLanguageConfig extends LunaticConfig {
     }
 
     public Component getMessage(MessageKey key, Placeholder... placeholders) {
-        String keyString = key.toString().toLowerCase();
+        String keyString = key.asString().toLowerCase();
 
         String message = getString(keyString);
         if (message == null) {
-            message = key.getDefault(language);
+            message = key.getDefaultMessage(language);
 
             if (message != null) {
                 Logger.infoLog("Using default message for key: " + keyString);
-
                 setString(keyString, message);
-                save();
             } else {
                 Logger.errorLog("Missing message for key without default: " + keyString);
+                return Component.text("Missing message for key: " + keyString);
             }
         }
+        addCommentsFromKey(key);
+
+        save();
 
         Component messageComponent = LegacyComponentSerializer.legacyAmpersand().deserialize(message);
 
