@@ -7,6 +7,7 @@ import org.yaml.snakeyaml.DumperOptions;
 import org.yaml.snakeyaml.LoaderOptions;
 import org.yaml.snakeyaml.Yaml;
 import org.yaml.snakeyaml.comments.CommentLine;
+import org.yaml.snakeyaml.comments.CommentType;
 import org.yaml.snakeyaml.constructor.Constructor;
 import org.yaml.snakeyaml.nodes.*;
 import org.yaml.snakeyaml.representer.Representer;
@@ -21,6 +22,7 @@ public class LunaticConfig {
 
     private final Path path;
     private Map<String, Object> yamlMap = new LinkedHashMap<>();
+    private Map<String, Object> commentsMap = new HashMap<>();
     private Node node;
     private final Path dataDirectory;
     private final String filePath;
@@ -68,7 +70,7 @@ public class LunaticConfig {
                 newNode = defaultRoot;
             } else {
                 Logger.infoLog("Loaded config file: " + path.getParent() + "/" + file.getName());
-                newNode = mergeNodes(root, defaultRoot);
+                newNode = mergeNodes(root, defaultRoot, "");
             }
 
             try (FileOutputStream fos = new FileOutputStream(file);
@@ -176,7 +178,7 @@ public class LunaticConfig {
             newNode = savingValues;
         } else {
             Logger.infoLog("Loaded config file: " + path);
-            newNode = mergeNodes(savingValues, root);
+            newNode = mergeNodes(savingValues, root, "");
         }
 
         try (FileOutputStream fos = new FileOutputStream(file);
@@ -216,12 +218,12 @@ public class LunaticConfig {
         return null;
     }
 
-    private static Node mergeNodes (Node node, Node defaultNode) {
+    private Node mergeNodes (Node node, Node defaultNode, String path) {
         if (node instanceof MappingNode mappingNode && defaultNode instanceof MappingNode defaultMappingNode) {
             List<NodeTuple> list = mappingNode.getValue();
             List<NodeTuple> defaultList = defaultMappingNode.getValue();
 
-            mappingNode.setValue(mergeMappingNodes(list, defaultList));
+            mappingNode.setValue(mergeMappingNodes(list, defaultList, path));
 
             return mappingNode;
         }
@@ -229,7 +231,7 @@ public class LunaticConfig {
         return null;
     }
 
-    private static List<NodeTuple> mergeMappingNodes(List<NodeTuple> list, List<NodeTuple> defaultList) {
+    private List<NodeTuple> mergeMappingNodes(List<NodeTuple> list, List<NodeTuple> defaultList, String path) {
         Map<String, NodeTuple> map = new HashMap<>();
         Map<String, NodeTuple> defaultMap = new HashMap<>();
         List<String> index = new ArrayList<>();
@@ -261,10 +263,9 @@ public class LunaticConfig {
                         List<NodeTuple> newList = newMappingNode.getValue();
                         List<NodeTuple> newDefaultList = newDefaultMappingNode.getValue();
 
-                        newMappingNode.setValue(mergeMappingNodes(newList, newDefaultList));
+                        newMappingNode.setValue(mergeMappingNodes(newList, newDefaultList, path));
 
-
-                        NodeTuple newNodeTuple = mergeComments(nodeTuple, defaultNodeTuple);
+                        NodeTuple newNodeTuple = mergeComments(nodeTuple, new NodeTuple(nodeTuple.getKeyNode(), newMappingNode));
                         mergedList.add(newNodeTuple);
                     } else {
                         NodeTuple newNodeTuple = mergeComments(nodeTuple, defaultNodeTuple);
@@ -351,11 +352,35 @@ public class LunaticConfig {
         Logger.debugLog("Setting value: " + path + " = " + value);
         String[] parts = path.split("\\.");
         Map<String, Object> current = this.yamlMap;
-        Node node = this.node;
 
         for (int i = 0; i < parts.length; i++) {
             if (i == parts.length - 1) {
                 current.put(parts[i], value);
+            } else {
+                if (current.containsKey(parts[i])) {
+                    if (current.get(parts[i]) instanceof Map) {
+                        current = (Map<String, Object>) current.get(parts[i]);
+                    } else {
+                        Map<String, Object> newMap = new LinkedHashMap<>();
+                        current.put(parts[i], newMap);
+                        current = newMap;
+                    }
+                } else {
+                    Map<String, Object> newMap = new LinkedHashMap<>();
+                    current.put(parts[i], newMap);
+                    current = newMap;
+                }
+            }
+        }
+    }
+
+    public void setComments(String path, CommentsTuple commentsTuple) {
+        String[] parts = path.split("\\.");
+        Map<String, Object> current = this.commentsMap;
+
+        for (int i = 0; i < parts.length; i++) {
+            if (i == parts.length - 1) {
+                current.put(parts[i], commentsTuple);
             } else {
                 if (current.containsKey(parts[i])) {
                     if (current.get(parts[i]) instanceof Map) {
@@ -640,82 +665,67 @@ public class LunaticConfig {
         }
     }
 
-    private static class ConfigValue {
-        private final String path;
-        private final Object value;
+    private static class CommentsTuple {
 
-        List<String> keyInlineComments = new ArrayList<>();
-        List<String> keyBlockComments = new ArrayList<>();
-        List<String> keyEndComments = new ArrayList<>();
+        List<CommentLine> keyInlineComments = new ArrayList<>();
+        List<CommentLine> keyBlockComments = new ArrayList<>();
+        List<CommentLine> keyEndComments = new ArrayList<>();
 
-        List<String> valueInlineComments = new ArrayList<>();
-        List<String> valueBlockComments = new ArrayList<>();
-        List<String> valueEndComments = new ArrayList<>();
+        List<CommentLine> valueInlineComments = new ArrayList<>();
+        List<CommentLine> valueBlockComments = new ArrayList<>();
+        List<CommentLine> valueEndComments = new ArrayList<>();
 
-        public ConfigValue(String path, Object value) {
-            this.path = path;
-            this.value = value;
-        }
-
-        public String getPath() {
-            return path;
-        }
-
-        public Object getValue() {
-            return value;
-        }
-
-        public ConfigValue setKeyInlineComments(List<String> keyInlineComments) {
+        public CommentsTuple setKeyInlineComments(List<CommentLine> keyInlineComments) {
             this.keyInlineComments = keyInlineComments;
             return this;
         }
 
-        public ConfigValue setKeyBlockComments(List<String> keyBlockComments) {
+        public CommentsTuple setKeyBlockComments(List<CommentLine> keyBlockComments) {
             this.keyBlockComments = keyBlockComments;
             return this;
         }
 
-        public ConfigValue setKeyEndComments(List<String> keyEndComments) {
+        public CommentsTuple setKeyEndComments(List<CommentLine> keyEndComments) {
             this.keyEndComments = keyEndComments;
             return this;
         }
 
-        public ConfigValue setValueInlineComments(List<String> valueInlineComments) {
+        public CommentsTuple setValueInlineComments(List<CommentLine> valueInlineComments) {
             this.valueInlineComments = valueInlineComments;
             return this;
         }
 
-        public ConfigValue setValueBlockComments(List<String> valueBlockComments) {
+        public CommentsTuple setValueBlockComments(List<CommentLine> valueBlockComments) {
             this.valueBlockComments = valueBlockComments;
             return this;
         }
 
-        public ConfigValue setValueEndComments(List<String> valueEndComments) {
+        public CommentsTuple setValueEndComments(List<CommentLine> valueEndComments) {
             this.valueEndComments = valueEndComments;
             return this;
         }
 
-        public List<String> getKeyInlineComments() {
+        public List<CommentLine> getKeyInlineComments() {
             return keyInlineComments;
         }
 
-        public List<String> getKeyBlockComments() {
+        public List<CommentLine> getKeyBlockComments() {
             return keyBlockComments;
         }
 
-        public List<String> getKeyEndComments() {
+        public List<CommentLine> getKeyEndComments() {
             return keyEndComments;
         }
 
-        public List<String> getValueInlineComments() {
+        public List<CommentLine> getValueInlineComments() {
             return valueInlineComments;
         }
 
-        public List<String> getValueBlockComments() {
+        public List<CommentLine> getValueBlockComments() {
             return valueBlockComments;
         }
 
-        public List<String> getValueEndComments() {
+        public List<CommentLine> getValueEndComments() {
             return valueEndComments;
         }
     }
