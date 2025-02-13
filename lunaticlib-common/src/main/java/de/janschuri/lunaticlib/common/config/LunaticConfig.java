@@ -81,8 +81,6 @@ public class LunaticConfig {
             yamlMap = loadYamlMap(newNode);
             node = newNode;
 
-
-
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -144,7 +142,7 @@ public class LunaticConfig {
         }
     }
 
-    private static Map<String, Object> loadYamlMap(Node root) {
+    private Map<String, Object> loadYamlMap(Node root) {
         Map<String, Object> yamlMap = new HashMap<>();
         MappingNode mappingNode = (MappingNode) root;
         List<NodeTuple> list = mappingNode.getValue();
@@ -190,7 +188,7 @@ public class LunaticConfig {
         }
     }
 
-    private static Object loadNodeTuple(NodeTuple nodeTuple) {
+    private Object loadNodeTuple(NodeTuple nodeTuple) {
         if (nodeTuple.getValueNode() instanceof MappingNode mappingNode) {
             Map<String, Object> yamlMap = new HashMap<>();
             List<NodeTuple> list = mappingNode.getValue();
@@ -199,18 +197,18 @@ public class LunaticConfig {
             }
             return yamlMap;
         }
-        if (nodeTuple.getValueNode() instanceof ScalarNode) {
-            return ((ScalarNode) nodeTuple.getValueNode()).getValue();
+        if (nodeTuple.getValueNode() instanceof ScalarNode scalarNode) {
+            return scalarNode.getValue();
         }
-        if (nodeTuple.getValueNode() instanceof SequenceNode) {
-            List<Node> nodes = ((SequenceNode) nodeTuple.getValueNode()).getValue();
+        if (nodeTuple.getValueNode() instanceof SequenceNode sequenceNode) {
+            List<Node> nodes = sequenceNode.getValue();
             List<Object> list = new ArrayList<>();
             for (Node node : nodes) {
                 if (node instanceof MappingNode) {
                     list.add(loadYamlMap(node));
                 }
-                if (node instanceof ScalarNode) {
-                    list.add(((ScalarNode) node).getValue());
+                if (node instanceof ScalarNode scalarNode) {
+                    list.add(scalarNode.getValue());
                 }
             }
             return list;
@@ -352,7 +350,8 @@ public class LunaticConfig {
     public void setString(String path, String value) {
         Logger.debugLog("Setting value: " + path + " = " + value);
         String[] parts = path.split("\\.");
-        Map<String, Object> current = yamlMap;
+        Map<String, Object> current = this.yamlMap;
+        Node node = this.node;
 
         for (int i = 0; i < parts.length; i++) {
             if (i == parts.length - 1) {
@@ -641,17 +640,83 @@ public class LunaticConfig {
         }
     }
 
-    protected static String translateAlternateColorCodes(char altColorChar, String textToTranslate) {
-        Preconditions.checkArgument(textToTranslate != null, "Cannot translate null text");
-        char[] b = textToTranslate.toCharArray();
+    private static class ConfigValue {
+        private final String path;
+        private final Object value;
 
-        for(int i = 0; i < b.length - 1; ++i) {
-            if (b[i] == altColorChar && "0123456789AaBbCcDdEeFfKkLlMmNnOoRrXx#".indexOf(b[i + 1]) > -1) {
-                b[i] = 167;
-                b[i + 1] = Character.toLowerCase(b[i + 1]);
-            }
+        List<String> keyInlineComments = new ArrayList<>();
+        List<String> keyBlockComments = new ArrayList<>();
+        List<String> keyEndComments = new ArrayList<>();
+
+        List<String> valueInlineComments = new ArrayList<>();
+        List<String> valueBlockComments = new ArrayList<>();
+        List<String> valueEndComments = new ArrayList<>();
+
+        public ConfigValue(String path, Object value) {
+            this.path = path;
+            this.value = value;
         }
 
-        return new String(b);
+        public String getPath() {
+            return path;
+        }
+
+        public Object getValue() {
+            return value;
+        }
+
+        public ConfigValue setKeyInlineComments(List<String> keyInlineComments) {
+            this.keyInlineComments = keyInlineComments;
+            return this;
+        }
+
+        public ConfigValue setKeyBlockComments(List<String> keyBlockComments) {
+            this.keyBlockComments = keyBlockComments;
+            return this;
+        }
+
+        public ConfigValue setKeyEndComments(List<String> keyEndComments) {
+            this.keyEndComments = keyEndComments;
+            return this;
+        }
+
+        public ConfigValue setValueInlineComments(List<String> valueInlineComments) {
+            this.valueInlineComments = valueInlineComments;
+            return this;
+        }
+
+        public ConfigValue setValueBlockComments(List<String> valueBlockComments) {
+            this.valueBlockComments = valueBlockComments;
+            return this;
+        }
+
+        public ConfigValue setValueEndComments(List<String> valueEndComments) {
+            this.valueEndComments = valueEndComments;
+            return this;
+        }
+
+        public List<String> getKeyInlineComments() {
+            return keyInlineComments;
+        }
+
+        public List<String> getKeyBlockComments() {
+            return keyBlockComments;
+        }
+
+        public List<String> getKeyEndComments() {
+            return keyEndComments;
+        }
+
+        public List<String> getValueInlineComments() {
+            return valueInlineComments;
+        }
+
+        public List<String> getValueBlockComments() {
+            return valueBlockComments;
+        }
+
+        public List<String> getValueEndComments() {
+            return valueEndComments;
+        }
     }
 }
