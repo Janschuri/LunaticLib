@@ -1,56 +1,64 @@
 package de.janschuri.lunaticlib.common.command;
 
+import de.janschuri.lunaticlib.ConfigKey;
 import de.janschuri.lunaticlib.MessageKey;
+import de.janschuri.lunaticlib.common.config.LunaticConfig;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class LunaticMessageKey implements MessageKey {
+public class LunaticMessageKey extends LunaticConfigKey implements MessageKey {
 
-    private final String key;
     private final Map<String, String> defaultMessages = new HashMap<>();
     private final List<LunaticPlaceholder> placeholders = new ArrayList<>();
     private boolean withPrefix = true;
 
     public LunaticMessageKey(String key) {
-        this.key = key;
+        super(key);
     }
 
-    public LunaticMessageKey defaultMessage(String defaultMessage) {
-        return defaultMessage("en", defaultMessage);
+    @Override
+    public MessageKey defaultValue(String defaultMessage) {
+        return defaultValue("en", defaultMessage);
     }
 
-    public String getDefaultMessage() {
-        return getDefaultMessage("en");
+    @Override
+    public String getDefault() {
+        return getDefault("en");
     }
 
-    public LunaticMessageKey defaultMessage(String lang, String defaultMessage) {
+    @Override
+    public MessageKey defaultValue(String lang, String defaultMessage) {
         defaultMessages.put(lang.toLowerCase(), defaultMessage);
         return this;
     }
 
-    public String getDefaultMessage(String lang) {
+    @Override
+    public String getDefault(String lang) {
         return defaultMessages.get(lang.toLowerCase());
     }
 
-    public LunaticMessageKey noPrefix() {
+    @Override
+    public MessageKey noPrefix() {
         this.withPrefix = false;
         return this;
     }
 
-    public LunaticMessageKey withPrefix() {
+    @Override
+    public MessageKey withPrefix() {
         this.withPrefix = true;
         return this;
     }
 
+    @Override
     public boolean isWithPrefix() {
         return withPrefix;
     }
 
     @Override
-    public String toString() {
-        return "messages." + key;
+    public String asString() {
+        return "messages." + getKey();
     }
 }

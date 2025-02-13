@@ -1,8 +1,8 @@
 package de.janschuri.lunaticlib.common.config;
 
-import com.google.common.base.Preconditions;
+import de.janschuri.lunaticlib.ConfigKey;
 import de.janschuri.lunaticlib.common.logger.Logger;
-import org.checkerframework.checker.units.qual.A;
+import org.jetbrains.annotations.NotNull;
 import org.yaml.snakeyaml.DumperOptions;
 import org.yaml.snakeyaml.LoaderOptions;
 import org.yaml.snakeyaml.Yaml;
@@ -22,8 +22,7 @@ public class LunaticConfig {
 
     private final Path path;
     private Map<String, Object> yamlMap = new LinkedHashMap<>();
-    private Map<String, Object> commentsMap = new HashMap<>();
-    private Node node;
+    private Map<String, CommentTuple> commentsMap = new HashMap<>();
     private final Path dataDirectory;
     private final String filePath;
 
@@ -81,7 +80,6 @@ public class LunaticConfig {
             }
 
             yamlMap = loadYamlMap(newNode);
-            node = newNode;
 
         } catch (IOException e) {
             e.printStackTrace();
@@ -236,6 +234,7 @@ public class LunaticConfig {
         Map<String, NodeTuple> defaultMap = new HashMap<>();
         List<String> index = new ArrayList<>();
         List<NodeTuple> mergedList = new ArrayList<>();
+
         for (NodeTuple n : defaultList) {
             defaultMap.put(((ScalarNode) n.getKeyNode()).getValue(), n);
             index.add(((ScalarNode) n.getKeyNode()).getValue());
@@ -248,6 +247,7 @@ public class LunaticConfig {
         }
 
         for (String key : index) {
+            String thisPath = path.isEmpty() ? key : path + "." + key;
 
             if (!map.containsKey(key)) {
                 mergedList.add(defaultMap.get(key));
@@ -263,12 +263,19 @@ public class LunaticConfig {
                         List<NodeTuple> newList = newMappingNode.getValue();
                         List<NodeTuple> newDefaultList = newDefaultMappingNode.getValue();
 
-                        newMappingNode.setValue(mergeMappingNodes(newList, newDefaultList, path));
+                        newMappingNode.setValue(mergeMappingNodes(newList, newDefaultList, thisPath));
 
-                        NodeTuple newNodeTuple = mergeComments(nodeTuple, new NodeTuple(nodeTuple.getKeyNode(), newMappingNode));
+                        Node keyNode = nodeTuple.getKeyNode();
+                        List<CommentLine> comments = new ArrayList<>();
+                        CommentLine pathComment = new CommentLine(null, null, thisPath, CommentType.IN_LINE);
+                        comments.add(pathComment);
+                        keyNode.setInLineComments(comments);
+
+
+                        NodeTuple newNodeTuple = mergeComments(nodeTuple, new NodeTuple(keyNode, newMappingNode), path);
                         mergedList.add(newNodeTuple);
                     } else {
-                        NodeTuple newNodeTuple = mergeComments(nodeTuple, defaultNodeTuple);
+                        NodeTuple newNodeTuple = mergeComments(nodeTuple, defaultNodeTuple, path);
                         mergedList.add(newNodeTuple);
                     }
                 }
@@ -277,38 +284,55 @@ public class LunaticConfig {
         return mergedList;
     }
 
-    public static NodeTuple mergeComments(NodeTuple nodeTuple, NodeTuple defaultNodeTuple) {
+    public NodeTuple mergeComments(NodeTuple nodeTuple, NodeTuple defaultNodeTuple, String path) {
         Node node = nodeTuple.getValueNode();
-        Node defaultNode = defaultNodeTuple.getValueNode();
-
-        if (node.getInLineComments() == null || node.getInLineComments().isEmpty()) {
-            node.setInLineComments(defaultNode.getInLineComments());
-        }
-
-        if (node.getBlockComments() == null || node.getBlockComments().isEmpty()) {
-            node.setBlockComments(defaultNode.getBlockComments());
-        }
-
-        if (node.getEndComments() == null || node.getEndComments().isEmpty()) {
-            node.setEndComments(defaultNode.getEndComments());
-        }
-
         Node keyNode = nodeTuple.getKeyNode();
+        Node defaultNode = defaultNodeTuple.getValueNode();
         Node defaultKeyNode = defaultNodeTuple.getKeyNode();
 
-        if (keyNode.getInLineComments() == null || keyNode.getInLineComments().isEmpty()) {
-            keyNode.setInLineComments(defaultKeyNode.getInLineComments());
-        }
-
-        if (keyNode.getBlockComments() == null || keyNode.getBlockComments().isEmpty()) {
-            keyNode.setBlockComments(defaultKeyNode.getBlockComments());
-        }
-
-        if (keyNode.getEndComments() == null || keyNode.getEndComments().isEmpty()) {
-            keyNode.setEndComments(defaultKeyNode.getEndComments());
-        }
+        node.setInLineComments(mergeCommentLists(node.getInLineComments(), defaultNode.getInLineComments(), path, true));
+        node.setBlockComments(mergeCommentLists(node.getBlockComments(), defaultNode.getBlockComments(), path, false));
+        keyNode.setInLineComments(mergeCommentLists(keyNode.getInLineComments(), defaultKeyNode.getInLineComments(), path, true));
+        keyNode.setBlockComments(mergeCommentLists(keyNode.getBlockComments(), defaultKeyNode.getBlockComments(), path, false));
 
         return new NodeTuple(keyNode, node);
+    }
+
+    private List<CommentLine> mergeCommentLists(List<CommentLine> primary, List<CommentLine> fallback, String path, boolean isInline) {
+        if (primary == null || primary.isEmpty()) {
+            primary = (fallback != null) ? new ArrayList<>(fallback) : new ArrayList<>();
+        }
+
+        if (commentsMap.containsKey(path)) {
+            CommentTuple commentTuple = commentsMap.get(path);
+            List<CommentLine> additionalComments = isInline ? commentTuple.getValueInlineComments() : commentTuple.getValueBlockComments();
+            if (primary.isEmpty()) {
+                primary.addAll(additionalComments);
+            }
+        }
+        return primary;
+    }
+
+    protected void addCommentsFromKey(ConfigKey key) {
+        for (String comment : key.getKeyInlineComments()) {
+            addComment(CommentType.IN_LINE, key.asString(), comment);
+        }
+
+        for (String comment : key.getKeyBlockComments()) {
+            addComment(CommentType.BLOCK, key.asString(), comment);
+        }
+
+        for (String comment : key.getValueInlineComments()) {
+            addComment(CommentType.IN_LINE, key.asString(), comment);
+        }
+
+        for (String comment : key.getValueBlockComments()) {
+            addComment(CommentType.BLOCK, key.asString(), comment);
+        }
+    }
+
+    protected void addComment(CommentType type, String path, String comment) {
+        commentsMap.computeIfAbsent(path, k -> new CommentTuple()).addComment(type, comment);
     }
 
     protected Map<String, Object> getYamlMap() {
@@ -356,31 +380,6 @@ public class LunaticConfig {
         for (int i = 0; i < parts.length; i++) {
             if (i == parts.length - 1) {
                 current.put(parts[i], value);
-            } else {
-                if (current.containsKey(parts[i])) {
-                    if (current.get(parts[i]) instanceof Map) {
-                        current = (Map<String, Object>) current.get(parts[i]);
-                    } else {
-                        Map<String, Object> newMap = new LinkedHashMap<>();
-                        current.put(parts[i], newMap);
-                        current = newMap;
-                    }
-                } else {
-                    Map<String, Object> newMap = new LinkedHashMap<>();
-                    current.put(parts[i], newMap);
-                    current = newMap;
-                }
-            }
-        }
-    }
-
-    public void setComments(String path, CommentsTuple commentsTuple) {
-        String[] parts = path.split("\\.");
-        Map<String, Object> current = this.commentsMap;
-
-        for (int i = 0; i < parts.length; i++) {
-            if (i == parts.length - 1) {
-                current.put(parts[i], commentsTuple);
             } else {
                 if (current.containsKey(parts[i])) {
                     if (current.get(parts[i]) instanceof Map) {
@@ -665,43 +664,29 @@ public class LunaticConfig {
         }
     }
 
-    private static class CommentsTuple {
+    private static class CommentTuple {
 
         List<CommentLine> keyInlineComments = new ArrayList<>();
         List<CommentLine> keyBlockComments = new ArrayList<>();
-        List<CommentLine> keyEndComments = new ArrayList<>();
 
         List<CommentLine> valueInlineComments = new ArrayList<>();
         List<CommentLine> valueBlockComments = new ArrayList<>();
-        List<CommentLine> valueEndComments = new ArrayList<>();
 
-        public CommentsTuple setKeyInlineComments(List<CommentLine> keyInlineComments) {
-            this.keyInlineComments = keyInlineComments;
+        public CommentTuple addComment(@NotNull CommentType type, @NotNull String comment) {
+            if (type == CommentType.IN_LINE) {
+                keyInlineComments.add(new CommentLine(null, null, comment, type));
+            } else if (type == CommentType.BLOCK) {
+                keyBlockComments.add(new CommentLine(null, null, comment, type));
+            }
             return this;
         }
 
-        public CommentsTuple setKeyBlockComments(List<CommentLine> keyBlockComments) {
-            this.keyBlockComments = keyBlockComments;
-            return this;
-        }
-
-        public CommentsTuple setKeyEndComments(List<CommentLine> keyEndComments) {
-            this.keyEndComments = keyEndComments;
-            return this;
-        }
-
-        public CommentsTuple setValueInlineComments(List<CommentLine> valueInlineComments) {
-            this.valueInlineComments = valueInlineComments;
-            return this;
-        }
-
-        public CommentsTuple setValueBlockComments(List<CommentLine> valueBlockComments) {
-            this.valueBlockComments = valueBlockComments;
-            return this;
-        }
-
-        public CommentsTuple setValueEndComments(List<CommentLine> valueEndComments) {
-            this.valueEndComments = valueEndComments;
+        public CommentTuple addKeyComment(@NotNull CommentType type, @NotNull String comment) {
+            if (type == CommentType.IN_LINE) {
+                keyInlineComments.add(new CommentLine(null, null, comment, type));
+            } else if (type == CommentType.BLOCK) {
+                keyBlockComments.add(new CommentLine(null, null, comment, type));
+            }
             return this;
         }
 
@@ -713,20 +698,12 @@ public class LunaticConfig {
             return keyBlockComments;
         }
 
-        public List<CommentLine> getKeyEndComments() {
-            return keyEndComments;
-        }
-
         public List<CommentLine> getValueInlineComments() {
             return valueInlineComments;
         }
 
         public List<CommentLine> getValueBlockComments() {
             return valueBlockComments;
-        }
-
-        public List<CommentLine> getValueEndComments() {
-            return valueEndComments;
         }
     }
 }

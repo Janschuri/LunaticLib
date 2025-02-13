@@ -29,10 +29,11 @@ public class LunaticLanguageConfig extends LunaticConfig {
 
         String message = getString(keyString);
         if (message == null) {
-            message = key.getDefaultMessage(language);
+            message = key.getDefault(language);
 
-            Logger.debugLog("Missing message for key: " + keyString);
             if (message != null) {
+                Logger.infoLog("Using default message for key: " + keyString);
+
                 setString(keyString, message);
                 save();
             } else {
