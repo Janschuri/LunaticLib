@@ -1,4 +1,4 @@
-package de.janschuri.lunaticlib.common.command;
+package de.janschuri.lunaticlib.common.config;
 
 import de.janschuri.lunaticlib.ConfigKey;
 

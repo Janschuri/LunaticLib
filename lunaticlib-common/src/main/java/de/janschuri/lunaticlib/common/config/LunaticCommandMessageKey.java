@@ -1,7 +1,9 @@
-package de.janschuri.lunaticlib.common.command;
+package de.janschuri.lunaticlib.common.config;
 
 import de.janschuri.lunaticlib.Command;
 import de.janschuri.lunaticlib.CommandMessageKey;
+import de.janschuri.lunaticlib.common.command.HasParentCommand;
+import de.janschuri.lunaticlib.common.command.LunaticCommand;
 
 public class LunaticCommandMessageKey extends LunaticMessageKey implements CommandMessageKey {
 

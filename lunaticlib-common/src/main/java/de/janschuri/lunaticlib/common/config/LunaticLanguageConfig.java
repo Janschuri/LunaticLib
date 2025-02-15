@@ -1,20 +1,30 @@
 package de.janschuri.lunaticlib.common.config;
 
+import de.janschuri.lunaticlib.Command;
 import de.janschuri.lunaticlib.CommandMessageKey;
 import de.janschuri.lunaticlib.MessageKey;
 import de.janschuri.lunaticlib.Placeholder;
+import de.janschuri.lunaticlib.common.command.LunaticCommand;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.TextComponent;
 import net.kyori.adventure.text.TextReplacementConfig;
 import de.janschuri.lunaticlib.common.logger.Logger;
 import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
+import org.reflections.Reflections;
+import org.reflections.scanners.SubTypesScanner;
+import org.reflections.util.ClasspathHelper;
+import org.reflections.util.ConfigurationBuilder;
+import org.reflections.util.FilterBuilder;
 
+import java.lang.reflect.Field;
 import java.nio.file.Path;
 import java.util.*;
 
-public class LunaticLanguageConfig extends LunaticConfig {
+public abstract class LunaticLanguageConfig extends LunaticConfig {
 
     private final String language;
+    private boolean loadedMessageKeys = false;
+    private final Set<MessageKey> cachedKeys = new HashSet<>();
 
     public LunaticLanguageConfig(Path dataDirectory, String language) {
         super(dataDirectory, "lang.yml");
@@ -24,6 +34,8 @@ public class LunaticLanguageConfig extends LunaticConfig {
     public void load() {
         super.load("lang/" + language + ".yml");
     }
+
+    protected abstract List<MessageKey> getMessageKeys();
 
     public Component getMessage(MessageKey key, Placeholder... placeholders) {
         String keyString = key.asString().toLowerCase();

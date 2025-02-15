@@ -1,6 +1,7 @@
 package de.janschuri.lunaticlib.common.command;
 
 import de.janschuri.lunaticlib.*;
+import de.janschuri.lunaticlib.common.config.LunaticCommandMessageKey;
 import de.janschuri.lunaticlib.common.config.LunaticLanguageConfig;
 import de.janschuri.lunaticlib.common.logger.Logger;
 import net.kyori.adventure.text.Component;

@@ -1,13 +1,9 @@
-package de.janschuri.lunaticlib.common.command;
+package de.janschuri.lunaticlib.common.config;
 
-import de.janschuri.lunaticlib.ConfigKey;
 import de.janschuri.lunaticlib.MessageKey;
-import de.janschuri.lunaticlib.common.config.LunaticConfig;
 import de.janschuri.lunaticlib.common.logger.Logger;
 
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 public class LunaticMessageKey extends LunaticConfigKey implements MessageKey {
