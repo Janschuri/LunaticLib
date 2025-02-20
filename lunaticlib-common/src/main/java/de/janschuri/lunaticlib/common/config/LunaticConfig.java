@@ -725,7 +725,6 @@ public class LunaticConfig {
         }
 
         public List<CommentLine> getKeyBlockComments() {
-            Logger.debugLog("Returning keyBlockComments: " + Arrays.toString(keyBlockComments.toArray()));
             return keyBlockComments;
         }
 

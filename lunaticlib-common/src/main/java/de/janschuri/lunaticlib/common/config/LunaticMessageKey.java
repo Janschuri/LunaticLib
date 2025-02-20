@@ -20,7 +20,6 @@ public class LunaticMessageKey extends LunaticConfigKey implements MessageKey {
     }
 
     public LunaticMessageKey defaultMessage(String lang, String defaultMessage) {
-        Logger.debugLog("Test:" + defaultMessages);
         defaultMessages.put(lang.toLowerCase(), defaultMessage);
         return this;
     }
