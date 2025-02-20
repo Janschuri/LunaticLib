@@ -1,14 +1,16 @@
 package de.janschuri.lunaticlib.common.command;
 
 import de.janschuri.lunaticlib.*;
+import de.janschuri.lunaticlib.common.config.HasMessageKeys;
 import de.janschuri.lunaticlib.common.config.LunaticCommandMessageKey;
 import de.janschuri.lunaticlib.common.config.LunaticLanguageConfig;
 import de.janschuri.lunaticlib.common.logger.Logger;
 import net.kyori.adventure.text.Component;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
-public abstract class LunaticCommand implements Command {
+public abstract class LunaticCommand implements Command, HasMessageKeys {
 
 
     protected abstract LunaticLanguageConfig getLanguageConfig();
@@ -37,6 +39,7 @@ public abstract class LunaticCommand implements Command {
                 }
             }
         }
+
         return list;
     }
 

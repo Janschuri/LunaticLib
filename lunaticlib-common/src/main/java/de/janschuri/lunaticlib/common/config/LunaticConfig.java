@@ -322,8 +322,9 @@ public class LunaticConfig {
             primary = new ArrayList<>();
         }
 
-        if (commentsMap.containsKey(path)) {
+        if (commentsMap.containsKey(path) && primary.isEmpty()) {
             CommentTuple commentTuple = commentsMap.get(path);
+
             List<CommentLine> additionalComments;
 
             if (isValueNode) {
@@ -332,11 +333,8 @@ public class LunaticConfig {
                 additionalComments = isInline ? commentTuple.getKeyInlineComments() : commentTuple.getKeyBlockComments();
             }
 
-            if (primary.isEmpty()) {
-                primary.addAll(additionalComments);
-            }
+            primary.addAll(additionalComments);
         }
-
 
         return primary;
     }
@@ -727,6 +725,7 @@ public class LunaticConfig {
         }
 
         public List<CommentLine> getKeyBlockComments() {
+            Logger.debugLog("Returning keyBlockComments: " + Arrays.toString(keyBlockComments.toArray()));
             return keyBlockComments;
         }
 
@@ -736,6 +735,16 @@ public class LunaticConfig {
 
         public List<CommentLine> getValueBlockComments() {
             return valueBlockComments;
+        }
+
+        @Override
+        public String toString() {
+            return "CommentTuple{" + "\n" +
+                    Arrays.toString(keyInlineComments.toArray()) + "\n" +
+                    Arrays.toString(keyBlockComments.toArray()) + "\n" +
+                    Arrays.toString(valueInlineComments.toArray()) + "\n" +
+                    Arrays.toString(valueBlockComments.toArray()) + "\n" +
+                    '}';
         }
     }
 }

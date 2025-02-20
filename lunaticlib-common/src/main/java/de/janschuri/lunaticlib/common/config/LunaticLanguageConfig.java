@@ -7,13 +7,21 @@ import net.kyori.adventure.text.TextComponent;
 import net.kyori.adventure.text.TextReplacementConfig;
 import de.janschuri.lunaticlib.common.logger.Logger;
 import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
+import org.reflections.Reflections;
+import org.reflections.scanners.SubTypesScanner;
+import org.reflections.util.ClasspathHelper;
+import org.reflections.util.ConfigurationBuilder;
+import org.reflections.util.FilterBuilder;
 
+import java.lang.reflect.Modifier;
 import java.nio.file.Path;
 import java.util.*;
+import java.util.stream.Collectors;
 
-public class LunaticLanguageConfig extends LunaticConfig {
+public abstract class LunaticLanguageConfig extends LunaticConfig {
 
     private final String language;
+    private List<MessageKey> messageKeys;
 
     public LunaticLanguageConfig(Path dataDirectory, String language) {
         super(dataDirectory, "lang.yml");
@@ -22,6 +30,68 @@ public class LunaticLanguageConfig extends LunaticConfig {
 
     public void load() {
         super.load("lang/" + language + ".yml");
+
+        this.messageKeys = getMessageKeys(getPackage());
+
+        for (MessageKey key : messageKeys) {
+            addCommentsFromKey(key);
+
+            if (getString(key.asString().toLowerCase()) == null) {
+                setString(key.asString().toLowerCase(), key.getDefaultMessage(language));
+            }
+        }
+
+        save();
+    }
+
+    abstract protected String getPackage();
+
+    public List<MessageKey> getMessageKeys(String packageName) {
+        if (messageKeys != null) {
+            return messageKeys;
+        }
+
+        ClassLoader pluginClassLoader = this.getClass().getClassLoader();
+
+        Reflections reflections = new Reflections(new ConfigurationBuilder()
+                .setUrls(ClasspathHelper.forPackage(packageName, pluginClassLoader))
+                .setScanners(new SubTypesScanner(false))
+                .filterInputsBy(new FilterBuilder().includePackage(packageName))
+                .addClassLoaders(pluginClassLoader)
+        );
+
+        Set<Class<? extends HasMessageKeys>> matchingClasses = reflections.getSubTypesOf(HasMessageKeys.class);
+
+        List<MessageKey> messageKeys = new ArrayList<>();
+
+        for (Class<?> clazz : matchingClasses) {
+            messageKeys.addAll(getMessageKeys(clazz));
+        }
+
+        Logger.infoLog("Found " + messageKeys.size() + " message keys in package " + packageName);
+
+        return messageKeys;
+    }
+
+    private List<MessageKey> getMessageKeys(Class<?> clazz) {
+        return Arrays.stream(clazz.getDeclaredFields())
+                .filter(field -> MessageKey.class.isAssignableFrom(field.getType()))
+                .filter(field -> Modifier.isStatic(field.getModifiers()))
+                .map(field -> {
+                    try {
+                        field.setAccessible(true);
+                        Object value = field.get(null);
+                        if (value == null) {
+                            Logger.errorLog("Warning: Field " + field.getName() + " is null in " + clazz.getName());
+                            return null;
+                        }
+                        return (MessageKey) value;
+                    } catch (IllegalAccessException e) {
+                        throw new RuntimeException("Failed to access MessageKey field: " + field.getName(), e);
+                    }
+                })
+                .filter(value -> value != null)
+                .collect(Collectors.toList());
     }
 
     public Component getMessage(MessageKey key, Placeholder... placeholders) {

@@ -6,7 +6,7 @@ import net.kyori.adventure.text.Component;
 public interface HasHelpCommand extends HasSubcommands {
 
     default LunaticHelpCommand getHelpCommand() {
-        return new LunaticHelpCommand(getLanguageConfig(), this);
+        return new LunaticHelpCommand(this);
     }
 
     LunaticLanguageConfig getLanguageConfig();

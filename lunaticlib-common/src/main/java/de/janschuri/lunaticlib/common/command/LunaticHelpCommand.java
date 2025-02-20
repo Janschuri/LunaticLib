@@ -25,8 +25,8 @@ public class LunaticHelpCommand extends LunaticCommand implements HasParentComma
     private final LunaticMessageKey noPermission = new LunaticMessageKey("no_permission");
     private final LunaticMessageKey no_number = new LunaticMessageKey("no_number");
 
-    public LunaticHelpCommand(LunaticLanguageConfig languageConfig, HasHelpCommand command) {
-        this.languageConfig = languageConfig;
+    public LunaticHelpCommand(HasHelpCommand command) {
+        this.languageConfig = command.getLanguageConfig();
         this.command = command;
         this.permission = command.getPermission();
         this.pageSize = 10;
