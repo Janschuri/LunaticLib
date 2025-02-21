@@ -50,6 +50,13 @@ public abstract class LunaticLanguageConfig extends LunaticConfig {
             }
         }
 
+        this.commands = getCommands(getPackage());
+
+        for (Command command : commands) {
+            List<String> aliases = command.getDefaultAliases();
+            setStringList(command.getPath() + ".aliases", aliases);
+        }
+
         save();
     }
 
@@ -118,13 +125,12 @@ public abstract class LunaticLanguageConfig extends LunaticConfig {
         );
 
         Set<Class<? extends Command>> matchingClasses = reflections.getSubTypesOf(Command.class);
+        List<Command> commands = new ArrayList<>();
 
         for (Class<? extends Command> clazz : matchingClasses) {
             try {
                 Command command = clazz.getDeclaredConstructor().newInstance();
-                List<String> aliases = command.getDefaultAliases();
-
-                setStringList(command.getPath() + ".aliases", aliases);
+                commands.add(command);
             } catch (Exception e) {
                 Logger.errorLog("Failed to instantiate command class: " + clazz.getName());
             }
