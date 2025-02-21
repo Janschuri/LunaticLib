@@ -161,7 +161,7 @@ public class LunaticHelpCommand extends LunaticCommand implements HasParentComma
             }
         }
 
-        Component footer = languageConfig.getHelpFooter(command.getName(), page, (int) Math.ceil((double) messages.size() /pageSize));
+        Component footer = languageConfig.getHelpFooter(command, page, (int) Math.ceil((double) messages.size() /pageSize));
         builder.append(Component.newline());
         builder.append(footer);
 

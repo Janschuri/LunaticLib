@@ -3,6 +3,7 @@ package de.janschuri.lunaticlib.common.config;
 import de.janschuri.lunaticlib.Command;
 import de.janschuri.lunaticlib.MessageKey;
 import de.janschuri.lunaticlib.Placeholder;
+import de.janschuri.lunaticlib.common.command.HasHelpCommand;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.TextComponent;
 import net.kyori.adventure.text.TextReplacementConfig;
@@ -205,19 +206,7 @@ public abstract class LunaticLanguageConfig extends LunaticConfig {
         return list;
     }
 
-    public Component getHelpHeader(String command) {
-        String headerRaw = getString("help_header");
-
-        if (headerRaw == null) {
-            headerRaw = "&7%header%";
-        }
-
-        return LegacyComponentSerializer.legacyAmpersand().deserialize(headerRaw
-                .replace("%header%", getCommandHelpHeader(command))
-        );
-    }
-
-    public Component getHelpFooter(String command, int page, int maxPage) {
+    public Component getHelpFooter(HasHelpCommand command, int page, int maxPage) {
         String headerRaw = getString("help_footer");
 
         if (headerRaw == null) {
@@ -225,20 +214,10 @@ public abstract class LunaticLanguageConfig extends LunaticConfig {
         }
 
         return LegacyComponentSerializer.legacyAmpersand().deserialize(headerRaw
-                .replace("%header%", getCommandHelpHeader(command))
+                .replace("%header%", getMessageAsLegacyString(command.getHelpHeader()))
                 .replace("%page%", String.valueOf(page))
                 .replace("%pages%", String.valueOf(maxPage))
         );
-    }
-
-    public String getCommandHelpHeader(String command) {
-        String commandHelpHeader = getString("commands." + command + ".help_header");
-
-        if (commandHelpHeader == null) {
-            commandHelpHeader = command;
-        }
-
-        return commandHelpHeader;
     }
 
     public Component getPrefix() {
