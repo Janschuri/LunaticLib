@@ -16,12 +16,7 @@ public interface Command {
 
     Component noPermissionMessage(Sender sender, String[] args);
 
-    boolean checkSource(Sender commandSender, String[] args);
-
-    boolean isConsoleCommand();
-
     Component wrongUsageMessage(Sender sender, String[] args);
-    Component noConsoleCommandMessage(Sender sender, String[] args);
 
     String getFullCommand();
 

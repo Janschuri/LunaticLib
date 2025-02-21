@@ -376,7 +376,6 @@ public class LunaticConfig {
             if (current instanceof Map) {
                 current = ((Map<?, ?>) current).get(part);
             } else {
-                Logger.errorLog("Error while getting config value: " + path);
                 return null;
             }
         }
@@ -388,8 +387,12 @@ public class LunaticConfig {
         try {
             return get(path) == null ? defaultValue : Objects.requireNonNull(get(path)).toString();
         } catch (Exception e) {
-            Logger.errorLog("Error while getting config value: " + path + "\n Returning default value: " + defaultValue);
-            return defaultValue;
+            if (defaultValue != null) {
+                Logger.debugLog("Error while getting config value: " + path + "\n Returning default value: " + defaultValue);
+                return defaultValue;
+            }
+            Logger.errorLog("Error while getting config value: " + path);
+            return null;
         }
     }
 
@@ -432,7 +435,7 @@ public class LunaticConfig {
         try {
             return get(path) == null ? defaultValue : Integer.parseInt(Objects.requireNonNull(get(path)).toString());
         } catch (Exception e) {
-            Logger.errorLog("Error while getting config value: " + path + "\n Returning default value: " + defaultValue);
+            Logger.debugLog("Error while getting config value: " + path + "\n Returning default value: " + defaultValue);
             return defaultValue;
         }
     }
@@ -454,7 +457,7 @@ public class LunaticConfig {
         try {
             return get(path) == null ? defaultValue : Double.parseDouble(Objects.requireNonNull(get(path)).toString());
         } catch (Exception e) {
-            Logger.errorLog("Error while getting config value: " + path + "\n Returning default value: " + defaultValue);
+            Logger.debugLog("Error while getting config value: " + path + "\n Returning default value: " + defaultValue);
             return defaultValue;
         }
     }
@@ -476,7 +479,7 @@ public class LunaticConfig {
         try {
             return get(path) == null ? defaultValue : Boolean.parseBoolean(Objects.requireNonNull(get(path)).toString());
         } catch (Exception e) {
-            Logger.errorLog("Error while getting config value: " + path + "\n Returning default value: " + defaultValue);
+            Logger.debugLog("Error while getting config value: " + path + "\n Returning default value: " + defaultValue);
             return defaultValue;
         }
     }
@@ -498,7 +501,7 @@ public class LunaticConfig {
         try {
             return get(path) == null ? defaultValue : Float.parseFloat(Objects.requireNonNull(get(path)).toString());
         } catch (Exception e) {
-            Logger.errorLog("Error while getting config value: " + path + "\n Returning default value: " + defaultValue);
+            Logger.debugLog("Error while getting config value: " + path + "\n Returning default value: " + defaultValue);
             return defaultValue;
         }
     }

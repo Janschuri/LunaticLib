@@ -111,11 +111,6 @@ public abstract class LunaticCommand implements Command, HasMessageKeys {
 
     @Override
     public boolean checkAndExecute(Sender commandSender, String[] args) {
-        Logger.debugLog("Checking and executing command " + getName() + " with args " + String.join(" ", args));
-        if (!checkSource(commandSender, args)) {
-            Logger.debugLog("Source check failed");
-            return true;
-        }
         if (!checkPermission(commandSender, args)) {
             Logger.debugLog("Permission check failed");
             return true;
@@ -123,25 +118,6 @@ public abstract class LunaticCommand implements Command, HasMessageKeys {
 
         Logger.debugLog("Executing command " + getName() + " with args " + String.join(" ", args));
         return execute(commandSender, args);
-    }
-
-    @Override
-    public boolean isConsoleCommand() {
-        return false;
-    }
-
-    @Override
-    public boolean checkSource(Sender commandSender, String[] args) {
-        if (isConsoleCommand()) {
-            return true;
-        }
-
-        if (commandSender instanceof PlayerSender) {
-            return true;
-        }
-
-        commandSender.sendMessage(noConsoleCommandMessage(commandSender, args));
-        return false;
     }
 
     @Override

@@ -36,7 +36,14 @@ public abstract class LunaticLanguageConfig extends LunaticConfig {
         for (MessageKey key : messageKeys) {
             addCommentsFromKey(key);
 
-            if (getString(key.asString().toLowerCase()) == null) {
+            String value = getString(key.asString().toLowerCase(), key.getDefaultMessage(language));
+            if (value == null) {
+                Logger.errorLog("Missing message for key without default value: " + key.asString().toLowerCase());
+                continue;
+            }
+
+            if (value.equals(key.getDefaultMessage(language))) {
+                Logger.debugLog("Adding default message for key: " + key.asString().toLowerCase());
                 setString(key.asString().toLowerCase(), key.getDefaultMessage(language));
             }
         }
