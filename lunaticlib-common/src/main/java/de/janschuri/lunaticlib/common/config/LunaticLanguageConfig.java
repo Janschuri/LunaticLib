@@ -133,7 +133,7 @@ public abstract class LunaticLanguageConfig extends LunaticConfig {
                 Command command = clazz.getDeclaredConstructor().newInstance();
                 commands.add(command);
             } catch (Exception e) {
-                Logger.errorLog("Failed to instantiate command class: " + clazz.getName());
+                Logger.debugLog("Failed to instantiate command class: " + clazz.getName());
             }
         }
 
