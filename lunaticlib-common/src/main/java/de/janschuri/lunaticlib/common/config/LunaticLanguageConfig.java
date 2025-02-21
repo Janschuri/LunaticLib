@@ -155,9 +155,6 @@ public abstract class LunaticLanguageConfig extends LunaticConfig {
                 return Component.text("Missing message for key: " + keyString);
             }
         }
-        addCommentsFromKey(key);
-
-        save();
 
         Component messageComponent = LegacyComponentSerializer.legacyAmpersand().deserialize(message);
 
