@@ -43,16 +43,18 @@ public abstract class LunaticCommand implements Command, HasMessageKeys {
         return list;
     }
 
-    public Map<CommandMessageKey, String> getHelpMessages() {
-        Map<CommandMessageKey, String> map = new HashMap<>();
-
-        if (this instanceof HasHelpCommand hasHelpCommand) {
-            map.put(new LunaticCommandMessageKey(hasHelpCommand.getHelpCommand(), "help"), hasHelpCommand.getHelpCommand().getPermission());
+    @Override
+    public String getPath() {
+        if (this instanceof HasParentCommand hasParentCommand && !hasParentCommand.isPrimaryCommand()) {
+            return "commands." + hasParentCommand.getParentCommand().getName() + ".subcommands." + this.getName();
         } else {
-            map.put(new LunaticCommandMessageKey(this, "help"), getPermission());
+            return "commands." + this.getName();
         }
+    }
 
-        return map;
+    @Override
+    public List<String> getDefaultAliases() {
+        return List.of(getName());
     }
 
     @Override

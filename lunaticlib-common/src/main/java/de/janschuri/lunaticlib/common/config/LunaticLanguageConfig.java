@@ -1,5 +1,6 @@
 package de.janschuri.lunaticlib.common.config;
 
+import de.janschuri.lunaticlib.Command;
 import de.janschuri.lunaticlib.MessageKey;
 import de.janschuri.lunaticlib.Placeholder;
 import net.kyori.adventure.text.Component;
@@ -22,6 +23,7 @@ public abstract class LunaticLanguageConfig extends LunaticConfig {
 
     private final String language;
     private List<MessageKey> messageKeys;
+    private List<Command> commands;
 
     public LunaticLanguageConfig(Path dataDirectory, String language) {
         super(dataDirectory, "lang.yml");
@@ -99,6 +101,36 @@ public abstract class LunaticLanguageConfig extends LunaticConfig {
                 })
                 .filter(value -> value != null)
                 .collect(Collectors.toList());
+    }
+
+    public List<Command> getCommands(String packageName) {
+        if (this.commands != null) {
+            return this.commands;
+        }
+
+        ClassLoader pluginClassLoader = this.getClass().getClassLoader();
+
+        Reflections reflections = new Reflections(new ConfigurationBuilder()
+                .setUrls(ClasspathHelper.forPackage(packageName, pluginClassLoader))
+                .setScanners(new SubTypesScanner(false))
+                .filterInputsBy(new FilterBuilder().includePackage(packageName))
+                .addClassLoaders(pluginClassLoader)
+        );
+
+        Set<Class<? extends Command>> matchingClasses = reflections.getSubTypesOf(Command.class);
+
+        for (Class<? extends Command> clazz : matchingClasses) {
+            try {
+                Command command = clazz.getDeclaredConstructor().newInstance();
+                List<String> aliases = command.getDefaultAliases();
+
+                setStringList(command.getPath() + ".aliases", aliases);
+            } catch (Exception e) {
+                Logger.errorLog("Failed to instantiate command class: " + clazz.getName());
+            }
+        }
+
+        return commands;
     }
 
     public Component getMessage(MessageKey key, Placeholder... placeholders) {

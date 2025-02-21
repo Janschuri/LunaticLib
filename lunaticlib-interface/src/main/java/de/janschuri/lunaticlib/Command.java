@@ -18,6 +18,10 @@ public interface Command {
 
     Component wrongUsageMessage(Sender sender, String[] args);
 
+    List<String> getDefaultAliases();
+
+    String getPath();
+
     String getFullCommand();
 
     boolean checkAndExecute(Sender commandSender, String[] args);

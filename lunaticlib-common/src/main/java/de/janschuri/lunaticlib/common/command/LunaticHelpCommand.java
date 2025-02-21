@@ -59,7 +59,7 @@ public class LunaticHelpCommand extends LunaticCommand implements HasParentComma
         }
 
         return List.of(
-                command.pageParamName()
+                getMessage(command.pageParamName())
         );
     }
 
@@ -70,7 +70,7 @@ public class LunaticHelpCommand extends LunaticCommand implements HasParentComma
         }
 
         return List.of(
-                Map.of("page", permission)
+                Map.of(getPageAmount()+"", permission)
         );
     }
 
@@ -126,8 +126,13 @@ public class LunaticHelpCommand extends LunaticCommand implements HasParentComma
         return true;
     }
 
+    @Override
+    public Map<CommandMessageKey, String> getHelpMessages() {
+        return command.getHelpMessages();
+    }
+
     private Component getHelpMessage(Sender sender, int page) {
-        Component header = languageConfig.getHelpHeader(command.getName());
+        Component header = getMessage(command.getHelpHeader());
 
         ComponentBuilder builder = Component.text()
                 .append(header);
@@ -138,14 +143,7 @@ public class LunaticHelpCommand extends LunaticCommand implements HasParentComma
 
 
         for (Command subcommand : command.getSubcommands()) {
-
-                if (subcommand instanceof HasHelpCommand hasHelpCommand) {
-                    if (sender.hasPermission(hasHelpCommand.getHelpCommand().getPermission())) {
-                        Component m = getMessage(new LunaticCommandMessageKey(hasHelpCommand.getHelpCommand(), "help").noPrefix());
-                        m = getReplacedComponent(m, sender, subcommand);
-                        messages.add(m);
-                    }
-                } else if (!subcommand.getHelpMessages().isEmpty()) {
+                if (!subcommand.getHelpMessages().isEmpty()) {
                     for (Map.Entry<CommandMessageKey, String> entry : subcommand.getHelpMessages().entrySet()) {
                         if (sender.hasPermission(entry.getValue())) {
                             Component m = subcommand.getMessage(entry.getKey().noPrefix());

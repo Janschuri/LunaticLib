@@ -16,11 +16,7 @@ public class LunaticCommandMessageKey extends LunaticMessageKey implements Comma
 
     @Override
     public String asString() {
-        if (command instanceof HasParentCommand hasParentCommand && !hasParentCommand.isPrimaryCommand()) {
-            return "commands." + hasParentCommand.getParentCommand().getName() + ".subcommands." + command.getName() + ".messages." + getKey();
-        } else {
-            return "commands." + command.getName() + ".messages." + getKey();
-        }
+        return command.getPath() + ".messages." + getKey();
     }
 
     @Override
