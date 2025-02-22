@@ -159,17 +159,25 @@ public abstract class LunaticLanguageConfig extends LunaticConfig {
         Component messageComponent = LegacyComponentSerializer.legacyAmpersand().deserialize(message);
 
         for (Placeholder placeholder : placeholders) {
-            messageComponent = messageComponent.replaceText(TextReplacementConfig.builder()
+
+            //check if the key is present in the message
+            if (!message.contains(placeholder.getKey())) {
+                Logger.debugLog("Placeholder " + placeholder.getKey() + " not found in message");
+            }
+
+            TextReplacementConfig replacementConfig = TextReplacementConfig.builder()
                     .match(placeholder.getKey())
                     .replacement(placeholder.getValue())
-                    .build());
+                    .build();
+
+            messageComponent = messageComponent.replaceText(replacementConfig);
         }
 
         if (key.isWithPrefix()) {
             return getPrefix().append(messageComponent);
         }
 
-        return LegacyComponentSerializer.legacyAmpersand().deserialize(message);
+        return messageComponent;
     }
 
 
