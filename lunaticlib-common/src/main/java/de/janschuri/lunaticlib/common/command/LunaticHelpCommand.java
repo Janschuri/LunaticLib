@@ -146,8 +146,7 @@ public class LunaticHelpCommand extends LunaticCommand implements HasParentComma
                 if (!subcommand.getHelpMessages().isEmpty()) {
                     for (Map.Entry<CommandMessageKey, String> entry : subcommand.getHelpMessages().entrySet()) {
                         if (sender.hasPermission(entry.getValue())) {
-                            Component m = subcommand.getMessage(entry.getKey().noPrefix());
-                            m = getReplacedComponent(m, sender, subcommand);
+                            Component m = getReplacedHelpMessage(entry.getKey().noPrefix(), sender, command, subcommand);
                             messages.add(m);
                         }
                     }
@@ -167,74 +166,5 @@ public class LunaticHelpCommand extends LunaticCommand implements HasParentComma
 
 
         return builder.build();
-    }
-
-    private Component getParamsHover(Sender sender, HasParams subcommand, int paramsIndex) {
-        List<Component> params = subcommand.getFormattedParamsList(sender, paramsIndex);
-        Component paramsName = subcommand.getParamsName(paramsIndex);
-
-        ComponentBuilder paramsHover = Component.text();
-
-        int index = 0;
-        for (Component param : params) {
-            paramsHover.append(param);
-            if (index < params.size() - 1) {
-                paramsHover.append(Component.newline());
-            }
-        }
-
-        return paramsName.hoverEvent(HoverEvent.showText(paramsHover.build()));
-    }
-
-    private Component getAliasesHover(Sender sender, Command subcommand) {
-        List<Component> aliases = subcommand.getFormattedAliasesList(sender);
-
-        ComponentBuilder aliasesHover = Component.text();
-
-        int index = 0;
-        for (Component alias : aliases) {
-            aliasesHover.append(alias);
-            if (index < aliases.size() - 1) {
-                aliasesHover.append(Component.newline());
-            }
-        }
-
-        return aliases.get(0).hoverEvent(HoverEvent.showText(aliasesHover.build()));
-    }
-
-    private Component getReplacedComponent(Component message, Sender sender, Command subcommand) {
-        int paramsIndex = 0;
-
-        if (subcommand instanceof HasParams hasParams) {
-            while (message.toString().contains("%param%")) {
-                TextReplacementConfig paramReplacement = TextReplacementConfig.builder()
-                        .match("%param%")
-                        .once()
-                        .replacement(getParamsHover(sender, hasParams, paramsIndex))
-                        .build();
-
-                message = message.replaceText(paramReplacement);
-                paramsIndex++;
-            }
-        }
-
-        TextReplacementConfig commandReplacement = TextReplacementConfig.builder()
-                .match("%command%")
-                .replacement(getAliasesHover(sender, command))
-                .build();
-
-        TextReplacementConfig subcommandReplacement = TextReplacementConfig.builder()
-                .match("%subcommand%")
-                .replacement(getAliasesHover(sender, subcommand))
-                .build();
-
-        message = message.replaceText(commandReplacement);
-        message = message.replaceText(subcommandReplacement);
-
-        String commandString = "/" + subcommand.getFullCommand();
-
-        message = message.clickEvent(ClickEvent.suggestCommand(commandString));
-
-        return message;
     }
 }

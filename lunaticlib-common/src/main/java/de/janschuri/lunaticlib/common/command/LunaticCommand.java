@@ -6,6 +6,10 @@ import de.janschuri.lunaticlib.common.config.LunaticCommandMessageKey;
 import de.janschuri.lunaticlib.common.config.LunaticLanguageConfig;
 import de.janschuri.lunaticlib.common.logger.Logger;
 import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.ComponentBuilder;
+import net.kyori.adventure.text.TextReplacementConfig;
+import net.kyori.adventure.text.event.ClickEvent;
+import net.kyori.adventure.text.event.HoverEvent;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -130,5 +134,75 @@ public abstract class LunaticCommand implements Command, HasMessageKeys {
             commandSender.sendMessage(noPermissionMessage(commandSender, args));
             return false;
         }
+    }
+
+    public Component getReplacedHelpMessage(MessageKey key, Sender sender, Command command, Command subcommand) {
+        int paramsIndex = 0;
+
+        Component message = getMessage(key);
+        if (subcommand instanceof HasParams hasParams) {
+            while (message.toString().contains("%param%")) {
+                TextReplacementConfig paramReplacement = TextReplacementConfig.builder()
+                        .match("%param%")
+                        .once()
+                        .replacement(getParamsHover(sender, hasParams, paramsIndex))
+                        .build();
+
+                message = message.replaceText(paramReplacement);
+                paramsIndex++;
+            }
+        }
+
+        TextReplacementConfig commandReplacement = TextReplacementConfig.builder()
+                .match("%command%")
+                .replacement(getAliasesHover(sender, command))
+                .build();
+
+        TextReplacementConfig subcommandReplacement = TextReplacementConfig.builder()
+                .match("%subcommand%")
+                .replacement(getAliasesHover(sender, subcommand))
+                .build();
+
+        message = message.replaceText(commandReplacement);
+        message = message.replaceText(subcommandReplacement);
+
+        String commandString = "/" + subcommand.getFullCommand();
+
+        message = message.clickEvent(ClickEvent.suggestCommand(commandString));
+
+        return message;
+    }
+
+    private Component getParamsHover(Sender sender, HasParams subcommand, int paramsIndex) {
+        List<Component> params = subcommand.getFormattedParamsList(sender, paramsIndex);
+        Component paramsName = subcommand.getParamsName(paramsIndex);
+
+        ComponentBuilder paramsHover = Component.text();
+
+        int index = 0;
+        for (Component param : params) {
+            paramsHover.append(param);
+            if (index < params.size() - 1) {
+                paramsHover.append(Component.newline());
+            }
+        }
+
+        return paramsName.hoverEvent(HoverEvent.showText(paramsHover.build()));
+    }
+
+    private Component getAliasesHover(Sender sender, Command subcommand) {
+        List<Component> aliases = subcommand.getFormattedAliasesList(sender);
+
+        ComponentBuilder aliasesHover = Component.text();
+
+        int index = 0;
+        for (Component alias : aliases) {
+            aliasesHover.append(alias);
+            if (index < aliases.size() - 1) {
+                aliasesHover.append(Component.newline());
+            }
+        }
+
+        return aliases.get(0).hoverEvent(HoverEvent.showText(aliasesHover.build()));
     }
 }
