@@ -16,6 +16,7 @@ import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
+import java.util.Map;
 import java.util.UUID;
 
 public class PlayerSenderImpl extends SenderImpl implements PlayerSender {
@@ -86,9 +87,21 @@ public class PlayerSenderImpl extends SenderImpl implements PlayerSender {
 
     @Override
     public boolean giveItemDrop(byte[] item) {
-        if (Bukkit.getPlayer(uuid) != null) {
+
+        Player player = Bukkit.getPlayer(uuid);
+        if (player != null) {
             ItemStack itemStack = ItemStackUtils.deserializeItemStack(item);
-            Bukkit.getPlayer(uuid).getWorld().dropItem(Bukkit.getPlayer(uuid).getLocation(), itemStack);
+
+            if (itemStack == null) {
+                return false;
+            }
+
+            Map<Integer, ItemStack> overflow = player.getInventory().addItem(itemStack);
+
+            for (ItemStack overflowItem : overflow.values()) {
+                player.getWorld().dropItem(player.getLocation(), overflowItem);
+            }
+
             return true;
         }
         return false;

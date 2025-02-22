@@ -108,6 +108,10 @@ public abstract class LunaticCommand implements Command, HasMessageKeys {
     }
 
     protected LunaticPlaceholder placeholder(String key, String value) {
+        if (value == null) {
+            value = "null";
+        }
+
         return new LunaticPlaceholder(key, Component.text(value));
     }
 
