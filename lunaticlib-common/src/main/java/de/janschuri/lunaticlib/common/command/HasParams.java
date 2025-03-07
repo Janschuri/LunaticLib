@@ -17,7 +17,7 @@ public interface HasParams extends Command {
         if (getParamsNames().size() <= paramIndex) {
             return Component.text("params");
         } else {
-            return getMessage(getParamsNames().get(paramIndex));
+            return getMessage(getParamsNames().get(paramIndex).noPrefix());
         }
     }
 
