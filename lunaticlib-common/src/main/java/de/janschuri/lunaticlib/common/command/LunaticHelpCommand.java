@@ -53,13 +53,13 @@ public class LunaticHelpCommand extends LunaticCommand implements HasParentComma
     }
 
     @Override
-    public List<Component> getParamsNames() {
+    public List<MessageKey> getParamsNames() {
         if (getPageAmount() < 2) {
             return List.of();
         }
 
         return List.of(
-                getMessage(command.pageParamName())
+                command.pageParamName()
         );
     }
 

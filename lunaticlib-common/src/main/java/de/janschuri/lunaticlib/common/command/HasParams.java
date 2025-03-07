@@ -1,6 +1,7 @@
 package de.janschuri.lunaticlib.common.command;
 
 import de.janschuri.lunaticlib.Command;
+import de.janschuri.lunaticlib.MessageKey;
 import de.janschuri.lunaticlib.PlayerSender;
 import de.janschuri.lunaticlib.Sender;
 import de.janschuri.lunaticlib.common.LunaticLib;
@@ -10,13 +11,13 @@ import java.util.*;
 
 public interface HasParams extends Command {
 
-    List<Component> getParamsNames();
+    List<MessageKey> getParamsNames();
 
     default Component getParamsName(int paramIndex) {
         if (getParamsNames().size() <= paramIndex) {
             return Component.text("params");
         } else {
-            return getParamsNames().get(paramIndex);
+            return getMessage(getParamsNames().get(paramIndex));
         }
     }
 
