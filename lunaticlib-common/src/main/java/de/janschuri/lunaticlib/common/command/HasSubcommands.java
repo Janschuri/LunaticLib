@@ -35,10 +35,15 @@ public interface HasSubcommands extends Command {
             }
         }
 
-        Logger.debugLog("Subcommand not found");
-        sender.sendMessage(wrongUsageMessage(sender, args));
+        return handleNoMatchingSubcommand(sender, args);
+    }
 
-
+    default boolean handleNoMatchingSubcommand(Sender sender, String[] args) {
+        if (this instanceof HasHelpCommand hasHelpCommand) {
+            hasHelpCommand.getHelpCommand().execute(sender, args);
+        } else {
+            sender.sendMessage(wrongUsageMessage(sender, args));
+        }
         return true;
     }
 
