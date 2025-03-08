@@ -13,13 +13,7 @@ public interface HasSubcommands extends Command {
     default boolean execute(Sender sender, String[] args) {
         Logger.debugLog("Executing subcommand for " + getName() + " with args " + String.join(" ", args));
         if (args.length == 0) {
-            Logger.debugLog("No subcommand given, executing help command");
-            if (this instanceof HasHelpCommand hasHelpCommand) {
-                hasHelpCommand.getHelpCommand().execute(sender, args);
-            } else {
-                sender.sendMessage(wrongUsageMessage(sender, args));
-            }
-            return true;
+            return handleNoMatchingSubcommand(sender, args);
         }
 
         Logger.debugLog("Subcommand given: " + args[0]);

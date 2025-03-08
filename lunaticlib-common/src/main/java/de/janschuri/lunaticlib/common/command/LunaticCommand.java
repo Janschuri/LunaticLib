@@ -275,7 +275,7 @@ public abstract class LunaticCommand implements Command, HasMessageKeys {
         sb.append("&6/%command%");
 
         for (int i = 0; i < subcommandsCount; i++) {
-            sb.append(" %subcommand%");
+            sb.append(" %subcommand").append(i + 1).append("%");
         }
 
         for (int i = 0; i < paramsCount; i++) {
