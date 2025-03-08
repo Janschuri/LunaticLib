@@ -75,7 +75,7 @@ public class LunaticConfig {
 
         File file = path.toFile();
 
-        if (!file.exists() && defaultFilePath != null) {
+        if (!file.exists()) {
             if (defaultFilePath != null) {
                 try (InputStream inputStream = getClass().getClassLoader().getResourceAsStream(defaultFilePath)) {
                     if (inputStream != null) {
@@ -260,6 +260,17 @@ public class LunaticConfig {
     }
 
     private Node mergeNodes(@NotNull Node node, @NotNull Node defaultNode, String path) {
+        if (node == null && defaultNode == null) {
+            return null;
+        }
+
+        if (defaultNode == null) {
+            return node;
+        }
+
+        if (node == null) {
+            return defaultNode;
+        }
 
         if (node instanceof MappingNode mappingNode && defaultNode instanceof MappingNode defaultMappingNode) {
             List<NodeTuple> list = mappingNode.getValue();
