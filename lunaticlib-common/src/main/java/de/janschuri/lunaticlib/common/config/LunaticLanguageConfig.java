@@ -40,6 +40,11 @@ public abstract class LunaticLanguageConfig extends LunaticConfig {
             super.load(null);
         }
 
+        if (getString("prefix") == null) {
+            setString("prefix", getDefaultPrefix());
+            Logger.debugLog("Setting default prefix: " + getDefaultPrefix());
+        }
+
         this.messageKeys = getMessageKeys(getPackage());
 
         for (MessageKey key : messageKeys) {
@@ -218,11 +223,9 @@ public abstract class LunaticLanguageConfig extends LunaticConfig {
     }
 
     public Component getHelpFooter(HasHelpCommand command, int page, int maxPage) {
-        String headerRaw = getString("help_footer");
+        String fallback = "&7%header% &8| &7Page %page% of %pages%";
 
-        if (headerRaw == null) {
-            headerRaw = "&7%header% &8| &7Page %page% of %pages%";
-        }
+        String headerRaw = getString("help_footer", fallback);
 
         return LegacyComponentSerializer.legacyAmpersand().deserialize(headerRaw
                 .replace("%header%", getMessageAsLegacyString(command.getHelpHeader()))
@@ -231,7 +234,11 @@ public abstract class LunaticLanguageConfig extends LunaticConfig {
         );
     }
 
+    protected String getDefaultPrefix() {
+        return getPackage() == null ? "null" : getPackage();
+    }
+
     public Component getPrefix() {
-        return LegacyComponentSerializer.legacyAmpersand().deserialize(getString("prefix", "[null]"));
+        return LegacyComponentSerializer.legacyAmpersand().deserialize(getString("prefix", getDefaultPrefix()));
     }
 }
