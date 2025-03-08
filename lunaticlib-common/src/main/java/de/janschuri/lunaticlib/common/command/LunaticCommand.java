@@ -140,12 +140,12 @@ public abstract class LunaticCommand implements Command, HasMessageKeys {
         }
     }
 
-    public Component getReplacedHelpMessage(MessageKey key, Sender sender, Command command, Command subcommand) {
+    public Component getReplacedHelpMessage(MessageKey key, Sender sender, Command command) {
 
         List<TextReplacementConfig> replacements = new ArrayList<>();
 
         Component message = getMessage(key);
-        if (subcommand instanceof HasParams hasParams) {
+        if (command instanceof HasParams hasParams) {
 
             if (message.toString().contains("%param%")) {
                 TextReplacementConfig paramReplacement = TextReplacementConfig.builder()
@@ -168,37 +168,45 @@ public abstract class LunaticCommand implements Command, HasMessageKeys {
             }
         }
 
-        TextReplacementConfig commandReplacement = TextReplacementConfig.builder()
-                .match("%command%")
-                .replacement(getAliasesHover(sender, command))
-                .build();
 
-        replacements.add(commandReplacement);
-
-        if (!this.isPrimaryCommand() && this instanceof HasParentCommand hasParentCommand) {
             replacements.add(TextReplacementConfig.builder()
                     .match("%subcommand%")
                     .replacement("%subcommand1%")
                     .build());
 
-            Command parentCommand = hasParentCommand.getParentCommand();
+            Command parentCommand = command;
 
             int depth = getCommandDepth();
+            Logger.debugLog("Command depth: " + depth);
+
             while (parentCommand instanceof HasParentCommand hasParentCommand1) {
                 parentCommand = hasParentCommand1.getParentCommand();
 
+                String pattern = "%subcommand" + depth + "%";
+
+                Logger.debugLog("Adding replacement for " + pattern);
+
                 replacements.add(TextReplacementConfig.builder()
-                        .match("%subcommand" + (depth - 1) + "%")
-                        .replacement(getAliasesHover(sender, parentCommand))
+                        .match(pattern)
+                        .replacement(getAliasesHover(sender, hasParentCommand1))
                         .build());
+
+                depth--;
             }
-        }
+
+            TextReplacementConfig commandReplacement = TextReplacementConfig.builder()
+                    .match("%command%")
+                    .replacement(getAliasesHover(sender, parentCommand))
+                    .build();
+
+
+            replacements.add(commandReplacement);
 
         for (TextReplacementConfig replacement : replacements) {
             message = message.replaceText(replacement);
         }
 
-        String commandString = "/" + subcommand.getFullCommand();
+        String commandString = "/" + command.getFullCommand();
 
         message = message.clickEvent(ClickEvent.suggestCommand(commandString));
 

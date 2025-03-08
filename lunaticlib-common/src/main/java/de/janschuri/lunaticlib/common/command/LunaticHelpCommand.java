@@ -146,7 +146,7 @@ public class LunaticHelpCommand extends LunaticCommand implements HasParentComma
                 if (!subcommand.getHelpMessages().isEmpty()) {
                     for (Map.Entry<CommandMessageKey, String> entry : subcommand.getHelpMessages().entrySet()) {
                         if (sender.hasPermission(entry.getValue())) {
-                            Component m = getReplacedHelpMessage(entry.getKey().noPrefix(), sender, command, subcommand);
+                            Component m = getReplacedHelpMessage(entry.getKey().noPrefix(), sender, subcommand);
                             messages.add(m);
                         }
                     }
