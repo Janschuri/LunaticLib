@@ -37,4 +37,6 @@ public interface Command {
     Component getMessage(MessageKey key, Placeholder... placeholders);
 
     Map<CommandMessageKey, String> getHelpMessages();
+
+    boolean isPrimaryCommand();
 }

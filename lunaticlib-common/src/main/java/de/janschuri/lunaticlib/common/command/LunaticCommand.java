@@ -141,19 +141,30 @@ public abstract class LunaticCommand implements Command, HasMessageKeys {
     }
 
     public Component getReplacedHelpMessage(MessageKey key, Sender sender, Command command, Command subcommand) {
-        int paramsIndex = 0;
+
+        List<TextReplacementConfig> replacements = new ArrayList<>();
 
         Component message = getMessage(key);
         if (subcommand instanceof HasParams hasParams) {
-            while (message.toString().contains("%param%")) {
+
+            if (message.toString().contains("%param%")) {
                 TextReplacementConfig paramReplacement = TextReplacementConfig.builder()
                         .match("%param%")
-                        .once()
-                        .replacement(getParamsHover(sender, hasParams, paramsIndex))
+                        .replacement("%param1%")
                         .build();
 
-                message = message.replaceText(paramReplacement);
-                paramsIndex++;
+                replacements.add(paramReplacement);
+            }
+
+            int paramAmount = hasParams.getParams().size();
+
+            for (int paramIndex = 0; paramIndex < paramAmount; paramIndex++) {
+                TextReplacementConfig paramReplacement = TextReplacementConfig.builder()
+                        .match("%param" + (paramIndex + 1) + "%")
+                        .replacement(getParamsHover(sender, hasParams, paramIndex))
+                        .build();
+
+                replacements.add(paramReplacement);
             }
         }
 
@@ -162,13 +173,30 @@ public abstract class LunaticCommand implements Command, HasMessageKeys {
                 .replacement(getAliasesHover(sender, command))
                 .build();
 
-        TextReplacementConfig subcommandReplacement = TextReplacementConfig.builder()
-                .match("%subcommand%")
-                .replacement(getAliasesHover(sender, subcommand))
-                .build();
+        replacements.add(commandReplacement);
 
-        message = message.replaceText(commandReplacement);
-        message = message.replaceText(subcommandReplacement);
+        if (!this.isPrimaryCommand() && this instanceof HasParentCommand hasParentCommand) {
+            replacements.add(TextReplacementConfig.builder()
+                    .match("%subcommand%")
+                    .replacement("%subcommand1%")
+                    .build());
+
+            Command parentCommand = hasParentCommand.getParentCommand();
+
+            int depth = getCommandDepth();
+            while (parentCommand instanceof HasParentCommand hasParentCommand1) {
+                parentCommand = hasParentCommand1.getParentCommand();
+
+                replacements.add(TextReplacementConfig.builder()
+                        .match("%subcommand" + (depth - 1) + "%")
+                        .replacement(getAliasesHover(sender, parentCommand))
+                        .build());
+            }
+        }
+
+        for (TextReplacementConfig replacement : replacements) {
+            message = message.replaceText(replacement);
+        }
 
         String commandString = "/" + subcommand.getFullCommand();
 
@@ -208,5 +236,46 @@ public abstract class LunaticCommand implements Command, HasMessageKeys {
         }
 
         return aliases.get(0).hoverEvent(HoverEvent.showText(aliasesHover.build()));
+    }
+
+    private int getCommandDepth() {
+        int depth = 0;
+
+        if (!this.isPrimaryCommand() && this instanceof HasParentCommand hasParentCommand) {
+            Command command = hasParentCommand.getParentCommand();
+            depth++;
+
+            while (command instanceof HasParentCommand hasParentCommand1) {
+                command = hasParentCommand1.getParentCommand();
+                depth++;
+            }
+        }
+
+        return depth;
+    }
+
+    protected String getDefaultHelpMessage(String message) {
+        int subcommandsCount = this.getCommandDepth();
+        int paramsCount = 0;
+
+        if (this instanceof HasParams hasParams) {
+            paramsCount = hasParams.getParams().size();
+        }
+
+        StringBuilder sb = new StringBuilder();
+
+        sb.append("&6/%command%");
+
+        for (int i = 0; i < subcommandsCount; i++) {
+            sb.append(" %subcommand%");
+        }
+
+        for (int i = 0; i < paramsCount; i++) {
+            sb.append(" &b<%param").append(i + 1).append("%>");
+        }
+
+        sb.append(" &7- ").append(message);
+
+        return sb.toString();
     }
 }

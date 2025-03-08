@@ -32,7 +32,13 @@ public abstract class LunaticLanguageConfig extends LunaticConfig {
     }
 
     public void load() {
-        super.load("lang/" + language + ".yml");
+        String path = "lang/" + language + ".yml";
+
+        if (isDefaultFilePathInResources(path)) {
+            super.load(path);
+        } else {
+            super.load(null);
+        }
 
         this.messageKeys = getMessageKeys(getPackage());
 
@@ -226,6 +232,6 @@ public abstract class LunaticLanguageConfig extends LunaticConfig {
     }
 
     public Component getPrefix() {
-        return LegacyComponentSerializer.legacyAmpersand().deserialize(getString("prefix"));
+        return LegacyComponentSerializer.legacyAmpersand().deserialize(getString("prefix", "[null]"));
     }
 }

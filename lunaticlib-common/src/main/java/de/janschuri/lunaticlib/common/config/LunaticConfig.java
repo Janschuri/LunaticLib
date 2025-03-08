@@ -28,6 +28,10 @@ public class LunaticConfig {
     private final Map<String, CommentTuple> commentsMap = new HashMap<>();
 
     public LunaticConfig(Path dataDirectory, String filePath) {
+        if (dataDirectory.toFile().isFile()) {
+            dataDirectory = dataDirectory.getParent();
+        }
+
         this.path = Path.of(dataDirectory.toString(), filePath);
         this.dataDirectory = dataDirectory;
         this.filePath = filePath;
@@ -72,14 +76,22 @@ public class LunaticConfig {
         File file = path.toFile();
 
         if (!file.exists() && defaultFilePath != null) {
-            try (InputStream inputStream = getClass().getClassLoader().getResourceAsStream(defaultFilePath)) {
-                if (inputStream != null) {
-                    Files.copy(inputStream, file.toPath());
-                } else {
-                    throw new IOException("Resource '" + defaultFilePath + "' not found");
+            if (defaultFilePath != null) {
+                try (InputStream inputStream = getClass().getClassLoader().getResourceAsStream(defaultFilePath)) {
+                    if (inputStream != null) {
+                        Files.copy(inputStream, file.toPath());
+                    } else {
+                        throw new IOException("Resource '" + defaultFilePath + "' not found");
+                    }
+                } catch (IOException e) {
+                    e.printStackTrace();
                 }
-            } catch (IOException e) {
-                e.printStackTrace();
+            } else {
+                try {
+                    Files.createFile(file.toPath());
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
             }
         }
 
@@ -91,7 +103,6 @@ public class LunaticConfig {
             Node newNode;
 
             if (root == null) {
-                Logger.errorLog("Error while loading config file: " + path.getParent() + "/" + file.getName());
                 newNode = defaultRoot;
             } else {
                 Logger.infoLog("Loaded config file: " + path.getParent() + "/" + file.getName());
@@ -102,7 +113,9 @@ public class LunaticConfig {
                  OutputStreamWriter osw = new OutputStreamWriter(fos, StandardCharsets.UTF_8);
                  BufferedWriter writer = new BufferedWriter(osw)) {
                 Yaml yaml = getYaml();
-                yaml.serialize(newNode, writer);
+                if (newNode != null) {
+                    yaml.serialize(newNode, writer);
+                }
             }
 
             yamlMap = loadYamlMap(newNode);
@@ -126,6 +139,14 @@ public class LunaticConfig {
 
     private Node getNode(File file) throws IOException {
         Yaml yaml = getYaml();
+
+        if (!file.exists()) {
+            file.createNewFile();
+        }
+
+        if (file == null) {
+            return null;
+        }
 
         try (FileInputStream inputStream = new FileInputStream(file)) {
             try (InputStreamReader reader = new InputStreamReader(inputStream, StandardCharsets.UTF_8)) {
@@ -163,11 +184,14 @@ public class LunaticConfig {
 
     private Map<String, Object> loadYamlMap(Node root) {
         Map<String, Object> yamlMap = new HashMap<>();
-        MappingNode mappingNode = (MappingNode) root;
-        List<NodeTuple> list = mappingNode.getValue();
-        for (NodeTuple node : list) {
-            yamlMap.put(((ScalarNode) node.getKeyNode()).getValue(), loadNodeTuple(node));
+
+        if (root instanceof MappingNode mappingNode) {
+            List<NodeTuple> list = mappingNode.getValue();
+            for (NodeTuple node : list) {
+                yamlMap.put(((ScalarNode) node.getKeyNode()).getValue(), loadNodeTuple(node));
+            }
         }
+
         return yamlMap;
     }
 
@@ -235,10 +259,7 @@ public class LunaticConfig {
         return null;
     }
 
-    private Node mergeNodes(Node node, Node defaultNode, String path) {
-        if (defaultNode == null) {
-            return node;
-        }
+    private Node mergeNodes(@NotNull Node node, @NotNull Node defaultNode, String path) {
 
         if (node instanceof MappingNode mappingNode && defaultNode instanceof MappingNode defaultMappingNode) {
             List<NodeTuple> list = mappingNode.getValue();
@@ -755,6 +776,14 @@ public class LunaticConfig {
                     Arrays.toString(valueInlineComments.toArray()) + "\n" +
                     Arrays.toString(valueBlockComments.toArray()) + "\n" +
                     '}';
+        }
+    }
+
+    protected boolean isDefaultFilePathInResources(String defaultFilePath) {
+        try (InputStream inputStream = getClass().getClassLoader().getResourceAsStream(defaultFilePath)) {
+            return inputStream != null;
+        } catch (IOException e) {
+            return false;
         }
     }
 }
