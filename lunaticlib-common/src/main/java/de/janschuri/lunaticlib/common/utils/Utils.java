@@ -89,8 +89,6 @@ public class Utils {
 
     public static String getSkinURLFromValue(String base64TextureValue) {
 
-        Logger.debugLog("Getting skin URL from base64 texture value: " + base64TextureValue);
-
         // Decode the base64 texture value
         byte[] decodedBytes = Base64.getDecoder().decode(base64TextureValue);
         String decodedString = new String(decodedBytes);

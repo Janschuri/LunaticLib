@@ -42,7 +42,6 @@ public abstract class LunaticLanguageConfig extends LunaticConfig {
 
         if (getString("prefix") == null) {
             setString("prefix", getDefaultPrefix());
-            Logger.debugLog("Setting default prefix: " + getDefaultPrefix());
         }
 
         this.messageKeys = getMessageKeys(getPackage());
@@ -57,7 +56,6 @@ public abstract class LunaticLanguageConfig extends LunaticConfig {
             }
 
             if (value.equals(key.getDefaultMessage(language))) {
-                Logger.debugLog("Adding default message for key: " + key.asString().toLowerCase());
                 setString(key.asString().toLowerCase(), key.getDefaultMessage(language));
             }
         }
@@ -144,7 +142,6 @@ public abstract class LunaticLanguageConfig extends LunaticConfig {
                 Command command = clazz.getDeclaredConstructor().newInstance();
                 commands.add(command);
             } catch (Exception e) {
-                Logger.debugLog("Failed to instantiate command class: " + clazz.getName());
             }
         }
 
@@ -173,7 +170,6 @@ public abstract class LunaticLanguageConfig extends LunaticConfig {
 
             //check if the key is present in the message
             if (!message.contains(placeholder.getKey())) {
-                Logger.debugLog("Placeholder " + placeholder.getKey() + " not found in message");
             }
 
             TextReplacementConfig replacementConfig = TextReplacementConfig.builder()

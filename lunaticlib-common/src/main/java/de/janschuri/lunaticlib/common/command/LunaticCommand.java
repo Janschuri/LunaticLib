@@ -128,11 +128,9 @@ public abstract class LunaticCommand implements Command, HasMessageKeys {
     @Override
     public boolean checkAndExecute(Sender commandSender, String[] args) {
         if (!checkPermission(commandSender, args)) {
-            Logger.debugLog("Permission check failed");
             return true;
         }
 
-        Logger.debugLog("Executing command " + getName() + " with args " + String.join(" ", args));
         return execute(commandSender, args);
     }
 
@@ -183,14 +181,11 @@ public abstract class LunaticCommand implements Command, HasMessageKeys {
             Command parentCommand = command;
 
             int depth = getCommandDepth();
-            Logger.debugLog("Command depth: " + depth);
 
             while (parentCommand instanceof HasParentCommand hasParentCommand1) {
                 parentCommand = hasParentCommand1.getParentCommand();
 
                 String pattern = "%subcommand" + depth + "%";
-
-                Logger.debugLog("Adding replacement for " + pattern);
 
                 replacements.add(TextReplacementConfig.builder()
                         .match(pattern)

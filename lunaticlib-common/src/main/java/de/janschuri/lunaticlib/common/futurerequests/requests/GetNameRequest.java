@@ -30,9 +30,7 @@ public class GetNameRequest extends FutureRequest<String> {
 
         boolean found = false;
 
-        if (name == null) {
-            Logger.debugLog("GetNameRequest: Player with UUID " + uuid + " does not exist.");
-        } else {
+        if (name != null) {
             found = true;
         }
 

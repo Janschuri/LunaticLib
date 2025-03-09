@@ -86,10 +86,7 @@ public abstract class FutureRequest<R> {
             stackTrace += " to " + stackTraceElements[i].getClassName() + " in " + stackTraceElements[i].getMethodName() + " at " + stackTraceElements[i].getLineNumber() + "\n";
         }
 
-        Logger.debugLog("Sending request: " + requestName + " with id: " + requestId + " from " + stackTrace);
-
         if (!LunaticLib.getPlatform().sendPluginMessage(out.toByteArray())) {
-            Logger.debugLog("Cannot sent plugin message: " + requestName + "-Request" + " with id: " + requestId);
             return null;
         }
 
@@ -117,11 +114,7 @@ public abstract class FutureRequest<R> {
         out.writeInt(requestId);
         out.write(data);
 
-        // Logging
-        Logger.debugLog("Sending request: " + requestName + " with id: " + requestId + " from " + getStackTrace());
-
         if (!LunaticLib.getPlatform().sendPluginMessage(out.toByteArray())) {
-            Logger.debugLog("Cannot send plugin message: " + requestName + "-Request with id: " + requestId);
             responseFuture.completeExceptionally(new RuntimeException("Failed to send plugin message"));
         }
 
@@ -156,10 +149,7 @@ public abstract class FutureRequest<R> {
             stackTrace += " to " + stackTraceElements[i].getClassName() + " in " + stackTraceElements[i].getMethodName() + " at " + stackTraceElements[i].getLineNumber() + "\n";
         }
 
-        Logger.debugLog("Sending request: " + requestName + " with id: " + requestId + " from " + stackTrace);
-
         if (!LunaticLib.getPlatform().sendPluginMessage(serverName, out.toByteArray())) {
-            Logger.debugLog("Cannot sent plugin message: " + requestName + "-Request to " + serverName + " with id: " + requestId);
             return null;
         }
 
@@ -180,13 +170,10 @@ public abstract class FutureRequest<R> {
         out.writeInt(requestId);
         out.write(data);
 
-        Logger.debugLog("Sending response: " + requestName + " with id: " + requestId);
-
         return LunaticLib.getPlatform().sendPluginMessage(out.toByteArray());
     }
 
     protected void completeRequest(int requestId, R response) {
-        Logger.debugLog("Completing request: " + requestName + " with id: " + requestId);
         CompletableFuture<R> future = requestMap.get(requestId);
         if (future != null) {
             future.complete(response);

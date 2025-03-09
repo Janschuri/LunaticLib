@@ -72,9 +72,6 @@ public class PlatformImpl implements Platform<JavaPlugin, CommandSender> {
 
             List<String> aliases = command.getAliases();
 
-            Logger.debugLog("Registering command " + command.getName() + " with aliases " + aliases.toString());
-            Logger.debugLog("Command: " + cmd);
-
             synchronized (aliases) {
                 aliases.forEach(alias -> {
                     commandMap.register(alias, plugin.getName(), cmd);

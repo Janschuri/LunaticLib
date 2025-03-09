@@ -46,13 +46,11 @@ public class BukkitLunaticLib extends JavaPlugin {
 
         if (Utils.classExists("net.milkbowl.vault.economy.Economy")) {
             installedVault = true;
-            Logger.debugLog("Vault is installed.");
             vault = new VaultImpl();
         }
 
         if (Utils.classExists("de.diddiz.LogBlock.LogBlock")) {
             installedLogBlock = true;
-            Logger.debugLog("LogBlock is installed.");
         }
     }
 

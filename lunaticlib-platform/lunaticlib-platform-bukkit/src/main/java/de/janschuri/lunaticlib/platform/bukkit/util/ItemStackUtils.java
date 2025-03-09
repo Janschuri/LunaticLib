@@ -105,7 +105,6 @@ public class ItemStackUtils {
     }
 
     public static ItemStack mapToItemStack(Map<String, Object> map) {
-        Logger.debugLog("Map: " + map);
 
         if (map == null) {
             return null;
@@ -157,13 +156,13 @@ public class ItemStackUtils {
                     assert item != null;
                     item.setItemMeta(meta);
                 } catch (Exception e) {
-                    Logger.debugLog("Error: " + e.getMessage());
+                    Logger.errorLog("Error: " + e.getMessage());
                 }
             }
 
             return item;
         } catch (Exception e) {
-            Logger.debugLog("Error: " + e.getMessage());
+            Logger.errorLog("Error: " + e.getMessage());
             return null;
         }
     }

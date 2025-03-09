@@ -11,18 +11,14 @@ public interface HasSubcommands extends Command {
 
     @Override
     default boolean execute(Sender sender, String[] args) {
-        Logger.debugLog("Executing subcommand for " + getName() + " with args " + String.join(" ", args));
         if (args.length == 0) {
             return handleNoMatchingSubcommand(sender, args);
         }
-
-        Logger.debugLog("Subcommand given: " + args[0]);
 
         final String subcommand = args[0];
 
         for (Command sc : getSubcommands()) {
             if (checkIsSubcommand(sc, subcommand)) {
-                Logger.debugLog("Subcommand found: " + sc.getName());
                 String[] newArgs = new String[args.length - 1];
                 System.arraycopy(args, 1, newArgs, 0, args.length - 1);
                 return sc.execute(sender, newArgs);

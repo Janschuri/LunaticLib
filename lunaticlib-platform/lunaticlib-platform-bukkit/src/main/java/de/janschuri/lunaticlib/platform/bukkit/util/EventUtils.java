@@ -44,7 +44,6 @@ public final class EventUtils {
         event.setCancelled(true);
         fakeEvents.remove(event);
 
-        Logger.debugLog("AllowedInteract: " + allowed);
         return allowed;
     }
 
@@ -61,7 +60,6 @@ public final class EventUtils {
         event.setCancelled(true);
         fakeEvents.remove(event);
 
-        Logger.debugLog("AllowedTakeItem: " + allowed);
         return allowed;
     }
 
@@ -78,7 +76,6 @@ public final class EventUtils {
         event.setCancelled(true);
         fakeEvents.remove(event);
 
-        Logger.debugLog("AllowedPutItem: " + allowed);
         return allowed;
     }
 
@@ -93,7 +90,6 @@ public final class EventUtils {
         event.setCancelled(true);
         fakeEvents.remove(event);
 
-        Logger.debugLog("AllowedPlaceBlock: " + allowed);
         return allowed;
     }
 

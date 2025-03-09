@@ -36,16 +36,11 @@ public interface PaginatedList<T> extends ListHandler<T> {
         int page = getPage();
         int pageSize = getPageSize();
 
-        Logger.debugLog("Page: " + page);
-
         int fromIndex = page * pageSize;
         int toIndex = Math.min((page + 1) * pageSize, list.size());
         if (fromIndex > list.size()) {
             fromIndex = list.size();
         }
-
-        Logger.debugLog("Paginating list from " + fromIndex + " to " + toIndex);
-        Logger.debugLog("List size: " + list.size());
 
         return list.subList(fromIndex, toIndex);
     }

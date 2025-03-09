@@ -44,8 +44,6 @@ public abstract class ListGUI<T> extends InventoryGUI implements ListHandler<T> 
 
         int startIndex = getStartIndex();
 
-        Logger.debugLog("Start index: " + startIndex);
-
         for (int i = 0; i < pageSize; i++) {
             if (i >= items.size()) {
                 addButton(i+startIndex, emptyListItemButton(i+startIndex));

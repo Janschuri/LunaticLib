@@ -428,7 +428,6 @@ public class LunaticConfig {
             return get(path) == null ? defaultValue : Objects.requireNonNull(get(path)).toString();
         } catch (Exception e) {
             if (defaultValue != null) {
-                Logger.debugLog("Error while getting config value: " + path + "\n Returning default value: " + defaultValue);
                 return defaultValue;
             }
             Logger.errorLog("Error while getting config value: " + path);
@@ -446,7 +445,6 @@ public class LunaticConfig {
     }
 
     public void setString(String path, String value) {
-        Logger.debugLog("Setting value: " + path + " = " + value);
         String[] parts = path.split("\\.");
         Map<String, Object> current = this.yamlMap;
 
@@ -475,7 +473,6 @@ public class LunaticConfig {
         try {
             return get(path) == null ? defaultValue : Integer.parseInt(Objects.requireNonNull(get(path)).toString());
         } catch (Exception e) {
-            Logger.debugLog("Error while getting config value: " + path + "\n Returning default value: " + defaultValue);
             return defaultValue;
         }
     }
@@ -497,7 +494,6 @@ public class LunaticConfig {
         try {
             return get(path) == null ? defaultValue : Double.parseDouble(Objects.requireNonNull(get(path)).toString());
         } catch (Exception e) {
-            Logger.debugLog("Error while getting config value: " + path + "\n Returning default value: " + defaultValue);
             return defaultValue;
         }
     }
@@ -519,7 +515,6 @@ public class LunaticConfig {
         try {
             return get(path) == null ? defaultValue : Boolean.parseBoolean(Objects.requireNonNull(get(path)).toString());
         } catch (Exception e) {
-            Logger.debugLog("Error while getting config value: " + path + "\n Returning default value: " + defaultValue);
             return defaultValue;
         }
     }
@@ -541,7 +536,6 @@ public class LunaticConfig {
         try {
             return get(path) == null ? defaultValue : Float.parseFloat(Objects.requireNonNull(get(path)).toString());
         } catch (Exception e) {
-            Logger.debugLog("Error while getting config value: " + path + "\n Returning default value: " + defaultValue);
             return defaultValue;
         }
     }
