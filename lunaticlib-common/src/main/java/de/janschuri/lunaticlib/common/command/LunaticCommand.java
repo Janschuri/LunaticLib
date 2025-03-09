@@ -49,11 +49,17 @@ public abstract class LunaticCommand implements Command, HasMessageKeys {
 
     @Override
     public String getPath() {
-        if (this instanceof HasParentCommand hasParentCommand && !hasParentCommand.isPrimaryCommand()) {
-            return "commands." + hasParentCommand.getParentCommand().getName() + ".subcommands." + this.getName();
-        } else {
-            return "commands." + this.getName();
+        StringBuilder sb = new StringBuilder();
+        Command command = this;
+        sb.insert(0, command.getName());
+
+        while (!command.isPrimaryCommand() && command instanceof HasParentCommand hasParentCommand) {
+            sb.insert(0, ".subcommands.");
+            command = hasParentCommand.getParentCommand();
+            sb.insert(0, command.getName());
         }
+        sb.insert(0, "commands.");
+        return sb.toString();
     }
 
     @Override
