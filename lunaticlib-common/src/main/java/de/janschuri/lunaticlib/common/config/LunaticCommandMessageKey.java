@@ -26,13 +26,31 @@ public class LunaticCommandMessageKey extends LunaticMessageKey implements Comma
     }
 
     @Override
-    public LunaticCommandMessageKey defaultMessage(String defaultMessage) {
-        super.defaultMessage(defaultMessage);
+    public Command getCommand() {
+        return command;
+    }
+
+    @Override
+    public LunaticCommandMessageKey keyInlineComment(String comment) {
+        super.keyInlineComment(comment);
         return this;
     }
 
     @Override
-    public Command getCommand() {
-        return command;
+    public LunaticCommandMessageKey keyBlockComment(String comment) {
+        super.keyBlockComment(comment);
+        return this;
+    }
+
+    @Override
+    public LunaticCommandMessageKey valueInlineComment(String comment) {
+        super.valueInlineComment(comment);
+        return this;
+    }
+
+    @Override
+    public LunaticCommandMessageKey valueBlockComment(String comment) {
+        super.valueBlockComment(comment);
+        return this;
     }
 }

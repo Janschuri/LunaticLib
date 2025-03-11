@@ -10,4 +10,9 @@ public interface ConfigKey {
     List<String> getKeyBlockComments();
     List<String> getValueInlineComments();
     List<String> getValueBlockComments();
+    ConfigKey defaultValue(Object defaultValue);
+    ConfigKey keyInlineComment(String comment);
+    ConfigKey keyBlockComment(String comment);
+    ConfigKey valueInlineComment(String comment);
+    ConfigKey valueBlockComment(String comment);
 }

@@ -1,6 +1,7 @@
 package de.janschuri.lunaticlib.common.config;
 
 import de.janschuri.lunaticlib.Command;
+import de.janschuri.lunaticlib.LanguageKey;
 import de.janschuri.lunaticlib.MessageKey;
 import de.janschuri.lunaticlib.Placeholder;
 import de.janschuri.lunaticlib.common.command.HasHelpCommand;
@@ -91,7 +92,7 @@ public abstract class LunaticLanguageConfig extends LunaticConfig {
         List<MessageKey> messageKeys = new ArrayList<>();
 
         for (Class<?> clazz : matchingClasses) {
-            messageKeys.addAll(getMessageKeys(clazz));
+            messageKeys.addAll(getLanguageKeys(clazz));
         }
 
         Logger.infoLog("Found " + messageKeys.size() + " message keys in package " + packageName);
@@ -99,9 +100,9 @@ public abstract class LunaticLanguageConfig extends LunaticConfig {
         return messageKeys;
     }
 
-    private List<MessageKey> getMessageKeys(Class<?> clazz) {
+    private List<LanguageKey> getLanguageKeys(Class<?> clazz) {
         return Arrays.stream(clazz.getDeclaredFields())
-                .filter(field -> MessageKey.class.isAssignableFrom(field.getType()))
+                .filter(field -> LanguageKey.class.isAssignableFrom(field.getType()))
                 .filter(field -> Modifier.isStatic(field.getModifiers()))
                 .map(field -> {
                     try {
@@ -111,7 +112,7 @@ public abstract class LunaticLanguageConfig extends LunaticConfig {
                             Logger.errorLog("Warning: Field " + field.getName() + " is null in " + clazz.getName());
                             return null;
                         }
-                        return (MessageKey) value;
+                        return (LanguageKey) value;
                     } catch (IllegalAccessException e) {
                         throw new RuntimeException("Failed to access MessageKey field: " + field.getName(), e);
                     }

@@ -1,42 +1,24 @@
 package de.janschuri.lunaticlib.common.config;
 
 import de.janschuri.lunaticlib.MessageKey;
-import de.janschuri.lunaticlib.common.logger.Logger;
 
-import java.util.HashMap;
-import java.util.Map;
+public class LunaticMessageKey extends LunaticLanguageKey implements MessageKey {
 
-public class LunaticMessageKey extends LunaticConfigKey implements MessageKey {
-
-    private final Map<String, String> defaultMessages = new HashMap<>();
     private boolean withPrefix = true;
 
     public LunaticMessageKey(String key) {
         super(key);
     }
 
-    public LunaticMessageKey defaultMessage(String defaultMessage) {
-        return defaultMessage("en", defaultMessage);
-    }
-
+    @Override
     public LunaticMessageKey defaultMessage(String lang, String defaultMessage) {
-        defaultMessages.put(lang.toLowerCase(), defaultMessage);
+        defaultValue(lang, defaultMessage);
         return this;
     }
 
     @Override
-    public Object getDefault() {
-        return defaultMessages;
-    }
-
-    @Override
-    public String getDefaultMessage() {
-        return getDefaultMessage("en");
-    }
-
-    @Override
     public String getDefaultMessage(String lang) {
-        return defaultMessages.get(lang.toLowerCase());
+        return getDefault(lang);
     }
 
     @Override
