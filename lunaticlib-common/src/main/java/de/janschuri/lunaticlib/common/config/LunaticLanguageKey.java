@@ -14,6 +14,10 @@ public class LunaticLanguageKey extends LunaticConfigKey implements LanguageKey 
 
     @Override
     public Map<String, String> getDefault() {
+        if (super.getDefault() == null) {
+            super.defaultValue(new HashMap<>());
+        }
+
         return (Map<String, String>) super.getDefault();
     }
 
