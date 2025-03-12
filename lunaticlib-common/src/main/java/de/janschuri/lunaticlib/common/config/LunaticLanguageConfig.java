@@ -24,7 +24,7 @@ import java.util.stream.Collectors;
 public abstract class LunaticLanguageConfig extends LunaticConfig {
 
     private final String language;
-    private List<MessageKey> messageKeys;
+    private List<LanguageKey> messageKeys;
     private List<Command> commands;
 
     public LunaticLanguageConfig(Path dataDirectory, String language) {
@@ -45,19 +45,19 @@ public abstract class LunaticLanguageConfig extends LunaticConfig {
             setString("prefix", getDefaultPrefix());
         }
 
-        this.messageKeys = getMessageKeys(getPackage());
+        this.messageKeys = getLanguageKeys(getPackage());
 
-        for (MessageKey key : messageKeys) {
+        for (LanguageKey key : messageKeys) {
             addCommentsFromKey(key);
 
-            String value = getString(key.asString().toLowerCase(), key.getDefaultMessage(language));
+            String value = getString(key.asString().toLowerCase(), key.getDefault(language));
             if (value == null) {
                 Logger.errorLog("Missing message for key without default value: " + key.asString().toLowerCase());
                 continue;
             }
 
-            if (value.equals(key.getDefaultMessage(language))) {
-                setString(key.asString().toLowerCase(), key.getDefaultMessage(language));
+            if (value.equals(key.getDefault(language))) {
+                setString(key.asString().toLowerCase(), key.getDefault(language));
             }
         }
 
@@ -73,7 +73,7 @@ public abstract class LunaticLanguageConfig extends LunaticConfig {
 
     abstract protected String getPackage();
 
-    public List<MessageKey> getMessageKeys(String packageName) {
+    public List<LanguageKey> getLanguageKeys(String packageName) {
         if (messageKeys != null) {
             return messageKeys;
         }
@@ -89,7 +89,7 @@ public abstract class LunaticLanguageConfig extends LunaticConfig {
 
         Set<Class<? extends HasMessageKeys>> matchingClasses = reflections.getSubTypesOf(HasMessageKeys.class);
 
-        List<MessageKey> messageKeys = new ArrayList<>();
+        List<LanguageKey> messageKeys = new ArrayList<>();
 
         for (Class<?> clazz : matchingClasses) {
             messageKeys.addAll(getLanguageKeys(clazz));
@@ -150,39 +150,40 @@ public abstract class LunaticLanguageConfig extends LunaticConfig {
     }
 
     public Component getMessage(MessageKey key, Placeholder... placeholders) {
+        Component messageComponent = getLang(key, placeholders);
+
+        if (key.isWithPrefix()) {
+            return getPrefix().append(messageComponent);
+        }
+
+        return messageComponent;
+    }
+
+    public Component getLang(LanguageKey key, Placeholder... placeholders) {
         String keyString = key.asString().toLowerCase();
 
         String message = getString(keyString);
         if (message == null) {
-            message = key.getDefaultMessage(language);
+            message = key.getDefault(language);
 
             if (message != null) {
-                Logger.infoLog("Using default message for key: " + keyString);
                 setString(keyString, message);
+                save();
             } else {
-                Logger.errorLog("Missing message for key without default: " + keyString);
-                return Component.text("Missing message for key: " + keyString);
+                Logger.errorLog("Missing value for key without default: " + keyString);
+                return Component.text("Missing value for key: " + keyString);
             }
         }
 
         Component messageComponent = LegacyComponentSerializer.legacyAmpersand().deserialize(message);
 
         for (Placeholder placeholder : placeholders) {
-
-            //check if the key is present in the message
-            if (!message.contains(placeholder.getKey())) {
-            }
-
             TextReplacementConfig replacementConfig = TextReplacementConfig.builder()
                     .match(placeholder.getKey())
                     .replacement(placeholder.getValue())
                     .build();
 
             messageComponent = messageComponent.replaceText(replacementConfig);
-        }
-
-        if (key.isWithPrefix()) {
-            return getPrefix().append(messageComponent);
         }
 
         return messageComponent;
