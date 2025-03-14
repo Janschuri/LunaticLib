@@ -1,5 +1,6 @@
 package de.janschuri.lunaticlib.platform.bungee;
 
+import de.janschuri.lunaticlib.platform.bungee.external.AdventureAPI;
 import de.janschuri.lunaticlib.platform.bungee.external.Metrics;
 import de.janschuri.lunaticlib.platform.Platform;
 import de.janschuri.lunaticlib.common.LunaticLib;
@@ -26,12 +27,14 @@ public class BungeeLunaticLib extends Plugin {
         Mode mode = Mode.PROXY;
         Platform platform = new PlatformImpl();
         Path dataDirectory = getDataFolder().toPath();
+        AdventureAPI.initialize(this);
 
         LunaticLib.onEnable(dataDirectory, mode, platform);
     }
 
     @Override
     public void onDisable() {
+        AdventureAPI.close();
         LunaticLib.onDisable();
     }
 

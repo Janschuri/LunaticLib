@@ -73,7 +73,9 @@ public class PlatformImpl implements Platform<Plugin, CommandSender> {
 
     @Override
     public void registerCommand(Plugin plugin, Command command) {
-        plugin.getProxy().getPluginManager().registerCommand(BungeeLunaticLib.getInstance(), new BungeeCommand(command));
+        BungeeCommand bungeeCommand = new BungeeCommand(command);
+
+        plugin.getProxy().getPluginManager().registerCommand(BungeeLunaticLib.getInstance(), bungeeCommand);
     }
 
     @Override

@@ -2,6 +2,7 @@ package de.janschuri.lunaticlib.platform.bungee.commands;
 
 import de.janschuri.lunaticlib.Command;
 import de.janschuri.lunaticlib.Sender;
+import de.janschuri.lunaticlib.common.logger.Logger;
 import de.janschuri.lunaticlib.platform.bungee.PlatformImpl;
 import net.md_5.bungee.api.CommandSender;
 import net.md_5.bungee.api.plugin.TabExecutor;
@@ -12,6 +13,7 @@ public class BungeeCommand extends net.md_5.bungee.api.plugin.Command implements
 
     public BungeeCommand(Command lunaticCommand) {
         super(lunaticCommand.getName(), lunaticCommand.getPermission(), lunaticCommand.getAliases().toArray(new String[0]));
+        System.out.println("Command: " + lunaticCommand.getName() + " Permission: " + lunaticCommand.getPermission() + " Aliases: " + String.join(", ", lunaticCommand.getAliases()));
         this.lunaticCommand = lunaticCommand;
     }
 
