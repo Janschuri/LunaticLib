@@ -14,9 +14,6 @@ public class SenderImpl implements Sender {
 
     public SenderImpl(CommandSender sender) {
         this.sender = sender;
-        if (sender instanceof ProxiedPlayer) {
-            new PlayerSenderImpl((ProxiedPlayer) sender);
-        }
     }
 
     @Override
