@@ -14,9 +14,19 @@ public class FutureRequestsHandler {
     private static final Map<String, FutureRequest> requests = new HashMap<>();
 
     public static void handleRequest(String requestKey, ByteArrayDataInput in) {
+        Logger.debugLog(String.format("Handling request: %s", requestKey));
         if (requests.containsKey(requestKey)) {
+            Logger.debugLog(String.format("Request %s already exists", requestKey));
             CompletableFuture.runAsync(() -> {
-                requests.get(requestKey).execute(in);
+                FutureRequest request = requests.get(requestKey);
+
+                Logger.debugLog(String.format("Executing request %s", requestKey));
+
+                for (FutureRequest r : requests.values()) {
+                    Logger.debugLog(String.format("Request %s is registered", r.getRequestName()));
+                }
+
+                request.execute(in);
             });
         } else {
             Logger.errorLog("Unknown request: " + requestKey);

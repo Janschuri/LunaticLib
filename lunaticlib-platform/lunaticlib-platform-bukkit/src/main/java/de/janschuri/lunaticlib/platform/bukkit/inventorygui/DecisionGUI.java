@@ -1,7 +1,6 @@
 package de.janschuri.lunaticlib.platform.bukkit.inventorygui;
 
 import de.janschuri.lunaticlib.DecisionMessage;
-import de.janschuri.lunaticlib.common.command.LunaticDecisionMessage;
 import de.janschuri.lunaticlib.common.futurerequests.requests.RunCommandRequest;
 import de.janschuri.lunaticlib.common.logger.Logger;
 import de.janschuri.lunaticlib.platform.bukkit.BukkitLunaticLib;
@@ -147,7 +146,7 @@ public class DecisionGUI extends InventoryGUI {
     private CompletableFuture<Boolean> performCommand(Player player, String command) {
 
         if (executeFromBackend) {
-            return new RunCommandRequest().getAsync(player.getUniqueId(), command);
+            return new RunCommandRequest().get(player.getUniqueId(), command);
         }
 
         boolean success = player.performCommand(command);

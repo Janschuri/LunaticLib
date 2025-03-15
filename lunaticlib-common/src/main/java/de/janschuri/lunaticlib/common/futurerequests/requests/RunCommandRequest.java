@@ -3,7 +3,6 @@ package de.janschuri.lunaticlib.common.futurerequests.requests;
 import com.google.common.io.ByteArrayDataInput;
 import com.google.common.io.ByteArrayDataOutput;
 import com.google.common.io.ByteStreams;
-import com.sun.jdi.VoidType;
 import de.janschuri.lunaticlib.PlayerSender;
 import de.janschuri.lunaticlib.common.LunaticLib;
 import de.janschuri.lunaticlib.common.futurerequests.FutureRequest;
