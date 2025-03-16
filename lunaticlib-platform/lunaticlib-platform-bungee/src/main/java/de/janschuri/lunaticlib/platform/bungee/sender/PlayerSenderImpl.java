@@ -2,15 +2,17 @@ package de.janschuri.lunaticlib.platform.bungee.sender;
 
 import de.janschuri.lunaticlib.DecisionMessage;
 import de.janschuri.lunaticlib.common.command.LunaticDecisionMessage;
-import de.janschuri.lunaticlib.common.futurerequests.requests.GetSkinURLRequest;
-import de.janschuri.lunaticlib.common.futurerequests.requests.OpenDecisionGUIRequest;
+import de.janschuri.lunaticlib.common.futurerequests.requests.*;
+import de.janschuri.lunaticlib.common.logger.Logger;
 import de.janschuri.lunaticlib.platform.bungee.BungeeLunaticLib;
 import de.janschuri.lunaticlib.PlayerSender;
 import de.janschuri.lunaticlib.platform.bungee.external.AdventureAPI;
 import net.kyori.adventure.inventory.Book;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
 
+import java.util.Locale;
 import java.util.UUID;
+import java.util.concurrent.CompletableFuture;
 
 public class PlayerSenderImpl extends SenderImpl implements PlayerSender {
 
@@ -37,7 +39,14 @@ public class PlayerSenderImpl extends SenderImpl implements PlayerSender {
 
     @Override
     public String getSkinURL() {
-        return new GetSkinURLRequest().get(uuid);
+        String skinURL = BungeeLunaticLib.getSkinCache(uuid);
+        Logger.debugLog(String.format("SkinURL from cache: %s", skinURL));
+        if (skinURL != null) {
+            Logger.debugLog(String.format("SkinURL from cache: %s", skinURL));
+            return skinURL;
+        }
+
+        return null;
     }
 
     @Override
@@ -47,23 +56,23 @@ public class PlayerSenderImpl extends SenderImpl implements PlayerSender {
     }
 
     @Override
-    public boolean hasItemInMainHand() {
-        return new de.janschuri.lunaticlib.common.futurerequests.requests.HasItemInMainHandRequest().get(getServerName(), uuid);
+    public CompletableFuture<Boolean> hasItemInMainHand() {
+        return new HasItemInMainHandRequest().get(getServerName(), uuid);
     }
 
     @Override
-    public byte[] getItemInMainHand() {
-        return new de.janschuri.lunaticlib.common.futurerequests.requests.GetItemInMainHandRequest().get(getServerName(), uuid);
+    public CompletableFuture<byte[]> getItemInMainHand() {
+        return new GetItemInMainHandRequest().get(getServerName(), uuid);
     }
 
     @Override
-    public boolean removeItemInMainHand() {
-        return new de.janschuri.lunaticlib.common.futurerequests.requests.RemoveItemInMainHandRequest().get(getServerName(), uuid);
+    public CompletableFuture<Boolean> removeItemInMainHand() {
+        return new RemoveItemInMainHandRequest().get(getServerName(), uuid);
     }
 
     @Override
-    public boolean giveItemDrop(byte[] item) {
-        return new de.janschuri.lunaticlib.common.futurerequests.requests.GiveItemDropRequest().get(getServerName(), uuid, item);
+    public CompletableFuture<Boolean> giveItemDrop(byte[] item) {
+        return new GiveItemDropRequest().get(getServerName(), uuid, item);
     }
 
     @Override
@@ -72,8 +81,8 @@ public class PlayerSenderImpl extends SenderImpl implements PlayerSender {
     }
 
     @Override
-    public double[] getPosition() {
-        return new de.janschuri.lunaticlib.common.futurerequests.requests.GetPositionRequest().get(getServerName(), uuid);
+    public CompletableFuture<double[]> getPosition() {
+        return new GetPositionRequest().get(getServerName(), uuid);
     }
 
     @Override
@@ -82,8 +91,8 @@ public class PlayerSenderImpl extends SenderImpl implements PlayerSender {
     }
 
     @Override
-    public boolean isInRange(UUID playerUUID, double range) {
-        return new de.janschuri.lunaticlib.common.futurerequests.requests.IsInRangeRequest().get(getServerName(), uuid, playerUUID, range);
+    public CompletableFuture<Boolean> isInRange(UUID playerUUID, double range) {
+        return new IsInRangeRequest().get(getServerName(), uuid, playerUUID, range);
     }
 
     @Override
@@ -97,17 +106,7 @@ public class PlayerSenderImpl extends SenderImpl implements PlayerSender {
     }
 
     @Override
-    public boolean openBook(Book.Builder book) {
-        return AdventureAPI.sendBook(BungeeLunaticLib.getInstance().getProxy().getPlayer(uuid), book);
-    }
-
-    @Override
-    public boolean closeBook() {
-        return new de.janschuri.lunaticlib.common.futurerequests.requests.CloseBookRequest().get(getServerName(), uuid);
-    }
-
-    @Override
-    public boolean openDecisionGUI(DecisionMessage message) {
+    public CompletableFuture<Boolean> openDecisionGUI(DecisionMessage message) {
         return new OpenDecisionGUIRequest().get(getServerName(), uuid, message);
     }
 

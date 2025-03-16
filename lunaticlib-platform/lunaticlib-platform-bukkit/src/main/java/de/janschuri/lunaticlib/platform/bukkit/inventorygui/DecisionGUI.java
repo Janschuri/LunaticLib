@@ -144,13 +144,11 @@ public class DecisionGUI extends InventoryGUI {
     }
 
     private CompletableFuture<Boolean> performCommand(Player player, String command) {
-
         if (executeFromBackend) {
             return new RunCommandRequest().get(player.getUniqueId(), command);
         }
 
-        boolean success = player.performCommand(command);
-        return CompletableFuture.completedFuture(success);
+        return CompletableFuture.completedFuture(player.performCommand(command));
     }
 
     @Override

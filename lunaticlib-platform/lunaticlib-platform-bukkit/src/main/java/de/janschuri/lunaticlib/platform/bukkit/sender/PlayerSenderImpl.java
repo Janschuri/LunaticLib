@@ -15,9 +15,11 @@ import org.bukkit.Material;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
+import org.checkerframework.checker.units.qual.C;
 
 import java.util.Map;
 import java.util.UUID;
+import java.util.concurrent.CompletableFuture;
 
 public class PlayerSenderImpl extends SenderImpl implements PlayerSender {
 
@@ -39,15 +41,17 @@ public class PlayerSenderImpl extends SenderImpl implements PlayerSender {
     }
 
     @Override
-    public double[] getPosition() {
+    public CompletableFuture<double[]> getPosition() {
         OfflinePlayer player = Bukkit.getOfflinePlayer(uuid);
 
         if (player.isOnline()) {
-            return new double[] {
+            double[] pos = new double[] {
                 Bukkit.getPlayer(uuid).getLocation().getX(),
                 Bukkit.getPlayer(uuid).getLocation().getY(),
                 Bukkit.getPlayer(uuid).getLocation().getZ()
             };
+
+            return CompletableFuture.completedFuture(pos);
         }
         return null;
     }
@@ -62,38 +66,39 @@ public class PlayerSenderImpl extends SenderImpl implements PlayerSender {
     }
 
     @Override
-    public boolean hasItemInMainHand() {
-        return !Bukkit.getPlayer(uuid).getInventory().getItemInMainHand().getType().equals(Material.AIR);
+    public CompletableFuture<Boolean> hasItemInMainHand() {
+
+        return CompletableFuture.completedFuture(!Bukkit.getPlayer(uuid).getInventory().getItemInMainHand().getType().equals(Material.AIR));
     }
 
     @Override
-    public byte[] getItemInMainHand() {
+    public CompletableFuture<byte[]> getItemInMainHand() {
         if (Bukkit.getPlayer(uuid) != null) {
             ItemStack item = Bukkit.getPlayer(uuid).getInventory().getItemInMainHand();
 
-            return ItemStackUtils.serializeItemStack(item);
+            return CompletableFuture.completedFuture(ItemStackUtils.serializeItemStack(item));
         }
         return null;
     }
 
     @Override
-    public boolean removeItemInMainHand() {
+    public CompletableFuture<Boolean> removeItemInMainHand() {
         if (Bukkit.getPlayer(uuid) != null) {
             Bukkit.getPlayer(uuid).getInventory().setItemInMainHand(new ItemStack(Material.AIR));
-            return true;
+            return CompletableFuture.completedFuture(true);
         }
-        return false;
+        return CompletableFuture.completedFuture(false);
     }
 
     @Override
-    public boolean giveItemDrop(byte[] item) {
+    public CompletableFuture<Boolean> giveItemDrop(byte[] item) {
 
         Player player = Bukkit.getPlayer(uuid);
         if (player != null) {
             ItemStack itemStack = ItemStackUtils.deserializeItemStack(item);
 
             if (itemStack == null) {
-                return false;
+                return CompletableFuture.completedFuture(false);
             }
 
             Map<Integer, ItemStack> overflow = player.getInventory().addItem(itemStack);
@@ -102,9 +107,9 @@ public class PlayerSenderImpl extends SenderImpl implements PlayerSender {
                 player.getWorld().dropItem(player.getLocation(), overflowItem);
             }
 
-            return true;
+            return CompletableFuture.completedFuture(true);
         }
-        return false;
+        return CompletableFuture.completedFuture(false);
     }
 
     @Override
@@ -113,23 +118,23 @@ public class PlayerSenderImpl extends SenderImpl implements PlayerSender {
     }
 
     @Override
-    public boolean isInRange(UUID playerUUID, double range) {
+    public CompletableFuture<Boolean> isInRange(UUID playerUUID, double range) {
         if (range < 0) {
-            return true;
+            return CompletableFuture.completedFuture(true);
         }
         org.bukkit.entity.Player player = Bukkit.getPlayer(playerUUID);
         if (player == null) {
-            return false;
+            return CompletableFuture.completedFuture(true);
         }
 
         if (player.getWorld() != Bukkit.getPlayer(uuid).getWorld()) {
-            return false;
+            return CompletableFuture.completedFuture(true);
         }
 
         Location location1= player.getLocation();
         Location location2 = Bukkit.getPlayer(uuid).getLocation();
 
-        return BukkitUtils.isInRange(location1, location2, range);
+        return CompletableFuture.completedFuture(BukkitUtils.isInRange(location1, location2, range));
     }
 
     @Override
@@ -164,36 +169,17 @@ public class PlayerSenderImpl extends SenderImpl implements PlayerSender {
         return true;
     }
 
-
     @Override
-    public boolean openBook(Book.Builder book) {
-        if (Bukkit.getPlayer(uuid) != null) {
-            Bukkit.getPlayer(uuid).openBook(book.build());
-        }
-        return false;
-    }
-
-    @Override
-    public boolean closeBook() {
-        if (Bukkit.getPlayer(uuid) != null) {
-            Player player = Bukkit.getPlayer(uuid);
-            player.openInventory(Bukkit.createInventory(null, 9));
-            player.closeInventory();
-        }
-        return false;
-    }
-
-    @Override
-    public boolean openDecisionGUI(DecisionMessage message) {
+    public CompletableFuture<Boolean> openDecisionGUI(DecisionMessage message) {
         Player player = Bukkit.getPlayer(uuid);
 
         if (player == null) {
             Logger.errorLog("Player is null");
-            return false;
+            return CompletableFuture.completedFuture(false);
         }
 
         GUIManager.openGUI(new DecisionGUI(message), player);
-        return true;
+        return CompletableFuture.completedFuture(true);
     }
 
     @Override

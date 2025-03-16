@@ -15,9 +15,10 @@ import java.util.concurrent.ConcurrentHashMap;
 
 public class OpenDecisionGUIRequest extends FutureRequest<Boolean> {
     private static final String REQUEST_NAME = "OpenDecisionGUI";
-    private static final ConcurrentHashMap<Integer, CompletableFuture<Boolean>> requestMap = new ConcurrentHashMap<>();
+    private static final ConcurrentHashMap<Integer, CompletableFuture<Boolean>> REQUEST_MAP = new ConcurrentHashMap<>();
+
     public OpenDecisionGUIRequest() {
-        super(REQUEST_NAME, requestMap);
+        super(REQUEST_NAME, REQUEST_MAP);
     }
 
     @Override
@@ -33,7 +34,9 @@ public class OpenDecisionGUIRequest extends FutureRequest<Boolean> {
 
         LunaticDecisionMessage decisionMessage = LunaticDecisionMessage.fromStringArray(message);
         decisionMessage.setExecuteFromBackend(true);
-        boolean success = player.openDecisionGUI(decisionMessage);
+        boolean success = player.openDecisionGUI(decisionMessage)
+                .thenApply(aSuccess -> aSuccess)
+                .join();
 
         ByteArrayDataOutput out = ByteStreams.newDataOutput();
         out.writeBoolean(success);
@@ -46,7 +49,7 @@ public class OpenDecisionGUIRequest extends FutureRequest<Boolean> {
         completeRequest(requestId, success);
     }
 
-    public Boolean get(String serverName, UUID uuid, DecisionMessage decisionMessage) {
+    public CompletableFuture<Boolean> get(String serverName, UUID uuid, DecisionMessage decisionMessage) {
         String[] message = decisionMessage.toStringArray();
 
         ByteArrayDataOutput out = ByteStreams.newDataOutput();

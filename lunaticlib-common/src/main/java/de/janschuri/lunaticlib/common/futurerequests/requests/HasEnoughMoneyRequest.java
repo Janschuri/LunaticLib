@@ -54,7 +54,7 @@ public class HasEnoughMoneyRequest extends FutureRequest<Boolean> {
         completeRequest(requestId, hasEnoughMoney);
     }
 
-    public boolean get(String serverName, UUID uuid, double amount) {
+    public CompletableFuture<Boolean> get(String serverName, UUID uuid, double amount) {
         ByteArrayDataOutput out = ByteStreams.newDataOutput();
         out.writeUTF(uuid.toString());
         out.writeDouble(amount);

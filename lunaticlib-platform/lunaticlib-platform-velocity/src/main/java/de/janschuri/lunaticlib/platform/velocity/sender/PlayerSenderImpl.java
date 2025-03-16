@@ -5,14 +5,14 @@ import com.velocitypowered.api.proxy.Player;
 import com.velocitypowered.api.util.GameProfile;
 import de.janschuri.lunaticlib.DecisionMessage;
 import de.janschuri.lunaticlib.common.command.LunaticDecisionMessage;
-import de.janschuri.lunaticlib.common.futurerequests.requests.GetSkinURLRequest;
+import de.janschuri.lunaticlib.common.futurerequests.requests.*;
 import de.janschuri.lunaticlib.PlayerSender;
-import de.janschuri.lunaticlib.common.futurerequests.requests.OpenDecisionGUIRequest;
 import de.janschuri.lunaticlib.platform.velocity.VelocityLunaticLib;
 import de.janschuri.lunaticlib.common.utils.Utils;
 import net.kyori.adventure.inventory.Book;
 
 import java.util.*;
+import java.util.concurrent.CompletableFuture;
 
 public class PlayerSenderImpl extends SenderImpl implements PlayerSender {
 
@@ -36,11 +36,8 @@ public class PlayerSenderImpl extends SenderImpl implements PlayerSender {
     @Override
     public String getName() {
         Optional<com.velocitypowered.api.proxy.Player> player = VelocityLunaticLib.getProxy().getPlayer(uuid);
-        if (player.isPresent()) {
-            return player.get().getUsername();
-        }
+        return player.map(Player::getUsername).orElse(null);
 
-        return new de.janschuri.lunaticlib.common.futurerequests.requests.GetNameRequest().get(uuid);
     }
 
     @Override
@@ -54,8 +51,6 @@ public class PlayerSenderImpl extends SenderImpl implements PlayerSender {
                     return Utils.getSkinURLFromValue(value);
                 }
             }
-        } else {
-            return new GetSkinURLRequest().get(uuid);
         }
         return null;
     }
@@ -73,23 +68,23 @@ public class PlayerSenderImpl extends SenderImpl implements PlayerSender {
     }
 
     @Override
-    public boolean hasItemInMainHand() {
-        return new de.janschuri.lunaticlib.common.futurerequests.requests.HasItemInMainHandRequest().get(getServerName(), uuid);
+    public CompletableFuture<Boolean> hasItemInMainHand() {
+        return new HasItemInMainHandRequest().get(getServerName(), uuid);
     }
 
     @Override
-    public byte[] getItemInMainHand() {
-        return new de.janschuri.lunaticlib.common.futurerequests.requests.GetItemInMainHandRequest().get(getServerName(), uuid);
+    public CompletableFuture<byte[]> getItemInMainHand() {
+        return new GetItemInMainHandRequest().get(getServerName(), uuid);
     }
 
     @Override
-    public boolean removeItemInMainHand() {
-        return new de.janschuri.lunaticlib.common.futurerequests.requests.RemoveItemInMainHandRequest().get(getServerName(), uuid);
+    public CompletableFuture<Boolean> removeItemInMainHand() {
+        return new RemoveItemInMainHandRequest().get(getServerName(), uuid);
     }
 
     @Override
-    public boolean giveItemDrop(byte[] item) {
-        return new de.janschuri.lunaticlib.common.futurerequests.requests.GiveItemDropRequest().get(getServerName(), uuid, item);
+    public CompletableFuture<Boolean> giveItemDrop(byte[] item) {
+        return new GiveItemDropRequest().get(getServerName(), uuid, item);
     }
 
     @Override
@@ -99,8 +94,8 @@ public class PlayerSenderImpl extends SenderImpl implements PlayerSender {
     }
 
     @Override
-    public double[] getPosition() {
-        return new de.janschuri.lunaticlib.common.futurerequests.requests.GetPositionRequest().get(getServerName(), uuid);
+    public CompletableFuture<double[]> getPosition() {
+        return new GetPositionRequest().get(getServerName(), uuid);
     }
 
     @Override
@@ -115,8 +110,8 @@ public class PlayerSenderImpl extends SenderImpl implements PlayerSender {
     }
 
     @Override
-    public boolean isInRange(UUID playerUUID, double range) {
-        return new de.janschuri.lunaticlib.common.futurerequests.requests.IsInRangeRequest().get(getServerName(), uuid, playerUUID, range);
+    public CompletableFuture<Boolean> isInRange(UUID playerUUID, double range) {
+        return new IsInRangeRequest().get(getServerName(), uuid, playerUUID, range);
     }
 
     @Override
@@ -133,26 +128,7 @@ public class PlayerSenderImpl extends SenderImpl implements PlayerSender {
     }
 
     @Override
-    public boolean openBook(Book.Builder book) {
-        Optional<com.velocitypowered.api.proxy.Player> player = VelocityLunaticLib.getProxy().getPlayer(uuid);
-        if (player.isPresent()) {
-            player.get().openBook(book.build());
-            return true;
-        }
-        return false;
-    }
-
-    @Override
-    public boolean closeBook() {
-        Optional<com.velocitypowered.api.proxy.Player> player = VelocityLunaticLib.getProxy().getPlayer(uuid);
-        if (player.isPresent()) {
-            return new de.janschuri.lunaticlib.common.futurerequests.requests.CloseBookRequest().get(getServerName(), uuid);
-        }
-        return false;
-    }
-
-    @Override
-    public boolean openDecisionGUI(DecisionMessage message) {
+    public CompletableFuture<Boolean> openDecisionGUI(DecisionMessage message) {
         return new  OpenDecisionGUIRequest().get(getServerName(), uuid, message);
     }
 

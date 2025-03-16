@@ -15,10 +15,10 @@ import java.util.concurrent.ConcurrentHashMap;
 public class RunCommandRequest extends FutureRequest<Boolean> {
 
     private static final String REQUEST_NAME = "LunaticLib:RunCommand";
-    private static final ConcurrentHashMap<Integer, CompletableFuture<Boolean>> requestMap = new ConcurrentHashMap<>();
+    private static final ConcurrentHashMap<Integer, CompletableFuture<Boolean>> REQUEST_MAP = new ConcurrentHashMap<>();
 
     public RunCommandRequest() {
-        super(REQUEST_NAME, requestMap);
+        super(REQUEST_NAME, REQUEST_MAP);
     }
 
     @Override
@@ -48,21 +48,11 @@ public class RunCommandRequest extends FutureRequest<Boolean> {
         completeRequest(requestId, success);
     }
 
-    public CompletableFuture<Boolean> getAsync(UUID uuid, String command) {
+    public CompletableFuture<Boolean> get(UUID uuid, String command) {
         ByteArrayDataOutput out = ByteStreams.newDataOutput();
         out.writeUTF(uuid.toString());
         out.writeUTF(command);
 
-        // Send the request asynchronously
-        return sendRequestAsync(out.toByteArray()).thenApply(response -> {
-            if (response == null || !(response instanceof Boolean)) {
-                Logger.errorLog("RunCommandRequest: Error while running command.");
-                return false; // Indicate failure if the response is invalid
-            }
-            return response; // Return the actual success/failure response from Velocity
-        }).exceptionally(ex -> {
-            Logger.errorLog("RunCommandRequest: Exception occurred - " + ex.getMessage());
-            return false; // Indicate failure on exception
-        });
+        return sendRequest(out.toByteArray());
     }
 }

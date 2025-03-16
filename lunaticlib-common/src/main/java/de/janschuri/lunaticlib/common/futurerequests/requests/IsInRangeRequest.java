@@ -14,11 +14,10 @@ import java.util.concurrent.ConcurrentHashMap;
 public class IsInRangeRequest extends FutureRequest<Boolean> {
 
     private static final String REQUEST_NAME = "LunaticLib:IsInRange";
-    private static final ConcurrentHashMap<Integer, CompletableFuture<Boolean>> requestMap = new ConcurrentHashMap<>();
-
+    private static final ConcurrentHashMap<Integer, CompletableFuture<Boolean>> REQUEST_MAP = new ConcurrentHashMap<>();
 
     public IsInRangeRequest() {
-        super(REQUEST_NAME, requestMap);
+        super(REQUEST_NAME, REQUEST_MAP);
     }
 
     @Override
@@ -33,7 +32,9 @@ public class IsInRangeRequest extends FutureRequest<Boolean> {
             return;
         }
 
-        boolean isInRange = player.isInRange(uuid2, range);
+        boolean isInRange = player.isInRange(uuid2, range)
+                .thenApply(isInRangeResult -> isInRangeResult)
+                .join();
         ByteArrayDataOutput out = ByteStreams.newDataOutput();
         out.writeBoolean(isInRange);
         sendResponse(requestId, out.toByteArray());
@@ -45,7 +46,7 @@ public class IsInRangeRequest extends FutureRequest<Boolean> {
         completeRequest(requestId, isInRange);
     }
 
-    public Boolean get(String serverName, UUID uuid1, UUID uuid2, double range) {
+    public CompletableFuture<Boolean> get(String serverName, UUID uuid1, UUID uuid2, double range) {
         ByteArrayDataOutput out = ByteStreams.newDataOutput();
         out.writeUTF(uuid1.toString());
         out.writeUTF(uuid2.toString());

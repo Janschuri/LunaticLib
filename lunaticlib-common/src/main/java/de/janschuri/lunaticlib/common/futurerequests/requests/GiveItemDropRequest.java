@@ -13,10 +13,10 @@ import java.util.concurrent.ConcurrentHashMap;
 
 public class GiveItemDropRequest extends FutureRequest<Boolean> {
     private static final String REQUEST_NAME = "LunaticLib:GiveItemDrop";
-    private static final ConcurrentHashMap<Integer, CompletableFuture<Boolean>> requestMap = new ConcurrentHashMap<>();
+    private static final ConcurrentHashMap<Integer, CompletableFuture<Boolean>> REQUEST_MAP = new ConcurrentHashMap<>();
 
     public GiveItemDropRequest() {
-        super(REQUEST_NAME, requestMap);
+        super(REQUEST_NAME, REQUEST_MAP);
     }
 
     @Override
@@ -28,7 +28,9 @@ public class GiveItemDropRequest extends FutureRequest<Boolean> {
 
         PlayerSender player = LunaticLib.getPlatform().getPlayerSender(uuid);
 
-        boolean dropped = player.giveItemDrop(item);
+        boolean dropped = player.giveItemDrop(item)
+                .thenApply(aSuccess -> aSuccess)
+                .join();
 
         ByteArrayDataOutput out = ByteStreams.newDataOutput();
         out.writeBoolean(dropped);
@@ -41,7 +43,7 @@ public class GiveItemDropRequest extends FutureRequest<Boolean> {
         completeRequest(requestId, dropped);
     }
 
-    public boolean get(String serverName, UUID uuid, byte[] item) {
+    public CompletableFuture<Boolean> get(String serverName, UUID uuid, byte[] item) {
         ByteArrayDataOutput out = ByteStreams.newDataOutput();
         out.writeUTF(uuid.toString());
         out.writeInt(item.length);

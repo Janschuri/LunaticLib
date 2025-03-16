@@ -14,9 +14,10 @@ import java.util.concurrent.ConcurrentHashMap;
 public class GetItemInMainHandRequest extends FutureRequest<byte[]> {
 
     private static final String REQUEST_NAME = "LunaticLib:GetItemInMainHand";
-    private static final ConcurrentHashMap<Integer, CompletableFuture<byte[]>> requestMap = new ConcurrentHashMap<>();
+    private static final ConcurrentHashMap<Integer, CompletableFuture<byte[]>> REQUEST_MAP = new ConcurrentHashMap<>();
+
     public GetItemInMainHandRequest() {
-        super(REQUEST_NAME, requestMap);
+        super(REQUEST_NAME, REQUEST_MAP);
     }
 
     @Override
@@ -25,7 +26,9 @@ public class GetItemInMainHandRequest extends FutureRequest<byte[]> {
 
         PlayerSender player = LunaticLib.getPlatform().getPlayerSender(uuid);
 
-        byte[] item = player.getItemInMainHand();
+        byte[] item = player.getItemInMainHand()
+                .thenApply(aItem -> aItem)
+                .join();
 
         ByteArrayDataOutput out = ByteStreams.newDataOutput();
         out.writeInt(item.length);
@@ -41,7 +44,7 @@ public class GetItemInMainHandRequest extends FutureRequest<byte[]> {
         completeRequest(requestId, item);
     }
 
-    public byte[] get(String serverName, UUID uuid) {
+    public CompletableFuture<byte[]> get(String serverName, UUID uuid) {
         ByteArrayDataOutput out = ByteStreams.newDataOutput();
         out.writeUTF(uuid.toString());
         return sendRequest(serverName, out.toByteArray());
