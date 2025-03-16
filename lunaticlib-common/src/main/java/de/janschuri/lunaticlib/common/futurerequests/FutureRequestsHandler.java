@@ -14,14 +14,11 @@ public class FutureRequestsHandler {
     private static final Map<String, FutureRequest> requests = new HashMap<>();
 
     public static void handleRequest(String requestKey, ByteArrayDataInput in) {
-        Logger.debugLog(String.format("Handling request: %s", requestKey));
         if (requests.containsKey(requestKey)) {
             CompletableFuture.runAsync(() -> {
                 FutureRequest request = requests.get(requestKey);
                 request.execute(in);
             });
-        } else {
-            Logger.errorLog("Unknown request: " + requestKey);
         }
     }
 

@@ -18,6 +18,7 @@ public class GetSkinURLRequest extends FutureRequest<String> {
 
     public GetSkinURLRequest() {
         super(REQUEST_NAME, REQUEST_MAP);
+        this.suppressTimeoutException();
     }
 
     @Override

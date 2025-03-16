@@ -45,10 +45,8 @@ public abstract class FutureRequest<R> {
         int requestId = in.readInt();
 
         if (type.equals(REQUEST)) {
-            Logger.debugLog("Received request: " + requestName + " with id: " + requestId);
             handleRequest(requestId, in);
         } else if (type.equals(RESPONSE)) {
-            Logger.debugLog("Received response: " + requestName + " with id: " + requestId);
             handleResponse(requestId, in);
         } else {
             throw new IllegalArgumentException("Unknown type: " + type);
@@ -118,8 +116,6 @@ public abstract class FutureRequest<R> {
         if (future != null) {
             future.complete(response);
             requestMap.remove(requestId);
-        } else {
-            Logger.errorLog("Request with id " + requestId + " not found");
         }
     }
 

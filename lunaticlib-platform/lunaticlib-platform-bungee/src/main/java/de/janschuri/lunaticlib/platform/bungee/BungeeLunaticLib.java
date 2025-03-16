@@ -6,7 +6,7 @@ import de.janschuri.lunaticlib.platform.Platform;
 import de.janschuri.lunaticlib.common.LunaticLib;
 import de.janschuri.lunaticlib.common.utils.Mode;
 import de.janschuri.lunaticlib.platform.bungee.listener.MessageListener;
-import de.janschuri.lunaticlib.platform.bungee.listener.PostLoginListener;
+import de.janschuri.lunaticlib.platform.bungee.listener.ServerConnectListener;
 import net.md_5.bungee.api.plugin.Plugin;
 
 import java.nio.file.Path;
@@ -34,7 +34,7 @@ public class BungeeLunaticLib extends Plugin {
         Path dataDirectory = getDataFolder().toPath();
         AdventureAPI.initialize(this);
         getProxy().getPluginManager().registerListener(this, new MessageListener());
-        getProxy().getPluginManager().registerListener(this, new PostLoginListener());
+        getProxy().getPluginManager().registerListener(this, new ServerConnectListener());
 
         LunaticLib.onEnable(dataDirectory, mode, platform);
     }
