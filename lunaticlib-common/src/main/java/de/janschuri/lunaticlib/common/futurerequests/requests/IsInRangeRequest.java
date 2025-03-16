@@ -32,9 +32,7 @@ public class IsInRangeRequest extends FutureRequest<Boolean> {
             return;
         }
 
-        boolean isInRange = player.isInRange(uuid2, range)
-                .thenApply(isInRangeResult -> isInRangeResult)
-                .join();
+        boolean isInRange = player.isInRange(uuid2, range);
         ByteArrayDataOutput out = ByteStreams.newDataOutput();
         out.writeBoolean(isInRange);
         sendResponse(requestId, out.toByteArray());

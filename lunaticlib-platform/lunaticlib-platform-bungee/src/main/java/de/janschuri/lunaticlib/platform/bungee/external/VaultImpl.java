@@ -5,19 +5,16 @@ import de.janschuri.lunaticlib.common.futurerequests.requests.WithdrawMoneyReque
 import de.janschuri.lunaticlib.platform.Vault;
 
 import java.util.UUID;
+import java.util.concurrent.CompletableFuture;
 
 public class VaultImpl implements Vault {
     @Override
-    public boolean hasEnoughMoney(String serverName, UUID uuid, double amount) {
-        return new HasEnoughMoneyRequest().get(serverName, uuid, amount)
-                .thenApply(aBoolean -> aBoolean)
-                .join();
+    public CompletableFuture<Boolean> hasEnoughMoney(String serverName, UUID uuid, double amount) {
+        return new HasEnoughMoneyRequest().get(serverName, uuid, amount);
     }
 
     @Override
-    public boolean withdrawMoney(String serverName, UUID uuid, double amount) {
-        return new WithdrawMoneyRequest().get(serverName, uuid, amount)
-                .thenApply(aBoolean -> aBoolean)
-                .join();
+    public CompletableFuture<Boolean> withdrawMoney(String serverName, UUID uuid, double amount) {
+        return new WithdrawMoneyRequest().get(serverName, uuid, amount);
     }
 }

@@ -34,9 +34,7 @@ public class OpenDecisionGUIRequest extends FutureRequest<Boolean> {
 
         LunaticDecisionMessage decisionMessage = LunaticDecisionMessage.fromStringArray(message);
         decisionMessage.setExecuteFromBackend(true);
-        boolean success = player.openDecisionGUI(decisionMessage)
-                .thenApply(aSuccess -> aSuccess)
-                .join();
+        boolean success = player.openDecisionGUI(decisionMessage);
 
         ByteArrayDataOutput out = ByteStreams.newDataOutput();
         out.writeBoolean(success);

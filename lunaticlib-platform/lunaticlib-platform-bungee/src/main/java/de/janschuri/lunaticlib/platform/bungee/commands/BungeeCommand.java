@@ -3,8 +3,11 @@ package de.janschuri.lunaticlib.platform.bungee.commands;
 import de.janschuri.lunaticlib.Command;
 import de.janschuri.lunaticlib.Sender;
 import de.janschuri.lunaticlib.common.logger.Logger;
+import de.janschuri.lunaticlib.platform.bungee.BungeeLunaticLib;
 import de.janschuri.lunaticlib.platform.bungee.PlatformImpl;
+import net.md_5.bungee.api.ChatColor;
 import net.md_5.bungee.api.CommandSender;
+import net.md_5.bungee.api.ProxyServer;
 import net.md_5.bungee.api.plugin.TabExecutor;
 
 public class BungeeCommand extends net.md_5.bungee.api.plugin.Command implements TabExecutor {
@@ -13,7 +16,6 @@ public class BungeeCommand extends net.md_5.bungee.api.plugin.Command implements
 
     public BungeeCommand(Command lunaticCommand) {
         super(lunaticCommand.getName(), lunaticCommand.getPermission(), lunaticCommand.getAliases().toArray(new String[0]));
-        System.out.println("Command: " + lunaticCommand.getName() + " Permission: " + lunaticCommand.getPermission() + " Aliases: " + String.join(", ", lunaticCommand.getAliases()));
         this.lunaticCommand = lunaticCommand;
     }
 
@@ -21,7 +23,11 @@ public class BungeeCommand extends net.md_5.bungee.api.plugin.Command implements
     public void execute(CommandSender sender, String[] args) {
         Sender commandSender = new PlatformImpl().getSender(sender);
 
-        lunaticCommand.checkAndExecute(commandSender, args);
+        ProxyServer.getInstance().getScheduler().runAsync(BungeeLunaticLib.getInstance(), () -> {
+            if (!lunaticCommand.checkAndExecute(commandSender, args)) {
+                sender.sendMessage(ChatColor.RED + "Internal server error. Please check the console for more information.");
+            }
+        });
     }
 
     @Override

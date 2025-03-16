@@ -68,34 +68,28 @@ public class PlayerSenderImpl extends SenderImpl implements PlayerSender {
     }
 
     @Override
-    public CompletableFuture<Boolean> hasItemInMainHand() {
-        return new HasItemInMainHandRequest().get(getServerName(), uuid);
+    public boolean hasItemInMainHand() {
+        return new HasItemInMainHandRequest().get(getServerName(), uuid).thenApply(result -> result).join();
     }
 
     @Override
-    public CompletableFuture<byte[]> getItemInMainHand() {
-        return new GetItemInMainHandRequest().get(getServerName(), uuid);
+    public byte[] getItemInMainHand() {
+        return new GetItemInMainHandRequest().get(getServerName(), uuid).thenApply(result -> result).join();
     }
 
     @Override
-    public CompletableFuture<Boolean> removeItemInMainHand() {
-        return new RemoveItemInMainHandRequest().get(getServerName(), uuid);
+    public boolean removeItemInMainHand() {
+        return new RemoveItemInMainHandRequest().get(getServerName(), uuid).thenApply(result -> result).join();
     }
 
     @Override
-    public CompletableFuture<Boolean> giveItemDrop(byte[] item) {
-        return new GiveItemDropRequest().get(getServerName(), uuid, item);
+    public boolean giveItemDrop(byte[] item) {
+        return new GiveItemDropRequest().get(getServerName(), uuid, item).thenApply(result -> result).join();
     }
 
     @Override
-    public String getServerName() {
-        Optional<com.velocitypowered.api.proxy.Player> playerOptional = VelocityLunaticLib.getProxy().getPlayer(uuid);
-        return playerOptional.map(player -> player.getCurrentServer().get().getServerInfo().getName()).orElse(null);
-    }
-
-    @Override
-    public CompletableFuture<double[]> getPosition() {
-        return new GetPositionRequest().get(getServerName(), uuid);
+    public double[] getPosition() {
+        return new GetPositionRequest().get(getServerName(), uuid).thenApply(result -> result).join();
     }
 
     @Override
@@ -110,13 +104,27 @@ public class PlayerSenderImpl extends SenderImpl implements PlayerSender {
     }
 
     @Override
-    public CompletableFuture<Boolean> isInRange(UUID playerUUID, double range) {
-        return new IsInRangeRequest().get(getServerName(), uuid, playerUUID, range);
+    public boolean isInRange(UUID playerUUID, double range) {
+        return new IsInRangeRequest().get(getServerName(), uuid, playerUUID, range).thenApply(result -> result).join();
     }
 
     @Override
     public boolean exists() {
         return uuid != null;
+    }
+
+    @Override
+    public boolean openDecisionGUI(DecisionMessage message) {
+        return new  OpenDecisionGUIRequest().get(getServerName(), uuid, message).thenApply(result -> result).join();
+    }
+
+    @Override
+    public void runCommand(String command) {
+        Optional<com.velocitypowered.api.proxy.Player> player = VelocityLunaticLib.getProxy().getPlayer(uuid);
+        if (player.isPresent()) {
+            CommandManager commandManager = VelocityLunaticLib.getProxy().getCommandManager();
+            commandManager.executeAsync(player.get(), command);
+        }
     }
 
     @Override
@@ -127,17 +135,10 @@ public class PlayerSenderImpl extends SenderImpl implements PlayerSender {
         return player1.isPresent() && player.isPresent() && player1.get().getCurrentServer().get().getServerInfo().getName().equals(player.get().getCurrentServer().get().getServerInfo().getName());
     }
 
-    @Override
-    public CompletableFuture<Boolean> openDecisionGUI(DecisionMessage message) {
-        return new  OpenDecisionGUIRequest().get(getServerName(), uuid, message);
-    }
 
     @Override
-    public void runCommand(String command) {
-        Optional<com.velocitypowered.api.proxy.Player> player = VelocityLunaticLib.getProxy().getPlayer(uuid);
-        if (player.isPresent()) {
-            CommandManager commandManager = VelocityLunaticLib.getProxy().getCommandManager();
-            commandManager.executeAsync(player.get(), command);
-        }
+    public String getServerName() {
+        Optional<com.velocitypowered.api.proxy.Player> playerOptional = VelocityLunaticLib.getProxy().getPlayer(uuid);
+        return playerOptional.map(player -> player.getCurrentServer().get().getServerInfo().getName()).orElse(null);
     }
 }

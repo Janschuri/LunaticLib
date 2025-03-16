@@ -24,9 +24,7 @@ public class RemoveItemInMainHandRequest extends FutureRequest<Boolean> {
     protected void handleRequest(int requestId, ByteArrayDataInput in) {
         UUID uuid = UUID.fromString(in.readUTF());
          PlayerSender player = LunaticLib.getPlatform().getPlayerSender(uuid);
-         boolean removed = player.removeItemInMainHand()
-                    .thenApply(aSuccess -> aSuccess)
-                    .join();
+         boolean removed = player.removeItemInMainHand();
 
          ByteArrayDataOutput out = ByteStreams.newDataOutput();
          out.writeBoolean(removed);

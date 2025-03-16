@@ -19,6 +19,7 @@ public class RunCommandRequest extends FutureRequest<Boolean> {
 
     public RunCommandRequest() {
         super(REQUEST_NAME, REQUEST_MAP);
+        this.suppressTimeoutException();
     }
 
     @Override
@@ -29,17 +30,22 @@ public class RunCommandRequest extends FutureRequest<Boolean> {
         PlayerSender player = LunaticLib.getPlatform().getPlayerSender(uuid);
 
         boolean found = player != null && player.isOnline();
+        boolean success = false;
 
         if (found) {
-            boolean success = false;
-
             try {
                 player.runCommand(command);
                 success = true;
             } catch (Exception e) {
+                success = false;
                 Logger.errorLog("RunCommandRequest: Error while running command.");
             }
         }
+
+        ByteArrayDataOutput out = ByteStreams.newDataOutput();
+        out.writeBoolean(success);
+
+        sendResponse(requestId, out.toByteArray());
     }
 
     @Override

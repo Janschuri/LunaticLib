@@ -24,9 +24,8 @@ public class GetPositionRequest extends FutureRequest<double[]> {
     protected void handleRequest(int requestId, ByteArrayDataInput in) {
         UUID uuid = UUID.fromString(in.readUTF());
         PlayerSender player = LunaticLib.getPlatform().getPlayerSender(uuid);
-        double[] position = player.getPosition()
-                .thenApply(pos -> pos)
-                .join();
+        double[] position = player.getPosition();
+
         ByteArrayDataOutput out = ByteStreams.newDataOutput();
         out.writeDouble(position[0]);
         out.writeDouble(position[1]);

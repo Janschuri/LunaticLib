@@ -56,23 +56,23 @@ public class PlayerSenderImpl extends SenderImpl implements PlayerSender {
     }
 
     @Override
-    public CompletableFuture<Boolean> hasItemInMainHand() {
-        return new HasItemInMainHandRequest().get(getServerName(), uuid);
+    public boolean hasItemInMainHand() {
+        return new HasItemInMainHandRequest().get(getServerName(), uuid).thenApply(result -> result).join();
     }
 
     @Override
-    public CompletableFuture<byte[]> getItemInMainHand() {
-        return new GetItemInMainHandRequest().get(getServerName(), uuid);
+    public byte[] getItemInMainHand() {
+        return new GetItemInMainHandRequest().get(getServerName(), uuid).thenApply(result -> result).join();
     }
 
     @Override
-    public CompletableFuture<Boolean> removeItemInMainHand() {
-        return new RemoveItemInMainHandRequest().get(getServerName(), uuid);
+    public boolean removeItemInMainHand() {
+        return new RemoveItemInMainHandRequest().get(getServerName(), uuid).thenApply(result -> result).join();
     }
 
     @Override
-    public CompletableFuture<Boolean> giveItemDrop(byte[] item) {
-        return new GiveItemDropRequest().get(getServerName(), uuid, item);
+    public boolean giveItemDrop(byte[] item) {
+        return new GiveItemDropRequest().get(getServerName(), uuid, item).thenApply(result -> result).join();
     }
 
     @Override
@@ -81,8 +81,8 @@ public class PlayerSenderImpl extends SenderImpl implements PlayerSender {
     }
 
     @Override
-    public CompletableFuture<double[]> getPosition() {
-        return new GetPositionRequest().get(getServerName(), uuid);
+    public double[] getPosition() {
+        return new GetPositionRequest().get(getServerName(), uuid).thenApply(result -> result).join();
     }
 
     @Override
@@ -91,8 +91,8 @@ public class PlayerSenderImpl extends SenderImpl implements PlayerSender {
     }
 
     @Override
-    public CompletableFuture<Boolean> isInRange(UUID playerUUID, double range) {
-        return new IsInRangeRequest().get(getServerName(), uuid, playerUUID, range);
+    public boolean isInRange(UUID playerUUID, double range) {
+        return new IsInRangeRequest().get(getServerName(), uuid, playerUUID, range).thenApply(result -> result).join();
     }
 
     @Override
@@ -106,8 +106,8 @@ public class PlayerSenderImpl extends SenderImpl implements PlayerSender {
     }
 
     @Override
-    public CompletableFuture<Boolean> openDecisionGUI(DecisionMessage message) {
-        return new OpenDecisionGUIRequest().get(getServerName(), uuid, message);
+    public boolean openDecisionGUI(DecisionMessage message) {
+        return new OpenDecisionGUIRequest().get(getServerName(), uuid, message).thenApply(result -> result).join();
     }
 
     @Override

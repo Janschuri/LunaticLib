@@ -11,26 +11,24 @@ public interface PlayerSender extends Sender {
     String getName();
     String getSkinURL();
     boolean chat(String message);
-    CompletableFuture<Boolean> hasItemInMainHand();
-    CompletableFuture<byte[]> getItemInMainHand();
-    CompletableFuture<Boolean> removeItemInMainHand();
-    CompletableFuture<Boolean> giveItemDrop(byte[] item);
+    boolean hasItemInMainHand();
+    byte[] getItemInMainHand();
+    boolean removeItemInMainHand();
+    boolean giveItemDrop(byte[] item);
     boolean hasPermission(String permission);
     String getServerName();
-    CompletableFuture<double[]> getPosition();
+    double[] getPosition();
     boolean isOnline();
-    CompletableFuture<Boolean> isInRange(UUID playerUUID, double range);
+    boolean isInRange(UUID playerUUID, double range);
     boolean exists();
     boolean isSameServer(UUID uuid);
     default boolean sendMessage(DecisionMessage message, boolean asInventoryGUI) {
         if (asInventoryGUI) {
-            return openDecisionGUI(message)
-                    .thenApply(aBoolean -> aBoolean && sendMessage(message.asComponent()))
-                    .join();
+            return openDecisionGUI(message);
         } else {
             return sendMessage(message.asComponent());
         }
     }
-    CompletableFuture<Boolean> openDecisionGUI(DecisionMessage message);
+    boolean openDecisionGUI(DecisionMessage message);
     void runCommand(String command);
 }

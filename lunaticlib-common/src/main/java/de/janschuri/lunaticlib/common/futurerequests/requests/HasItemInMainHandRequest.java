@@ -23,9 +23,7 @@ public class HasItemInMainHandRequest extends FutureRequest<Boolean> {
     protected void handleRequest(int requestId, ByteArrayDataInput in) {
         UUID uuid = UUID.fromString(in.readUTF());
         PlayerSender player = LunaticLib.getPlatform().getPlayerSender(uuid);
-        boolean hasItemInMainHand = player.hasItemInMainHand()
-                .thenApply(hasItem -> hasItem)
-                .join();
+        boolean hasItemInMainHand = player.hasItemInMainHand();
 
         ByteArrayDataOutput out = ByteStreams.newDataOutput();
         out.writeBoolean(hasItemInMainHand);

@@ -23,23 +23,26 @@ public class WithdrawMoneyRequest extends FutureRequest<Boolean> {
 
     @Override
     protected void handleRequest(int requestId, ByteArrayDataInput in) {
-        boolean vaultAvailable = false;
-        boolean success = false;
 
         UUID uuid = UUID.fromString(in.readUTF());
         double amount = in.readDouble();
 
         Vault vault = LunaticLib.getPlatform().getVault();
+        ByteArrayDataOutput out = ByteStreams.newDataOutput();
 
         if (vault != null) {
-            vaultAvailable = true;
-            success = vault.withdrawMoney("", uuid, amount);
-        }
+            vault.withdrawMoney("", uuid, amount)
+                    .thenAccept(success -> {
+                        out.writeBoolean(true);
+                        out.writeBoolean(success);
+                        sendResponse(requestId, out.toByteArray());
+                    });
 
-        ByteArrayDataOutput out = ByteStreams.newDataOutput();
-        out.writeBoolean(vaultAvailable);
-        out.writeBoolean(success);
-        sendResponse(requestId, out.toByteArray());
+        } else {
+            out.writeBoolean(false);
+            out.writeBoolean(false);
+            sendResponse(requestId, out.toByteArray());
+        }
     }
 
     @Override

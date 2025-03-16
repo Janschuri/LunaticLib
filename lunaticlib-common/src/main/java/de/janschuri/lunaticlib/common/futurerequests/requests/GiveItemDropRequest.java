@@ -28,9 +28,7 @@ public class GiveItemDropRequest extends FutureRequest<Boolean> {
 
         PlayerSender player = LunaticLib.getPlatform().getPlayerSender(uuid);
 
-        boolean dropped = player.giveItemDrop(item)
-                .thenApply(aSuccess -> aSuccess)
-                .join();
+        boolean dropped = player.giveItemDrop(item);
 
         ByteArrayDataOutput out = ByteStreams.newDataOutput();
         out.writeBoolean(dropped);

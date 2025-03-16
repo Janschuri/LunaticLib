@@ -26,9 +26,7 @@ public class GetItemInMainHandRequest extends FutureRequest<byte[]> {
 
         PlayerSender player = LunaticLib.getPlatform().getPlayerSender(uuid);
 
-        byte[] item = player.getItemInMainHand()
-                .thenApply(aItem -> aItem)
-                .join();
+        byte[] item = player.getItemInMainHand();
 
         ByteArrayDataOutput out = ByteStreams.newDataOutput();
         out.writeInt(item.length);
