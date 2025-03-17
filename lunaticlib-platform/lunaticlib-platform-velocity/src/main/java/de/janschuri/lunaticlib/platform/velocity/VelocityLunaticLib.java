@@ -17,6 +17,9 @@ import de.janschuri.lunaticlib.common.LunaticLib;
 import de.janschuri.lunaticlib.common.utils.Mode;
 
 import java.nio.file.Path;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.UUID;
 
 import static de.janschuri.lunaticlib.common.LunaticLib.IDENTIFIER;
 
@@ -29,6 +32,7 @@ import static de.janschuri.lunaticlib.common.LunaticLib.IDENTIFIER;
 public class VelocityLunaticLib {
 
     private static ProxyServer proxy;
+    private static VelocityLunaticLib instance;
     private static Path dataDirectory;
     public static final MinecraftChannelIdentifier MINECRAFT_CHANNEL_IDENTIFIER = MinecraftChannelIdentifier.from(IDENTIFIER);
     private final Metrics.Factory metricsFactory;
@@ -36,6 +40,7 @@ public class VelocityLunaticLib {
     @Inject
     public VelocityLunaticLib(ProxyServer proxy, @DataDirectory Path dataDirectory, Metrics.Factory metricsFactory) {
         VelocityLunaticLib.proxy = proxy;
+        VelocityLunaticLib.instance = this;
         VelocityLunaticLib.dataDirectory = dataDirectory;
         this.metricsFactory = metricsFactory;
     }
@@ -83,5 +88,7 @@ public class VelocityLunaticLib {
         return true;
     }
 
-
+    public static VelocityLunaticLib getInstance() {
+        return instance;
+    }
 }
