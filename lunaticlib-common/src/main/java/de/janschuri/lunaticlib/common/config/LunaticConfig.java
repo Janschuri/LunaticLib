@@ -2,6 +2,7 @@ package de.janschuri.lunaticlib.common.config;
 
 import com.google.common.base.Preconditions;
 import de.janschuri.lunaticlib.ConfigKey;
+import de.janschuri.lunaticlib.LanguageKey;
 import de.janschuri.lunaticlib.common.logger.Logger;
 import org.jetbrains.annotations.NotNull;
 import org.yaml.snakeyaml.DumperOptions;
@@ -14,10 +15,12 @@ import org.yaml.snakeyaml.nodes.*;
 import org.yaml.snakeyaml.representer.Representer;
 
 import java.io.*;
+import java.lang.reflect.Modifier;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.*;
+import java.util.stream.Collectors;
 
 public class LunaticConfig {
 
@@ -47,6 +50,43 @@ public class LunaticConfig {
         dumperOptions.setIndent(2);
         return new Yaml(new Constructor(loaderOptions), new Representer(dumperOptions), dumperOptions, loaderOptions);
     }
+
+    private List<ConfigKey> getConfigKeys() {
+        List<ConfigKey> configKeys = new ArrayList<>();
+        Class<?> clazz = this.getClass();
+
+        while (clazz != null) {
+            // Get all declared fields of the current class (including private fields)
+            Class<?> finalClazz = clazz;
+            Arrays.stream(clazz.getDeclaredFields())
+                    .filter(field -> ConfigKey.class.isAssignableFrom(field.getType())) // Filter ConfigKey fields
+                    .forEach(field -> {
+                        try {
+                            field.setAccessible(true);
+                            Object value;
+
+                            // If static, access it with null, otherwise use 'this' for non-static fields
+                            if (Modifier.isStatic(field.getModifiers())) {
+                                value = field.get(null);
+                            } else {
+                                value = field.get(this);
+                            }
+
+                            if (value != null) {
+                                configKeys.add((ConfigKey) value);
+                            }
+                        } catch (IllegalAccessException e) {
+                            throw new RuntimeException("Failed to access field: " + field.getName(), e);
+                        }
+                    });
+
+            // Move to the superclass
+            clazz = clazz.getSuperclass();
+        }
+
+        return configKeys;
+    }
+
 
     protected static String translateAlternateColorCodes(char altColorChar, String textToTranslate) {
         Preconditions.checkArgument(textToTranslate != null, "Cannot translate null text");
@@ -123,6 +163,23 @@ public class LunaticConfig {
         } catch (IOException e) {
             e.printStackTrace();
         }
+
+        List<ConfigKey> configKeys = getConfigKeys();
+        Logger.debugLog("Loaded " + configKeys.size() + " config keys");
+
+        for (ConfigKey key : configKeys) {
+            Object configValue = get(key.asString());
+            Object value = key.getDefault();
+
+            Logger.debugLog(key.asString() + " -> " + configValue + " -> " + value);
+            Logger.debugLog(configValue + " -> " + value);
+
+            if (configValue == null && value != null) {
+                set(key.asString(), value);
+            }
+        }
+
+        save();
     }
 
     public Path getDataDirectory() {
@@ -215,7 +272,6 @@ public class LunaticConfig {
         Node newNode;
 
         if (root == null) {
-            Logger.errorLog("Error while loading config file: " + path);
             newNode = savingValues;
         } else {
             Logger.infoLog("Loaded config file: " + path);
@@ -379,7 +435,7 @@ public class LunaticConfig {
         return primary;
     }
 
-    protected void addCommentsFromKey(ConfigKey key) {
+    protected void addCommentsFromKey(ConfigKey<?> key) {
         for (String comment : key.getKeyInlineComments()) {
             addKeyComment(CommentType.IN_LINE, key.asString(), comment);
         }
@@ -444,7 +500,7 @@ public class LunaticConfig {
         }
     }
 
-    public void setString(String path, String value) {
+    private void set(String path, Object value) {
         String[] parts = path.split("\\.");
         Map<String, Object> current = this.yamlMap;
 
@@ -467,6 +523,10 @@ public class LunaticConfig {
                 }
             }
         }
+    }
+
+    public void setString(String path, String value) {
+        set(path, value);
     }
 
     public Integer getInt(String path, int defaultValue) {

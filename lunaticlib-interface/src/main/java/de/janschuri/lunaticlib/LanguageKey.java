@@ -2,15 +2,10 @@ package de.janschuri.lunaticlib;
 
 import java.util.Map;
 
-public interface LanguageKey extends ConfigKey {
-
-    @Override
-    Map<String, String> getDefault();
+public interface LanguageKey extends ConfigKey<Map<String,String>> {
 
     String getDefault(String lang);
-    LanguageKey defaultValues(Map<String, String> defaultMessages);
     LanguageKey defaultValue(String lang, String defaultMessage);
-
     @Override
     LanguageKey keyInlineComment(String comment);
     @Override

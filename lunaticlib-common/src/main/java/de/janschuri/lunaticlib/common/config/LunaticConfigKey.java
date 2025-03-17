@@ -5,10 +5,10 @@ import de.janschuri.lunaticlib.ConfigKey;
 import java.util.ArrayList;
 import java.util.List;
 
-public class LunaticConfigKey implements ConfigKey {
+public class LunaticConfigKey<T> implements ConfigKey<T> {
 
     private final String key;
-    private Object defaultValue;
+    private T defaultValue;
 
     private final List<String> keyInlineComments = new ArrayList<>();
     private final List<String> keyBlockComments = new ArrayList<>();
@@ -25,7 +25,7 @@ public class LunaticConfigKey implements ConfigKey {
     }
 
     @Override
-    public Object getDefault() {
+    public T getDefault() {
         return defaultValue;
     }
 
@@ -34,7 +34,7 @@ public class LunaticConfigKey implements ConfigKey {
         return key;
     }
 
-    public ConfigKey defaultValue(Object defaultValue) {
+    public ConfigKey defaultValue(T defaultValue) {
         this.defaultValue = defaultValue;
         return this;
     }

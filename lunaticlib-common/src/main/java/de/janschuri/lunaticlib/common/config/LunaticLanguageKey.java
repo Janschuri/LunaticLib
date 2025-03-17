@@ -5,20 +5,12 @@ import de.janschuri.lunaticlib.LanguageKey;
 import java.util.HashMap;
 import java.util.Map;
 
-public class LunaticLanguageKey extends LunaticConfigKey implements LanguageKey {
+public class LunaticLanguageKey extends LunaticConfigKey<Map<String, String>> implements LanguageKey {
 
 
     public LunaticLanguageKey(String key) {
         super(key);
-    }
-
-    @Override
-    public Map<String, String> getDefault() {
-        if (super.getDefault() == null) {
-            super.defaultValue(new HashMap<>());
-        }
-
-        return (Map<String, String>) super.getDefault();
+        defaultValue(new HashMap<>());
     }
 
     @Override
@@ -31,16 +23,10 @@ public class LunaticLanguageKey extends LunaticConfigKey implements LanguageKey 
     }
 
     @Override
-    public LunaticLanguageKey defaultValues(Map<String, String> defaultMessages) {
-        super.defaultValue(defaultMessages);
-        return this;
-    }
-
-    @Override
     public LunaticLanguageKey defaultValue(String lang, String defaultMessage) {
         Map<String, String> defaultMessages = getDefault();
         defaultMessages.put(lang.toLowerCase(), defaultMessage);
-        super.defaultValue(defaultMessages);
+        defaultValue(defaultMessages);
         return this;
     }
 
