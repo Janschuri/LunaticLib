@@ -35,9 +35,8 @@ public class PlayerSenderImpl extends SenderImpl implements PlayerSender {
     @Override
     public String getSkinURL() {
         String skinURL = BungeeLunaticLib.getSkinCache(uuid);
-        Logger.debugLog(String.format("SkinURL from cache: %s", skinURL));
+
         if (skinURL != null) {
-            Logger.debugLog(String.format("SkinURL from cache: %s", skinURL));
             return skinURL;
         }
 

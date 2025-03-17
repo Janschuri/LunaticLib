@@ -165,14 +165,10 @@ public class LunaticConfig {
         }
 
         List<ConfigKey> configKeys = getConfigKeys();
-        Logger.debugLog("Loaded " + configKeys.size() + " config keys");
 
         for (ConfigKey key : configKeys) {
             Object configValue = get(key.asString());
             Object value = key.getDefault();
-
-            Logger.debugLog(key.asString() + " -> " + configValue + " -> " + value);
-            Logger.debugLog(configValue + " -> " + value);
 
             if (configValue == null && value != null) {
                 set(key.asString(), value);
