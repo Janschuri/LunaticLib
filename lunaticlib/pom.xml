@@ -46,6 +46,7 @@
                             <finalName>
                                 ${buildName}-${project.version}
                             </finalName>
+                            <minimizeJar>true</minimizeJar>
                         </configuration>
                     </execution>
                 </executions>
