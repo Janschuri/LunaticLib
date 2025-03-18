@@ -34,7 +34,6 @@ public final class LunaticLib {
 
     private static final FutureRequest[] requests = {
             new GetItemInMainHandRequest(),
-            new GetNameRequest(),
             new GetPositionRequest(),
             new GiveItemDropRequest(),
             new HasItemInMainHandRequest(),

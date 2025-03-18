@@ -26,7 +26,6 @@ public class MessageListener {
         byte[] message = event.getData();
         ByteArrayDataInput in = ByteStreams.newDataInput(message);
         String subchannel = in.readUTF();
-        Logger.debugLog("Received message on subchannel: " + subchannel);
         FutureRequestsHandler.handleRequest(subchannel, in);
     }
 }

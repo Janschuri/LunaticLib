@@ -4,6 +4,7 @@ import net.kyori.adventure.inventory.Book;
 import net.kyori.adventure.text.Component;
 
 import java.util.UUID;
+import java.util.concurrent.CompletableFuture;
 
 public interface PlayerSender extends Sender {
     UUID getUniqueId();
@@ -21,8 +22,6 @@ public interface PlayerSender extends Sender {
     boolean isInRange(UUID playerUUID, double range);
     boolean exists();
     boolean isSameServer(UUID uuid);
-    boolean openBook(Book.Builder book);
-    boolean closeBook();
     default boolean sendMessage(DecisionMessage message, boolean asInventoryGUI) {
         if (asInventoryGUI) {
             return openDecisionGUI(message);

@@ -79,8 +79,6 @@ public class GUIManager {
             Set<Integer> slots = event.getInventorySlots();
 
             for (int slot : slots) {
-                Logger.debugLog("Slot: " + slot);
-                Logger.debugLog("GUI size: " + guiSize);
                 if (slot < guiSize) {
                     handler.onDrag(event);
 //                    return;

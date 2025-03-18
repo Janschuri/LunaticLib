@@ -14,9 +14,10 @@ import java.util.concurrent.ConcurrentHashMap;
 public class RemoveItemInMainHandRequest extends FutureRequest<Boolean> {
 
     private static final String REQUEST_NAME = "LunaticLib:RemoveItemInMainHand";
-    private static final ConcurrentHashMap<Integer, CompletableFuture<Boolean>> requestMap = new ConcurrentHashMap<>();
+    private static final ConcurrentHashMap<Integer, CompletableFuture<Boolean>> REQUEST_MAP = new ConcurrentHashMap<>();
+
     public RemoveItemInMainHandRequest() {
-        super(REQUEST_NAME, requestMap);
+        super(REQUEST_NAME, REQUEST_MAP);
     }
 
     @Override
@@ -36,7 +37,7 @@ public class RemoveItemInMainHandRequest extends FutureRequest<Boolean> {
         completeRequest(requestId, removed);
     }
 
-    public Boolean get(String serverName, UUID uuid) {
+    public CompletableFuture<Boolean> get(String serverName, UUID uuid) {
         ByteArrayDataOutput out = ByteStreams.newDataOutput();
         out.writeUTF(uuid.toString());
         return sendRequest(serverName, out.toByteArray());

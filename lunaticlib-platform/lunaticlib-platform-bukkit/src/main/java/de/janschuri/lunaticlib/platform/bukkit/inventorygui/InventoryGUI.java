@@ -1,7 +1,9 @@
 package de.janschuri.lunaticlib.platform.bukkit.inventorygui;
 
+import de.janschuri.lunaticlib.common.command.LunaticPlaceholder;
 import de.janschuri.lunaticlib.common.utils.Utils;
 import de.janschuri.lunaticlib.platform.bukkit.BukkitLunaticLib;
+import net.kyori.adventure.text.Component;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
@@ -31,7 +33,7 @@ public abstract class InventoryGUI implements InventoryHandler {
     private Inventory inventory;
     private boolean processingClickEvent;
     private String title;
-    private int size;
+    private final int size;
     private final Map<Integer, InventoryButton> buttonMap;
     private final List<PlayerInvButton> playerInvButtonList;
 
@@ -251,5 +253,17 @@ public abstract class InventoryGUI implements InventoryHandler {
         String button2Name = button2Container.get(key, PersistentDataType.STRING);
 
         return button1Name != null && button1Name.equals(button2Name);
+    }
+
+    protected LunaticPlaceholder placeholder(String key, String value) {
+        if (value == null) {
+            value = "null";
+        }
+
+        return new LunaticPlaceholder(key, Component.text(value));
+    }
+
+    protected LunaticPlaceholder placeholder(String key, Component value) {
+        return new LunaticPlaceholder(key, value);
     }
 }

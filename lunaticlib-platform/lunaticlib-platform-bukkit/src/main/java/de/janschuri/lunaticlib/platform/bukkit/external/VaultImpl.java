@@ -5,8 +5,10 @@ import de.janschuri.lunaticlib.common.logger.Logger;
 import net.milkbowl.vault.economy.Economy;
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.RegisteredServiceProvider;
+import org.checkerframework.checker.units.qual.C;
 
 import java.util.UUID;
+import java.util.concurrent.CompletableFuture;
 
 public class VaultImpl implements Vault {
 
@@ -30,11 +32,11 @@ public class VaultImpl implements Vault {
         return econ;
     }
 
-    public boolean hasEnoughMoney(String serverName, UUID uuid, double amount) {
-        return econ.has(Bukkit.getOfflinePlayer(uuid), amount);
+    public CompletableFuture<Boolean> hasEnoughMoney(String serverName, UUID uuid, double amount) {
+        return CompletableFuture.completedFuture(econ.has(Bukkit.getOfflinePlayer(uuid), amount));
     }
 
-    public boolean withdrawMoney(String serverName, UUID uuid, double amount) {
-        return econ.withdrawPlayer(Bukkit.getOfflinePlayer(uuid), amount).transactionSuccess();
+    public CompletableFuture<Boolean> withdrawMoney(String serverName, UUID uuid, double amount) {
+        return CompletableFuture.completedFuture(econ.withdrawPlayer(Bukkit.getOfflinePlayer(uuid), amount).transactionSuccess());
     }
 }

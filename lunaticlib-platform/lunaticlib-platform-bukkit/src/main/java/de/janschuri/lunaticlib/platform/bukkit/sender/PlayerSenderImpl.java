@@ -1,6 +1,7 @@
 package de.janschuri.lunaticlib.platform.bukkit.sender;
 
 import de.janschuri.lunaticlib.DecisionMessage;
+import de.janschuri.lunaticlib.common.command.LunaticDecisionMessage;
 import de.janschuri.lunaticlib.PlayerSender;
 import de.janschuri.lunaticlib.common.logger.Logger;
 import de.janschuri.lunaticlib.platform.bukkit.inventorygui.DecisionGUI;
@@ -14,8 +15,11 @@ import org.bukkit.Material;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
+import org.checkerframework.checker.units.qual.C;
 
+import java.util.Map;
 import java.util.UUID;
+import java.util.concurrent.CompletableFuture;
 
 public class PlayerSenderImpl extends SenderImpl implements PlayerSender {
 
@@ -41,11 +45,13 @@ public class PlayerSenderImpl extends SenderImpl implements PlayerSender {
         OfflinePlayer player = Bukkit.getOfflinePlayer(uuid);
 
         if (player.isOnline()) {
-            return new double[] {
+            double[] pos = new double[] {
                 Bukkit.getPlayer(uuid).getLocation().getX(),
                 Bukkit.getPlayer(uuid).getLocation().getY(),
                 Bukkit.getPlayer(uuid).getLocation().getZ()
             };
+
+            return pos;
         }
         return null;
     }
@@ -61,6 +67,7 @@ public class PlayerSenderImpl extends SenderImpl implements PlayerSender {
 
     @Override
     public boolean hasItemInMainHand() {
+
         return !Bukkit.getPlayer(uuid).getInventory().getItemInMainHand().getType().equals(Material.AIR);
     }
 
@@ -85,9 +92,21 @@ public class PlayerSenderImpl extends SenderImpl implements PlayerSender {
 
     @Override
     public boolean giveItemDrop(byte[] item) {
-        if (Bukkit.getPlayer(uuid) != null) {
+
+        Player player = Bukkit.getPlayer(uuid);
+        if (player != null) {
             ItemStack itemStack = ItemStackUtils.deserializeItemStack(item);
-            Bukkit.getPlayer(uuid).getWorld().dropItem(Bukkit.getPlayer(uuid).getLocation(), itemStack);
+
+            if (itemStack == null) {
+                return false;
+            }
+
+            Map<Integer, ItemStack> overflow = player.getInventory().addItem(itemStack);
+
+            for (ItemStack overflowItem : overflow.values()) {
+                player.getWorld().dropItem(player.getLocation(), overflowItem);
+            }
+
             return true;
         }
         return false;
@@ -105,11 +124,11 @@ public class PlayerSenderImpl extends SenderImpl implements PlayerSender {
         }
         org.bukkit.entity.Player player = Bukkit.getPlayer(playerUUID);
         if (player == null) {
-            return false;
+            return true;
         }
 
         if (player.getWorld() != Bukkit.getPlayer(uuid).getWorld()) {
-            return false;
+            return true;
         }
 
         Location location1= player.getLocation();
@@ -148,25 +167,6 @@ public class PlayerSenderImpl extends SenderImpl implements PlayerSender {
     @Override
     public boolean isSameServer(UUID uuid) {
         return true;
-    }
-
-
-    @Override
-    public boolean openBook(Book.Builder book) {
-        if (Bukkit.getPlayer(uuid) != null) {
-            Bukkit.getPlayer(uuid).openBook(book.build());
-        }
-        return false;
-    }
-
-    @Override
-    public boolean closeBook() {
-        if (Bukkit.getPlayer(uuid) != null) {
-            Player player = Bukkit.getPlayer(uuid);
-            player.openInventory(Bukkit.createInventory(null, 9));
-            player.closeInventory();
-        }
-        return false;
     }
 
     @Override

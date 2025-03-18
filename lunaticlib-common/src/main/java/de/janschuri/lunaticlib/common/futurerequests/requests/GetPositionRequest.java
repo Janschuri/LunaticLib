@@ -14,10 +14,10 @@ import java.util.concurrent.ConcurrentHashMap;
 public class GetPositionRequest extends FutureRequest<double[]> {
 
     private static final String REQUEST_NAME = "LunaticLib:GetPosition";
-    private static final ConcurrentHashMap<Integer, CompletableFuture<double[]>> requestMap = new ConcurrentHashMap<>();
+    private static final ConcurrentHashMap<Integer, CompletableFuture<double[]>> REQUEST_MAP = new ConcurrentHashMap<>();
 
     public GetPositionRequest() {
-        super(REQUEST_NAME, requestMap);
+        super(REQUEST_NAME, REQUEST_MAP);
     }
 
     @Override
@@ -25,6 +25,7 @@ public class GetPositionRequest extends FutureRequest<double[]> {
         UUID uuid = UUID.fromString(in.readUTF());
         PlayerSender player = LunaticLib.getPlatform().getPlayerSender(uuid);
         double[] position = player.getPosition();
+
         ByteArrayDataOutput out = ByteStreams.newDataOutput();
         out.writeDouble(position[0]);
         out.writeDouble(position[1]);
@@ -41,7 +42,7 @@ public class GetPositionRequest extends FutureRequest<double[]> {
         completeRequest(requestId, position);
     }
 
-    public double[] get(String serverName, UUID uuid) {
+    public CompletableFuture<double[]> get(String serverName, UUID uuid) {
         ByteArrayDataOutput out = ByteStreams.newDataOutput();
         out.writeUTF(uuid.toString());
         return sendRequest(serverName, out.toByteArray());

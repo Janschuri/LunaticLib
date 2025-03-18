@@ -15,12 +15,10 @@ public class FutureRequestsHandler {
 
     public static void handleRequest(String requestKey, ByteArrayDataInput in) {
         if (requests.containsKey(requestKey)) {
-            Logger.debugLog("Handling request: " + requestKey);
             CompletableFuture.runAsync(() -> {
-                requests.get(requestKey).execute(in);
+                FutureRequest request = requests.get(requestKey);
+                request.execute(in);
             });
-        } else {
-            Logger.errorLog("Unknown request: " + requestKey);
         }
     }
 

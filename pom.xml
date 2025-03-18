@@ -15,7 +15,6 @@
         <module>lunaticlib</module>
         <module>lunaticlib-common</module>
         <module>lunaticlib-platform</module>
-        <module>lunaticlib-interface</module>
     </modules>
 
     <properties>

@@ -23,7 +23,7 @@ public class DecisionGUI extends InventoryGUI {
     private String question = "Are you sure?";
     private String confirmText = "Yes";
     private String denyText = "No";
-    private boolean executeFromBackend = false;
+    private final boolean executeFromBackend = false;
 
     public DecisionGUI(String title) {
         super(title, 9);
@@ -144,13 +144,11 @@ public class DecisionGUI extends InventoryGUI {
     }
 
     private CompletableFuture<Boolean> performCommand(Player player, String command) {
-
         if (executeFromBackend) {
-            return new RunCommandRequest().getAsync(player.getUniqueId(), command);
+            return new RunCommandRequest().get(player.getUniqueId(), command);
         }
 
-        boolean success = player.performCommand(command);
-        return CompletableFuture.completedFuture(success);
+        return CompletableFuture.completedFuture(player.performCommand(command));
     }
 
     @Override

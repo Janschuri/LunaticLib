@@ -18,6 +18,7 @@ public class GetSkinURLRequest extends FutureRequest<String> {
 
     public GetSkinURLRequest() {
         super(REQUEST_NAME, REQUEST_MAP);
+        this.suppressTimeoutException();
     }
 
     @Override
@@ -47,7 +48,7 @@ public class GetSkinURLRequest extends FutureRequest<String> {
         completeRequest(requestId, skin);
     }
 
-    public String get(UUID uuid) {
+    public CompletableFuture<String> get(UUID uuid) {
         ByteArrayDataOutput out = ByteStreams.newDataOutput();
         out.writeUTF(uuid.toString());
         return sendRequest(out.toByteArray());

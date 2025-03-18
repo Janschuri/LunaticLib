@@ -4,6 +4,7 @@ import com.google.common.io.ByteArrayDataInput;
 import com.google.common.io.ByteArrayDataOutput;
 import com.google.common.io.ByteStreams;
 import de.janschuri.lunaticlib.DecisionMessage;
+import de.janschuri.lunaticlib.common.command.LunaticDecisionMessage;
 import de.janschuri.lunaticlib.PlayerSender;
 import de.janschuri.lunaticlib.common.LunaticLib;
 import de.janschuri.lunaticlib.common.futurerequests.FutureRequest;
@@ -14,9 +15,10 @@ import java.util.concurrent.ConcurrentHashMap;
 
 public class OpenDecisionGUIRequest extends FutureRequest<Boolean> {
     private static final String REQUEST_NAME = "OpenDecisionGUI";
-    private static final ConcurrentHashMap<Integer, CompletableFuture<Boolean>> requestMap = new ConcurrentHashMap<>();
+    private static final ConcurrentHashMap<Integer, CompletableFuture<Boolean>> REQUEST_MAP = new ConcurrentHashMap<>();
+
     public OpenDecisionGUIRequest() {
-        super(REQUEST_NAME, requestMap);
+        super(REQUEST_NAME, REQUEST_MAP);
     }
 
     @Override
@@ -30,7 +32,7 @@ public class OpenDecisionGUIRequest extends FutureRequest<Boolean> {
             message[i] = in.readUTF();
         }
 
-        DecisionMessage decisionMessage = DecisionMessage.fromStringArray(message);
+        LunaticDecisionMessage decisionMessage = LunaticDecisionMessage.fromStringArray(message);
         decisionMessage.setExecuteFromBackend(true);
         boolean success = player.openDecisionGUI(decisionMessage);
 
@@ -45,7 +47,7 @@ public class OpenDecisionGUIRequest extends FutureRequest<Boolean> {
         completeRequest(requestId, success);
     }
 
-    public Boolean get(String serverName, UUID uuid, DecisionMessage decisionMessage) {
+    public CompletableFuture<Boolean> get(String serverName, UUID uuid, DecisionMessage decisionMessage) {
         String[] message = decisionMessage.toStringArray();
 
         ByteArrayDataOutput out = ByteStreams.newDataOutput();

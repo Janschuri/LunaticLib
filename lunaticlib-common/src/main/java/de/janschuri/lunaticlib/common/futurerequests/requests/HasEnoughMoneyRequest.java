@@ -23,21 +23,23 @@ public class HasEnoughMoneyRequest extends FutureRequest<Boolean> {
 
     @Override
     protected void handleRequest(int requestId, ByteArrayDataInput in) {
-        boolean vaultAvailable = false;
-        boolean hasEnoughMoney = false;
-
         UUID uuid = UUID.fromString(in.readUTF());
         double amount = in.readDouble();
         Vault vault = LunaticLib.getPlatform().getVault();
-        if (vault != null) {
-            vaultAvailable = true;
-            hasEnoughMoney = vault.hasEnoughMoney("", uuid, amount);
-        }
 
         ByteArrayDataOutput out = ByteStreams.newDataOutput();
-        out.writeBoolean(vaultAvailable);
-        out.writeBoolean(hasEnoughMoney);
-        sendResponse(requestId, out.toByteArray());
+        if (vault != null) {
+            vault.hasEnoughMoney("", uuid, amount)
+                    .thenAccept(hasEnoughMoney -> {
+                        out.writeBoolean(true);
+                        out.writeBoolean(hasEnoughMoney);
+                        sendResponse(requestId, out.toByteArray());
+                    });
+        } else {
+            out.writeBoolean(false);
+            out.writeBoolean(false);
+            sendResponse(requestId, out.toByteArray());
+        }
     }
 
     @Override
@@ -54,7 +56,7 @@ public class HasEnoughMoneyRequest extends FutureRequest<Boolean> {
         completeRequest(requestId, hasEnoughMoney);
     }
 
-    public boolean get(String serverName, UUID uuid, double amount) {
+    public CompletableFuture<Boolean> get(String serverName, UUID uuid, double amount) {
         ByteArrayDataOutput out = ByteStreams.newDataOutput();
         out.writeUTF(uuid.toString());
         out.writeDouble(amount);

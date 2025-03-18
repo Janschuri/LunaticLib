@@ -1,10 +1,10 @@
 package de.janschuri.lunaticlib.platform.bukkit;
 
-import de.janschuri.lunaticlib.LunaticCommand;
+import de.janschuri.lunaticlib.Command;
 import de.janschuri.lunaticlib.PlayerSender;
 import de.janschuri.lunaticlib.common.logger.Logger;
 import de.janschuri.lunaticlib.platform.*;
-import de.janschuri.lunaticlib.platform.bukkit.commands.Command;
+import de.janschuri.lunaticlib.platform.bukkit.commands.BukkitCommand;
 import de.janschuri.lunaticlib.platform.bukkit.sender.PlayerSenderImpl;
 import de.janschuri.lunaticlib.platform.bukkit.sender.SenderImpl;
 import org.bukkit.Bukkit;
@@ -19,8 +19,6 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.UUID;
-
-import static de.janschuri.lunaticlib.common.LunaticLib.IDENTIFIER;
 
 public class PlatformImpl implements Platform<JavaPlugin, CommandSender> {
     @Override
@@ -55,8 +53,7 @@ public class PlatformImpl implements Platform<JavaPlugin, CommandSender> {
 
     @Override
     public de.janschuri.lunaticlib.Sender getSender(CommandSender sender) {
-        if (sender instanceof Player) {
-            Player player = (Player) sender;
+        if (sender instanceof Player player) {
             PlayerSenderImpl playerSender = new PlayerSenderImpl(player);
             return playerSender;
         }
@@ -65,18 +62,15 @@ public class PlatformImpl implements Platform<JavaPlugin, CommandSender> {
     }
 
     @Override
-    public void registerCommand(JavaPlugin plugin, LunaticCommand lunaticCommand) {
-        PluginCommand cmd = plugin.getCommand(lunaticCommand.getName());
+    public void registerCommand(JavaPlugin plugin, Command command) {
+        PluginCommand cmd = plugin.getCommand(command.getName());
         assert cmd != null;
         try {
             final Field bukkitCommandMap = Bukkit.getServer().getClass().getDeclaredField("commandMap");
             bukkitCommandMap.setAccessible(true);
             CommandMap commandMap = (CommandMap) bukkitCommandMap.get(Bukkit.getServer());
 
-            List<String> aliases = lunaticCommand.getAliases();
-
-            Logger.debugLog("Registering command " + lunaticCommand.getName() + " with aliases " + aliases.toString());
-            Logger.debugLog("Command: " + cmd.toString());
+            List<String> aliases = command.getAliases();
 
             synchronized (aliases) {
                 aliases.forEach(alias -> {
@@ -87,10 +81,15 @@ public class PlatformImpl implements Platform<JavaPlugin, CommandSender> {
             e.printStackTrace();
         }
 
-        plugin.getCommand(lunaticCommand.getName()).setPermission(lunaticCommand.getPermission());
+        plugin.getCommand(command.getName()).setPermission(command.getPermission());
 
-        plugin.getCommand(lunaticCommand.getName()).setExecutor(new Command(lunaticCommand));
-        plugin.getCommand(lunaticCommand.getName()).setTabCompleter(new Command(lunaticCommand));
+        plugin.getCommand(command.getName()).setExecutor(new BukkitCommand(command));
+        plugin.getCommand(command.getName()).setTabCompleter(new BukkitCommand(command));
+    }
+
+    @Override
+    public JavaPlugin getPlugin() {
+        return BukkitLunaticLib.getInstance();
     }
 
     @Override

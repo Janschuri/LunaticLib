@@ -20,16 +20,6 @@ public class AdventureAPI {
         }
     }
 
-    public static boolean sendMessage(CommandSender sender, String message) {
-        if (bungeeAudiences != null) {
-            bungeeAudiences.sender(sender).sendMessage(
-                    Component.text(message)
-            );
-            return true;
-        }
-        return false;
-    }
-
     public static boolean sendMessage(CommandSender sender, Component message) {
         if (bungeeAudiences != null) {
             bungeeAudiences.sender(sender).sendMessage(message);

@@ -1,67 +1,107 @@
 package de.janschuri.lunaticlib.common.config;
 
 import com.google.common.base.Preconditions;
+import de.janschuri.lunaticlib.ConfigKey;
+import de.janschuri.lunaticlib.LanguageKey;
 import de.janschuri.lunaticlib.common.logger.Logger;
+import org.jetbrains.annotations.NotNull;
 import org.yaml.snakeyaml.DumperOptions;
 import org.yaml.snakeyaml.LoaderOptions;
 import org.yaml.snakeyaml.Yaml;
+import org.yaml.snakeyaml.comments.CommentLine;
+import org.yaml.snakeyaml.comments.CommentType;
 import org.yaml.snakeyaml.constructor.Constructor;
 import org.yaml.snakeyaml.nodes.*;
 import org.yaml.snakeyaml.representer.Representer;
 
 import java.io.*;
+import java.lang.reflect.Modifier;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.*;
+import java.util.stream.Collectors;
 
-public class LunaticConfigImpl implements de.janschuri.lunaticlib.LunaticConfig {
+public class LunaticConfig {
 
     private final Path path;
-    private final String defaultFilePath;
+    private final Path dataDirectory;
+    private final String filePath;
     private Map<String, Object> yamlMap = new LinkedHashMap<>();
+    private final Map<String, CommentTuple> commentsMap = new HashMap<>();
 
-    @Deprecated
-    public LunaticConfigImpl(Path dataDirectory, String filePath, String defaultFilePath) {
+    public LunaticConfig(Path dataDirectory, String filePath) {
+        if (dataDirectory.toFile().isFile()) {
+            dataDirectory = dataDirectory.getParent();
+        }
+
         this.path = Path.of(dataDirectory.toString(), filePath);
-        this.defaultFilePath = defaultFilePath;
+        this.dataDirectory = dataDirectory;
+        this.filePath = filePath;
     }
 
-    public LunaticConfigImpl(Path dataDirectory, String filePath) {
-        this.path = Path.of(dataDirectory.toString(), filePath);
-        this.defaultFilePath = null;
+    private static Yaml getYaml() {
+        LoaderOptions loaderOptions = new LoaderOptions();
+        loaderOptions.setProcessComments(true);
+        DumperOptions dumperOptions = new DumperOptions();
+        dumperOptions.setProcessComments(true);
+        dumperOptions.setSplitLines(false); // remove the line breaks
+        dumperOptions.setDefaultFlowStyle(DumperOptions.FlowStyle.BLOCK); // remove quotes
+        dumperOptions.setIndent(2);
+        return new Yaml(new Constructor(loaderOptions), new Representer(dumperOptions), dumperOptions, loaderOptions);
     }
 
-    public LunaticConfigImpl(Path path) {
-        this.path = path;
-        this.defaultFilePath = null;
-    }
+    private List<ConfigKey> getConfigKeys() {
+        List<ConfigKey> configKeys = new ArrayList<>();
+        Class<?> clazz = this.getClass();
 
+        while (clazz != null) {
+            // Get all declared fields of the current class (including private fields)
+            Class<?> finalClazz = clazz;
+            Arrays.stream(clazz.getDeclaredFields())
+                    .filter(field -> ConfigKey.class.isAssignableFrom(field.getType())) // Filter ConfigKey fields
+                    .forEach(field -> {
+                        try {
+                            field.setAccessible(true);
+                            Object value;
 
+                            // If static, access it with null, otherwise use 'this' for non-static fields
+                            if (Modifier.isStatic(field.getModifiers())) {
+                                value = field.get(null);
+                            } else {
+                                value = field.get(this);
+                            }
 
-    @Override
-    public void load() {
-        if (defaultFilePath != null) {
-            load(defaultFilePath);
-            return;
+                            if (value != null) {
+                                configKeys.add((ConfigKey) value);
+                            }
+                        } catch (IllegalAccessException e) {
+                            throw new RuntimeException("Failed to access field: " + field.getName(), e);
+                        }
+                    });
+
+            // Move to the superclass
+            clazz = clazz.getSuperclass();
         }
 
-        File file = path.toFile();
-
-        if (!file.exists()) {
-            return;
-        }
-
-        try {
-            Node root = getNode(file);
-
-            yamlMap = loadYamlMap(root);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        return configKeys;
     }
 
-    @Override
+
+    protected static String translateAlternateColorCodes(char altColorChar, String textToTranslate) {
+        Preconditions.checkArgument(textToTranslate != null, "Cannot translate null text");
+        char[] b = textToTranslate.toCharArray();
+
+        for (int i = 0; i < b.length - 1; ++i) {
+            if (b[i] == altColorChar && "0123456789AaBbCcDdEeFfKkLlMmNnOoRrXx#".indexOf(b[i + 1]) > -1) {
+                b[i] = 167;
+                b[i + 1] = Character.toLowerCase(b[i + 1]);
+            }
+        }
+
+        return new String(b);
+    }
+
     public void load(String defaultFilePath) {
 
         if (!path.getParent().toFile().exists()) {
@@ -76,14 +116,22 @@ public class LunaticConfigImpl implements de.janschuri.lunaticlib.LunaticConfig 
         File file = path.toFile();
 
         if (!file.exists()) {
-            try (InputStream inputStream = getClass().getClassLoader().getResourceAsStream(defaultFilePath)) {
-                if (inputStream != null) {
-                    Files.copy(inputStream, file.toPath());
-                } else {
-                    throw new IOException("Resource '" + defaultFilePath + "' not found");
+            if (defaultFilePath != null) {
+                try (InputStream inputStream = getClass().getClassLoader().getResourceAsStream(defaultFilePath)) {
+                    if (inputStream != null) {
+                        Files.copy(inputStream, file.toPath());
+                    } else {
+                        throw new IOException("Resource '" + defaultFilePath + "' not found");
+                    }
+                } catch (IOException e) {
+                    e.printStackTrace();
                 }
-            } catch (IOException e) {
-                e.printStackTrace();
+            } else {
+                try {
+                    Files.createFile(file.toPath());
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
             }
         }
 
@@ -95,18 +143,19 @@ public class LunaticConfigImpl implements de.janschuri.lunaticlib.LunaticConfig 
             Node newNode;
 
             if (root == null) {
-                Logger.errorLog("Error while loading config file: " + path.getParent() + "/" + file.getName());
                 newNode = defaultRoot;
             } else {
                 Logger.infoLog("Loaded config file: " + path.getParent() + "/" + file.getName());
-                newNode = mergeNodes(root, defaultRoot);
+                newNode = mergeNodes(root, defaultRoot, "");
             }
 
             try (FileOutputStream fos = new FileOutputStream(file);
                  OutputStreamWriter osw = new OutputStreamWriter(fos, StandardCharsets.UTF_8);
                  BufferedWriter writer = new BufferedWriter(osw)) {
                 Yaml yaml = getYaml();
-                 yaml.serialize(newNode, writer);
+                if (newNode != null) {
+                    yaml.serialize(newNode, writer);
+                }
             }
 
             yamlMap = loadYamlMap(newNode);
@@ -114,21 +163,43 @@ public class LunaticConfigImpl implements de.janschuri.lunaticlib.LunaticConfig 
         } catch (IOException e) {
             e.printStackTrace();
         }
+
+        List<ConfigKey> configKeys = getConfigKeys();
+
+        for (ConfigKey key : configKeys) {
+            Object configValue = get(key.asString());
+            Object value = key.getDefault();
+
+            if (configValue == null && value != null) {
+                set(key.asString(), value);
+            }
+        }
+
+        save();
     }
 
-    private static Yaml getYaml() {
-        LoaderOptions loaderOptions = new LoaderOptions();
-        loaderOptions.setProcessComments(true);
-        DumperOptions dumperOptions = new DumperOptions();
-        dumperOptions.setProcessComments(true);
-        dumperOptions.setSplitLines(false); // remove the line breaks
-        dumperOptions.setDefaultFlowStyle(DumperOptions.FlowStyle.BLOCK); // remove quotes
-        dumperOptions.setIndent(2);
-        return new Yaml(new Constructor(loaderOptions), new Representer(dumperOptions), dumperOptions, loaderOptions);
+    public Path getDataDirectory() {
+        return dataDirectory;
+    }
+
+    public String getFilePath() {
+        return filePath;
+    }
+
+    public Path getPath() {
+        return path;
     }
 
     private Node getNode(File file) throws IOException {
         Yaml yaml = getYaml();
+
+        if (!file.exists()) {
+            file.createNewFile();
+        }
+
+        if (file == null) {
+            return null;
+        }
 
         try (FileInputStream inputStream = new FileInputStream(file)) {
             try (InputStreamReader reader = new InputStreamReader(inputStream, StandardCharsets.UTF_8)) {
@@ -146,6 +217,10 @@ public class LunaticConfigImpl implements de.janschuri.lunaticlib.LunaticConfig 
     private Node getDefaultNode(String defaultFilePath) throws IOException {
         Yaml yaml = getYaml();
 
+        if (defaultFilePath == null) {
+            return null;
+        }
+
         try (InputStream inputStream = getClass().getClassLoader().getResourceAsStream(defaultFilePath)) {
             if (inputStream != null) {
                 try (InputStreamReader reader = new InputStreamReader(inputStream, StandardCharsets.UTF_8)) {
@@ -160,17 +235,20 @@ public class LunaticConfigImpl implements de.janschuri.lunaticlib.LunaticConfig 
         }
     }
 
-    private static Map<String, Object> loadYamlMap(Node root) {
+    private Map<String, Object> loadYamlMap(Node root) {
         Map<String, Object> yamlMap = new HashMap<>();
-        MappingNode mappingNode = (MappingNode) root;
-        List<NodeTuple> list = mappingNode.getValue();
-        for (NodeTuple node : list) {
-            yamlMap.put(((ScalarNode) node.getKeyNode()).getValue(), loadNodeTuple(node));
+
+        if (root instanceof MappingNode mappingNode) {
+            List<NodeTuple> list = mappingNode.getValue();
+            for (NodeTuple node : list) {
+                yamlMap.put(((ScalarNode) node.getKeyNode()).getValue(), loadNodeTuple(node));
+            }
         }
+
         return yamlMap;
     }
 
-    private void save() {
+    protected void save() {
         File file = path.toFile();
 
         Yaml yaml = getYaml();
@@ -190,44 +268,42 @@ public class LunaticConfigImpl implements de.janschuri.lunaticlib.LunaticConfig 
         Node newNode;
 
         if (root == null) {
-            Logger.errorLog("Error while loading config file: " + path);
             newNode = savingValues;
         } else {
             Logger.infoLog("Loaded config file: " + path);
-            newNode = mergeNodes(savingValues, root);
+            newNode = mergeNodes(savingValues, root, "");
         }
 
         try (FileOutputStream fos = new FileOutputStream(file);
              OutputStreamWriter osw = new OutputStreamWriter(fos, StandardCharsets.UTF_8);
              BufferedWriter writer = new BufferedWriter(osw)) {
-             yaml.serialize(newNode, writer);
+            yaml.serialize(newNode, writer);
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
 
-    private static Object loadNodeTuple(NodeTuple nodeTuple) {
-        if (nodeTuple.getValueNode() instanceof MappingNode) {
+    private Object loadNodeTuple(NodeTuple nodeTuple) {
+        if (nodeTuple.getValueNode() instanceof MappingNode mappingNode) {
             Map<String, Object> yamlMap = new HashMap<>();
-            MappingNode mappingNode = (MappingNode) nodeTuple.getValueNode();
             List<NodeTuple> list = mappingNode.getValue();
             for (NodeTuple node : list) {
                 yamlMap.put(((ScalarNode) node.getKeyNode()).getValue(), loadNodeTuple(node));
             }
             return yamlMap;
         }
-        if (nodeTuple.getValueNode() instanceof ScalarNode) {
-            return ((ScalarNode) nodeTuple.getValueNode()).getValue();
+        if (nodeTuple.getValueNode() instanceof ScalarNode scalarNode) {
+            return scalarNode.getValue();
         }
-        if (nodeTuple.getValueNode() instanceof SequenceNode) {
-            List<Node> nodes = ((SequenceNode) nodeTuple.getValueNode()).getValue();
+        if (nodeTuple.getValueNode() instanceof SequenceNode sequenceNode) {
+            List<Node> nodes = sequenceNode.getValue();
             List<Object> list = new ArrayList<>();
             for (Node node : nodes) {
                 if (node instanceof MappingNode) {
                     list.add(loadYamlMap(node));
                 }
-                if (node instanceof ScalarNode) {
-                    list.add(((ScalarNode) node).getValue());
+                if (node instanceof ScalarNode scalarNode) {
+                    list.add(scalarNode.getValue());
                 }
             }
             return list;
@@ -235,14 +311,24 @@ public class LunaticConfigImpl implements de.janschuri.lunaticlib.LunaticConfig 
         return null;
     }
 
-    private static Node mergeNodes (Node node, Node defaultNode) {
-        if (node instanceof MappingNode && defaultNode instanceof MappingNode) {
-            MappingNode mappingNode = (MappingNode) node;
-            MappingNode defaultMappingNode = (MappingNode) defaultNode;
+    private Node mergeNodes(@NotNull Node node, @NotNull Node defaultNode, String path) {
+        if (node == null && defaultNode == null) {
+            return null;
+        }
+
+        if (defaultNode == null) {
+            return node;
+        }
+
+        if (node == null) {
+            return defaultNode;
+        }
+
+        if (node instanceof MappingNode mappingNode && defaultNode instanceof MappingNode defaultMappingNode) {
             List<NodeTuple> list = mappingNode.getValue();
             List<NodeTuple> defaultList = defaultMappingNode.getValue();
 
-            mappingNode.setValue(mergeMappingNodes(list, defaultList));
+            mappingNode.setValue(mergeMappingNodes(list, defaultList, path));
 
             return mappingNode;
         }
@@ -250,11 +336,12 @@ public class LunaticConfigImpl implements de.janschuri.lunaticlib.LunaticConfig 
         return null;
     }
 
-    private static List<NodeTuple> mergeMappingNodes(List<NodeTuple> list, List<NodeTuple> defaultList) {
+    private List<NodeTuple> mergeMappingNodes(List<NodeTuple> list, List<NodeTuple> defaultList, String path) {
         Map<String, NodeTuple> map = new HashMap<>();
         Map<String, NodeTuple> defaultMap = new HashMap<>();
         List<String> index = new ArrayList<>();
         List<NodeTuple> mergedList = new ArrayList<>();
+
         for (NodeTuple n : defaultList) {
             defaultMap.put(((ScalarNode) n.getKeyNode()).getValue(), n);
             index.add(((ScalarNode) n.getKeyNode()).getValue());
@@ -267,34 +354,107 @@ public class LunaticConfigImpl implements de.janschuri.lunaticlib.LunaticConfig 
         }
 
         for (String key : index) {
+            String thisPath = path.isEmpty() ? key : path + "." + key;
 
             if (!map.containsKey(key)) {
-                Logger.errorLog("Missing key in config: " + key);
-                Logger.errorLog("Using default value: " + loadNodeTuple(defaultMap.get(key)));
-                mergedList.add(defaultMap.get(key));
+                mergedList.add(mergeComments(defaultMap.get(key), null, thisPath));
             } else {
                 if (!defaultMap.containsKey(key)) {
-                    mergedList.add(map.get(key));
+                    mergedList.add(mergeComments(map.get(key), null, thisPath));
                 } else {
-                    Node node = map.get(key).getValueNode();
-                    Node defaultNode = defaultMap.get(key).getValueNode();
-                    if (node instanceof MappingNode && defaultNode instanceof MappingNode) {
-                        MappingNode newMappingNode = (MappingNode) node;
-                        MappingNode newDefaultMappingNode = (MappingNode) defaultNode;
+                    NodeTuple nodeTuple = map.get(key);
+                    Node node = nodeTuple.getValueNode();
+                    NodeTuple defaultNodeTuple = defaultMap.get(key);
+                    Node defaultNode = defaultNodeTuple.getValueNode();
+                    if (node instanceof MappingNode newMappingNode && defaultNode instanceof MappingNode newDefaultMappingNode) {
                         List<NodeTuple> newList = newMappingNode.getValue();
                         List<NodeTuple> newDefaultList = newDefaultMappingNode.getValue();
 
-                        newMappingNode.setValue(mergeMappingNodes(newList, newDefaultList));
+                        newMappingNode.setValue(mergeMappingNodes(newList, newDefaultList, thisPath));
 
-                        NodeTuple newNodeTuple = new NodeTuple(defaultMap.get(key).getKeyNode(), newMappingNode);
+                        Node keyNode = nodeTuple.getKeyNode();
+
+                        NodeTuple newNodeTuple = mergeComments(nodeTuple, new NodeTuple(keyNode, newMappingNode), thisPath);
                         mergedList.add(newNodeTuple);
                     } else {
-                        mergedList.add(map.get(key));
+                        NodeTuple newNodeTuple = mergeComments(nodeTuple, defaultNodeTuple, thisPath);
+                        mergedList.add(newNodeTuple);
                     }
                 }
             }
         }
         return mergedList;
+    }
+
+    public NodeTuple mergeComments(NodeTuple nodeTuple, NodeTuple defaultNodeTuple, String path) {
+        Node node = nodeTuple.getValueNode();
+        Node keyNode = nodeTuple.getKeyNode();
+
+        List<CommentLine> defaultInLineComments = defaultNodeTuple != null ? defaultNodeTuple.getValueNode().getInLineComments() : new ArrayList<>();
+        List<CommentLine> defaultBlockComments = defaultNodeTuple != null ? defaultNodeTuple.getValueNode().getBlockComments() : new ArrayList<>();
+        List<CommentLine> defaultKeyInLineComments = defaultNodeTuple != null ? defaultNodeTuple.getKeyNode().getInLineComments() : new ArrayList<>();
+        List<CommentLine> defaultKeyBlockComments = defaultNodeTuple != null ? defaultNodeTuple.getKeyNode().getBlockComments() : new ArrayList<>();
+
+        node.setInLineComments(mergeCommentLists(node.getInLineComments(), defaultInLineComments, path, true, true));
+        node.setBlockComments(mergeCommentLists(node.getBlockComments(), defaultBlockComments, path, false, true));
+        keyNode.setInLineComments(mergeCommentLists(keyNode.getInLineComments(), defaultKeyInLineComments, path, true, false));
+        keyNode.setBlockComments(mergeCommentLists(keyNode.getBlockComments(), defaultKeyBlockComments, path, false, false));
+
+        return new NodeTuple(keyNode, node);
+    }
+
+    private List<CommentLine> mergeCommentLists(List<CommentLine> primary, List<CommentLine> secondary, String path, boolean isInline, boolean isValueNode) {
+        if (primary != null && !primary.isEmpty()) {
+            return primary;
+        }
+
+        primary = secondary;
+
+        if (primary == null) {
+            primary = new ArrayList<>();
+        }
+
+        if (commentsMap.containsKey(path) && primary.isEmpty()) {
+            CommentTuple commentTuple = commentsMap.get(path);
+
+            List<CommentLine> additionalComments;
+
+            if (isValueNode) {
+                additionalComments = isInline ? commentTuple.getValueInlineComments() : commentTuple.getValueBlockComments();
+            } else {
+                additionalComments = isInline ? commentTuple.getKeyInlineComments() : commentTuple.getKeyBlockComments();
+            }
+
+            primary.addAll(additionalComments);
+        }
+
+        return primary;
+    }
+
+    protected void addCommentsFromKey(ConfigKey<?> key) {
+        for (String comment : key.getKeyInlineComments()) {
+            addKeyComment(CommentType.IN_LINE, key.asString(), comment);
+        }
+
+        for (String comment : key.getKeyBlockComments()) {
+            addKeyComment(CommentType.BLOCK, key.asString(), comment);
+        }
+
+        for (String comment : key.getValueInlineComments()) {
+            addComment(CommentType.IN_LINE, key.asString(), comment);
+        }
+
+        for (String comment : key.getValueBlockComments()) {
+            addComment(CommentType.BLOCK, key.asString(), comment);
+        }
+    }
+
+    protected void addComment(CommentType type, String path, String comment) {
+        commentsMap.computeIfAbsent(path, k -> new CommentTuple()).addComment(type, comment);
+    }
+
+    protected void addKeyComment(CommentType type, String path, String comment) {
+        commentsMap.computeIfAbsent(path, k -> new CommentTuple()).addKeyComment(type, comment);
     }
 
     protected Map<String, Object> getYamlMap() {
@@ -308,7 +468,6 @@ public class LunaticConfigImpl implements de.janschuri.lunaticlib.LunaticConfig 
             if (current instanceof Map) {
                 current = ((Map<?, ?>) current).get(part);
             } else {
-                Logger.errorLog("Error while getting config value: " + path);
                 return null;
             }
         }
@@ -316,17 +475,18 @@ public class LunaticConfigImpl implements de.janschuri.lunaticlib.LunaticConfig 
         return current;
     }
 
-    @Override
     public String getString(String path, String defaultValue) {
         try {
             return get(path) == null ? defaultValue : Objects.requireNonNull(get(path)).toString();
         } catch (Exception e) {
-            Logger.errorLog("Error while getting config value: " + path + "\n Returning default value: " + defaultValue);
-            return defaultValue;
+            if (defaultValue != null) {
+                return defaultValue;
+            }
+            Logger.errorLog("Error while getting config value: " + path);
+            return null;
         }
     }
 
-    @Override
     public String getString(String path) {
         try {
             return Objects.requireNonNull(get(path)).toString();
@@ -336,11 +496,10 @@ public class LunaticConfigImpl implements de.janschuri.lunaticlib.LunaticConfig 
         }
     }
 
-    public void setString(String path, String value) {
-        Logger.debugLog("Setting value: " + path + " = " + value);
+    private void set(String path, Object value) {
         String[] parts = path.split("\\.");
-        Map<String, Object> current = yamlMap;
-        Logger.debugLog("Current map: " + current.toString());
+        Map<String, Object> current = this.yamlMap;
+
         for (int i = 0; i < parts.length; i++) {
             if (i == parts.length - 1) {
                 current.put(parts[i], value);
@@ -360,21 +519,20 @@ public class LunaticConfigImpl implements de.janschuri.lunaticlib.LunaticConfig 
                 }
             }
         }
-
-        save();
     }
 
-    @Override
+    public void setString(String path, String value) {
+        set(path, value);
+    }
+
     public Integer getInt(String path, int defaultValue) {
         try {
             return get(path) == null ? defaultValue : Integer.parseInt(Objects.requireNonNull(get(path)).toString());
         } catch (Exception e) {
-            Logger.errorLog("Error while getting config value: " + path + "\n Returning default value: " + defaultValue);
             return defaultValue;
         }
     }
 
-    @Override
     public Integer getInt(String path) {
         try {
             return Integer.parseInt(Objects.requireNonNull(get(path)).toString());
@@ -388,17 +546,14 @@ public class LunaticConfigImpl implements de.janschuri.lunaticlib.LunaticConfig 
         setString(path, String.valueOf(value));
     }
 
-    @Override
     public Double getDouble(String path, double defaultValue) {
         try {
             return get(path) == null ? defaultValue : Double.parseDouble(Objects.requireNonNull(get(path)).toString());
         } catch (Exception e) {
-            Logger.errorLog("Error while getting config value: " + path + "\n Returning default value: " + defaultValue);
             return defaultValue;
         }
     }
 
-    @Override
     public Double getDouble(String path) {
         try {
             return Double.parseDouble(Objects.requireNonNull(get(path)).toString());
@@ -412,17 +567,14 @@ public class LunaticConfigImpl implements de.janschuri.lunaticlib.LunaticConfig 
         setString(path, String.valueOf(value));
     }
 
-    @Override
     public Boolean getBoolean(String path, boolean defaultValue) {
         try {
             return get(path) == null ? defaultValue : Boolean.parseBoolean(Objects.requireNonNull(get(path)).toString());
         } catch (Exception e) {
-            Logger.errorLog("Error while getting config value: " + path + "\n Returning default value: " + defaultValue);
             return defaultValue;
         }
     }
 
-    @Override
     public Boolean getBoolean(String path) {
         try {
             return Boolean.parseBoolean(Objects.requireNonNull(get(path)).toString());
@@ -440,7 +592,6 @@ public class LunaticConfigImpl implements de.janschuri.lunaticlib.LunaticConfig 
         try {
             return get(path) == null ? defaultValue : Float.parseFloat(Objects.requireNonNull(get(path)).toString());
         } catch (Exception e) {
-            Logger.errorLog("Error while getting config value: " + path + "\n Returning default value: " + defaultValue);
             return defaultValue;
         }
     }
@@ -458,7 +609,6 @@ public class LunaticConfigImpl implements de.janschuri.lunaticlib.LunaticConfig 
         setString(path, String.valueOf(value));
     }
 
-    @Override
     public List<String> getStringList(String path) {
         try {
             return (List<String>) get(path);
@@ -468,7 +618,6 @@ public class LunaticConfigImpl implements de.janschuri.lunaticlib.LunaticConfig 
         }
     }
 
-    @Override
     public List<Map<String, Object>> getMapList(String path) {
         try {
             return (List<Map<String, Object>>) get(path);
@@ -500,11 +649,8 @@ public class LunaticConfigImpl implements de.janschuri.lunaticlib.LunaticConfig 
                 }
             }
         }
-
-        save();
     }
 
-    @Override
     public Map<String, Object> getMap(String path) {
         try {
             return (Map<String, Object>) get(path);
@@ -525,11 +671,8 @@ public class LunaticConfigImpl implements de.janschuri.lunaticlib.LunaticConfig 
                 setString(path + "." + key, obj.toString());
             }
         }
-
-        save();
     }
 
-    @Override
     public Map<String, String> getStringMap(String path) {
         try {
             Map<String, Object> map = getMap(path);
@@ -549,11 +692,8 @@ public class LunaticConfigImpl implements de.janschuri.lunaticlib.LunaticConfig 
             Object obj = value.get(key);
             setString(path + "." + key, obj.toString());
         }
-
-        save();
     }
 
-    @Override
     public Map<String, Double> getDoubleMap(String path) {
         try {
             Map<String, Object> map = getMap(path);
@@ -573,11 +713,8 @@ public class LunaticConfigImpl implements de.janschuri.lunaticlib.LunaticConfig 
             Object obj = value.get(key);
             setString(path + "." + key, obj.toString());
         }
-
-        save();
     }
 
-    @Override
     public Map<String, List<String>> getStringListMap(String path) {
         try {
             Map<String, Object> map = getMap(path);
@@ -597,14 +734,11 @@ public class LunaticConfigImpl implements de.janschuri.lunaticlib.LunaticConfig 
             Object obj = value.get(key);
             setStringList(path + "." + key, (List<String>) obj);
         }
-
-        save();
     }
 
-    @Override
     public Map<String, Integer> getIntMap(String path) {
         try {
-            Map<String,Object> map = getMap(path);
+            Map<String, Object> map = getMap(path);
             Map<String, Integer> intMap = new HashMap<>();
             for (Object key : map.keySet()) {
                 intMap.put(key.toString(), Integer.parseInt(map.get(key).toString()));
@@ -621,14 +755,11 @@ public class LunaticConfigImpl implements de.janschuri.lunaticlib.LunaticConfig 
             Object obj = value.get(key);
             setString(path + "." + key, obj.toString());
         }
-
-        save();
     }
 
-    @Override
     public Map<String, Boolean> getBooleanMap(String path) {
         try {
-            Map<String,Object> map = getMap(path);
+            Map<String, Object> map = getMap(path);
             Map<String, Boolean> booleanMap = new HashMap<>();
             for (Object key : map.keySet()) {
                 booleanMap.put(key.toString(), Boolean.parseBoolean(map.get(key).toString()));
@@ -645,11 +776,8 @@ public class LunaticConfigImpl implements de.janschuri.lunaticlib.LunaticConfig 
             Object obj = value.get(key);
             setString(path + "." + key, obj.toString());
         }
-
-        save();
     }
 
-    @Override
     public List<String> getKeys(String path) {
         try {
             return new ArrayList<>(((Map<String, Object>) get(path)).keySet());
@@ -659,17 +787,64 @@ public class LunaticConfigImpl implements de.janschuri.lunaticlib.LunaticConfig 
         }
     }
 
-    protected static String translateAlternateColorCodes(char altColorChar, String textToTranslate) {
-        Preconditions.checkArgument(textToTranslate != null, "Cannot translate null text");
-        char[] b = textToTranslate.toCharArray();
+    private static class CommentTuple {
 
-        for(int i = 0; i < b.length - 1; ++i) {
-            if (b[i] == altColorChar && "0123456789AaBbCcDdEeFfKkLlMmNnOoRrXx#".indexOf(b[i + 1]) > -1) {
-                b[i] = 167;
-                b[i + 1] = Character.toLowerCase(b[i + 1]);
+        List<CommentLine> keyInlineComments = new ArrayList<>();
+        List<CommentLine> keyBlockComments = new ArrayList<>();
+
+        List<CommentLine> valueInlineComments = new ArrayList<>();
+        List<CommentLine> valueBlockComments = new ArrayList<>();
+
+        public CommentTuple addComment(@NotNull CommentType type, @NotNull String comment) {
+            if (type == CommentType.IN_LINE) {
+                valueInlineComments.add(new CommentLine(null, null, comment, type));
+            } else if (type == CommentType.BLOCK) {
+                valueBlockComments.add(new CommentLine(null, null, comment, type));
             }
+            return this;
         }
 
-        return new String(b);
+        public CommentTuple addKeyComment(@NotNull CommentType type, @NotNull String comment) {
+            if (type == CommentType.IN_LINE) {
+                keyInlineComments.add(new CommentLine(null, null, comment, type));
+            } else if (type == CommentType.BLOCK) {
+                keyBlockComments.add(new CommentLine(null, null, comment, type));
+            }
+            return this;
+        }
+
+        public List<CommentLine> getKeyInlineComments() {
+            return keyInlineComments;
+        }
+
+        public List<CommentLine> getKeyBlockComments() {
+            return keyBlockComments;
+        }
+
+        public List<CommentLine> getValueInlineComments() {
+            return valueInlineComments;
+        }
+
+        public List<CommentLine> getValueBlockComments() {
+            return valueBlockComments;
+        }
+
+        @Override
+        public String toString() {
+            return "CommentTuple{" + "\n" +
+                    Arrays.toString(keyInlineComments.toArray()) + "\n" +
+                    Arrays.toString(keyBlockComments.toArray()) + "\n" +
+                    Arrays.toString(valueInlineComments.toArray()) + "\n" +
+                    Arrays.toString(valueBlockComments.toArray()) + "\n" +
+                    '}';
+        }
+    }
+
+    protected boolean isDefaultFilePathInResources(String defaultFilePath) {
+        try (InputStream inputStream = getClass().getClassLoader().getResourceAsStream(defaultFilePath)) {
+            return inputStream != null;
+        } catch (IOException e) {
+            return false;
+        }
     }
 }
