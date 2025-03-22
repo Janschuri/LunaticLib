@@ -13,6 +13,7 @@
 
     <modules>
         <module>lunaticlib</module>
+        <module>lunaticlib-interface</module>
         <module>lunaticlib-common</module>
         <module>lunaticlib-platform</module>
     </modules>
