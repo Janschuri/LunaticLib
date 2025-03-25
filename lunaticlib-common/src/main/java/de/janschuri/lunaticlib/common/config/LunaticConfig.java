@@ -171,6 +171,7 @@ public class LunaticConfig {
 
             if (configValue == null && value != null) {
                 set(key.asString(), value);
+                addCommentsFromKey(key);
             }
         }
 
