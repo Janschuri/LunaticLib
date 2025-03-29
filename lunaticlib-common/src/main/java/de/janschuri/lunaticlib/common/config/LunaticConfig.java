@@ -145,7 +145,6 @@ public class LunaticConfig {
             if (root == null) {
                 newNode = defaultRoot;
             } else {
-                Logger.infoLog("Loaded config file: " + path.getParent() + "/" + file.getName());
                 newNode = mergeNodes(root, defaultRoot, "");
             }
 
@@ -172,6 +171,7 @@ public class LunaticConfig {
 
             if (configValue == null && value != null) {
                 set(key.asString(), value);
+                addCommentsFromKey(key);
             }
         }
 

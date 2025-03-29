@@ -29,7 +29,12 @@ public class PlayerSenderImpl extends SenderImpl implements PlayerSender {
 
     @Override
     public String getName() {
-        return BungeeLunaticLib.getInstance().getProxy().getPlayer(uuid).getName();
+        ProxiedPlayer player = BungeeLunaticLib.getInstance().getProxy().getPlayer(uuid);
+        if (player != null) {
+            return player.getName();
+        }
+
+        return null;
     }
 
     @Override
