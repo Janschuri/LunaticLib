@@ -30,7 +30,7 @@ public interface HasSubcommands extends Command {
 
     default boolean handleNoMatchingSubcommand(Sender sender, String[] args) {
         if (this instanceof HasHelpCommand hasHelpCommand) {
-            hasHelpCommand.getHelpCommand().execute(sender, args);
+            hasHelpCommand.getHelpCommand().execute(sender, new String[0]);
         } else {
             sender.sendMessage(wrongUsageMessage(sender, args));
         }
