@@ -23,7 +23,6 @@ public class LunaticHelpCommand extends LunaticCommand implements HasParentComma
     private String permission;
     private int pageSize;
 
-    private final LunaticMessageKey noPermission = new LunaticMessageKey("no_permission");
     private final LunaticMessageKey no_number = new LunaticMessageKey("no_number");
 
     public LunaticHelpCommand(HasHelpCommand command) {
@@ -120,7 +119,7 @@ public class LunaticHelpCommand extends LunaticCommand implements HasParentComma
                 int page = Integer.parseInt(args[0]);
                 sender.sendMessage(getHelpMessage(sender, page));
             } catch (NumberFormatException e) {
-                sender.sendMessage(languageConfig.getPrefix().append(languageConfig.getMessage(no_number)));
+                sender.sendMessage(getMessage(no_number, placeholder("%input%", args[0])));
             }
         }
 
