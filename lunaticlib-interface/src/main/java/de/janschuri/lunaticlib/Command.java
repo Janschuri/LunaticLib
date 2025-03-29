@@ -12,6 +12,9 @@ public interface Command {
 
     String getPermission();
 
+
+    boolean checkPermission(Sender commandSender, String[] args, boolean silent);
+
     boolean checkPermission(Sender commandSender, String[] args);
 
     Component noPermissionMessage(Sender sender, String[] args);

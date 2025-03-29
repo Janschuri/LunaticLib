@@ -22,7 +22,7 @@ public abstract class LunaticCommand implements Command, HasMessageKeys {
     @Override
     public List<String> tabComplete(Sender sender, String[] args) {
         List<String> list = new ArrayList<>();
-        if (sender.hasPermission(getPermission())) {
+        if (this.checkPermission(sender, args, true)) {
             if (args.length == 0) {
                 list.addAll(getAliases());
             } else if (args.length == 1) {
@@ -135,11 +135,18 @@ public abstract class LunaticCommand implements Command, HasMessageKeys {
     }
 
     @Override
-    public boolean checkPermission(Sender commandSender, String[] args) {
+    public final boolean checkPermission(Sender commandSender, String[] args) {
+        return checkPermission(commandSender, args, false);
+    }
+
+    @Override
+    public boolean checkPermission(Sender commandSender, String[] args, boolean silent) {
         if (commandSender.hasPermission(getPermission())) {
             return true;
         } else {
-            commandSender.sendMessage(noPermissionMessage(commandSender, args));
+            if (!silent) {
+                commandSender.sendMessage(noPermissionMessage(commandSender, args));
+            }
             return false;
         }
     }
