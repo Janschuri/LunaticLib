@@ -17,6 +17,10 @@ public class FutureRequestsHandler {
         if (requests.containsKey(requestKey)) {
             CompletableFuture.runAsync(() -> {
                 FutureRequest request = requests.get(requestKey);
+                if (request == null) {
+                    Logger.errorLog("Request not found: " + requestKey);
+                    return;
+                }
                 request.execute(in);
             });
         }

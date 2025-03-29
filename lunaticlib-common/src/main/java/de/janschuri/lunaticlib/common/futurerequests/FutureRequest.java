@@ -5,7 +5,10 @@ import com.google.common.io.ByteArrayDataOutput;
 import com.google.common.io.ByteStreams;
 import de.janschuri.lunaticlib.common.LunaticLib;
 import de.janschuri.lunaticlib.common.logger.Logger;
+import de.janschuri.lunaticlib.common.utils.Utils;
+import jdk.jshell.execution.Util;
 
+import java.util.*;
 import java.util.concurrent.*;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -20,6 +23,8 @@ public abstract class FutureRequest<R> {
     protected static final TimeUnit UNIT = TimeUnit.SECONDS;
     protected static final String RESPONSE = "Response";
     protected static final String REQUEST = "Request";
+
+    private static Set<Integer> currentRequests = new ConcurrentSkipListSet<>();
 
     public FutureRequest(String REQUEST_NAME, ConcurrentHashMap<Integer, CompletableFuture<R>> REQUEST_MAP) {
         this.requestName = REQUEST_NAME;
@@ -45,6 +50,15 @@ public abstract class FutureRequest<R> {
         int requestId = in.readInt();
 
         if (type.equals(REQUEST)) {
+
+            if (!currentRequests.add(requestId)) {
+                return;
+            }
+
+            Utils.scheduleTask(() -> {
+                currentRequests.remove(Integer.valueOf(requestId));
+            }, 1, TimeUnit.SECONDS);
+
             handleRequest(requestId, in);
         } else if (type.equals(RESPONSE)) {
             handleResponse(requestId, in);

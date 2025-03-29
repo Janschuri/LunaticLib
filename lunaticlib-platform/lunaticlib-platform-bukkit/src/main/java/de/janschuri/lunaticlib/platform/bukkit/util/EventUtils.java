@@ -83,7 +83,7 @@ public final class EventUtils {
         if (player == null) {
             return true;
         }
-        BlockPlaceEvent event = new BlockPlaceEvent(block, block.getState(), block, new ItemStack(block.getType()), player, false, EquipmentSlot.HAND);
+        BlockPlaceEvent event = new BlockPlaceEvent(block, block.getState(), block, new ItemStack(Material.AIR), player, false, EquipmentSlot.HAND);
         fakeEvents.add(event);
         Bukkit.getPluginManager().callEvent(event);
         boolean allowed = !event.isCancelled();
