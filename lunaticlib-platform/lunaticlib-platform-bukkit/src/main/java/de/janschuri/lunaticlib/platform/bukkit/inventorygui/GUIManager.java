@@ -10,27 +10,54 @@ import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.event.inventory.InventoryDragEvent;
 import org.bukkit.event.inventory.InventoryOpenEvent;
 import org.bukkit.inventory.Inventory;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
 
 public class GUIManager {
 
     private static final Map<Inventory, InventoryHandler> activeInventories = new HashMap<>();
+    private static final Map<String, Reopenable> reopenables = new HashMap<>();
 
+    public static void reopenGUI(@NotNull Reopenable reopenable, Player player) {
+        String uniqueKey = reopenable.uniqueKey().toString();
 
-    public static void openGUI(InventoryHandler gui, Player player) {
+        if (reopenable.isPlayerUnique()) {
+            uniqueKey += ":" + player.getUniqueId();
+        }
+
+        reopenable = reopenables.getOrDefault(uniqueKey, reopenable);
+
+        if (reopenable == null) {
+            Logger.errorLog("Reopenable GUI not found for key: " + uniqueKey);
+            return;
+        }
+
+        openGUI(reopenable, player);
+    }
+
+    public static void openGUI(@NotNull InventoryHandler gui, Player player) {
         Inventory inventory = gui.getInventory();
         registerHandledInventory(inventory, gui);
+
+        if (gui instanceof Reopenable reopenable) {
+            String uniqueKey = reopenable.uniqueKey().toString();
+
+            if (reopenable.isPlayerUnique()) {
+                uniqueKey += ":" + player.getUniqueId();
+            }
+
+            reopenables.put(uniqueKey, reopenable);
+        }
 
         if (player.getOpenInventory().getTopInventory().equals(inventory)) {
             gui.init(player);
             return;
         }
 
-                Bukkit.getScheduler().runTask(BukkitLunaticLib.getInstance(), () -> {
-                    player.openInventory(inventory);
-                });
-
+        Bukkit.getScheduler().runTask(BukkitLunaticLib.getInstance(), () -> {
+            player.openInventory(inventory);
+        });
     }
 
     public static void registerHandledInventory(Inventory inventory, InventoryHandler handler) {
