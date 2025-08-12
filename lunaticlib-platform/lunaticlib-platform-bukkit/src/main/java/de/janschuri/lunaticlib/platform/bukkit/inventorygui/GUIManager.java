@@ -76,13 +76,7 @@ public class GUIManager {
     public static void handleClick(InventoryClickEvent event) {
         InventoryHandler handler = activeInventories.get(event.getInventory());
         if (handler != null) {
-            Inventory playerInv = event.getWhoClicked().getInventory();
-
-            if (event.getClickedInventory() != playerInv) {
-                handler.onClick(event);
-            } else {
-                handler.onPlayerInvClick(event);
-            }
+            handler.onClick(event);
         }
     }
 
@@ -96,23 +90,8 @@ public class GUIManager {
     public static void handleDrag(InventoryDragEvent event) {
         InventoryHandler handler = activeInventories.get(event.getInventory());
 
-
         if (handler != null) {
-
-            int guiSize = event.getView().getTopInventory().getSize();
-
-            Logger.infoLog("GUI size: " + guiSize);
-
-            Set<Integer> slots = event.getInventorySlots();
-
-            for (int slot : slots) {
-                if (slot < guiSize) {
-                    handler.onDrag(event);
-//                    return;
-                }
-            }
-
-//            handler.onPlayerInvDrag(event);
+            handler.onDrag(event);
         }
     }
 
