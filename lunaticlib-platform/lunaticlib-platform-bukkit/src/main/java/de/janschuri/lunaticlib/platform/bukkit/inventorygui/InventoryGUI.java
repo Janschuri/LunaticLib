@@ -1,6 +1,7 @@
 package de.janschuri.lunaticlib.platform.bukkit.inventorygui;
 
 import de.janschuri.lunaticlib.common.command.LunaticPlaceholder;
+import de.janschuri.lunaticlib.common.logger.Logger;
 import de.janschuri.lunaticlib.common.utils.Utils;
 import de.janschuri.lunaticlib.platform.bukkit.BukkitLunaticLib;
 import net.kyori.adventure.text.Component;
@@ -12,15 +13,14 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.inventory.*;
 import org.bukkit.inventory.Inventory;
+import org.bukkit.inventory.InventoryView;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.persistence.PersistentDataContainer;
 import org.bukkit.persistence.PersistentDataType;
+import org.jooq.Log;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -97,19 +97,35 @@ public abstract class InventoryGUI implements InventoryHandler {
                 continue;
             }
 
+            if (icon == null) {
+                icon = new ItemStack(Material.AIR);
+            }
+
+            ItemMeta meta = icon.getItemMeta();
+
+            if (meta != null) {
+                NamespacedKey key = getGuiIdKey();
+                PersistentDataContainer container = meta.getPersistentDataContainer();
+
+                if (!container.has(key, PersistentDataType.STRING)) {
+                    container.set(key, PersistentDataType.STRING, UUID.randomUUID().toString());
+                }
+
+                icon.setItemMeta(meta);
+            }
+
             getInventory().setItem(i, icon);
         }
     }
 
     @Override
     public void onClick(InventoryClickEvent event) {
-        event.setCancelled(true);
-        int slot = event.getSlot();
-        InventoryButton button = this.buttonMap.get(slot);
-        if (button != null) {
-            if (button.getEventConsumer() != null) {
-                button.getEventConsumer().accept(event);
-            }
+        Inventory playerInv = event.getWhoClicked().getInventory();
+
+        if (event.getClickedInventory() != playerInv) {
+            onContainerInvClick(event);
+        } else {
+            onPlayerInvClick(event);
         }
     }
 
@@ -122,18 +138,37 @@ public abstract class InventoryGUI implements InventoryHandler {
     public void onClose(InventoryCloseEvent event) {
     }
 
-    @EventHandler
     public void onDrag(InventoryDragEvent event) {
+        boolean draggingIntoGUI = false;
+
+        for (int slot : event.getInventorySlots()) {
+            if (slot > 36) {
+                draggingIntoGUI = true;
+                break;
+            }
+        }
+
+        if (draggingIntoGUI) {
+            event.setCancelled(true);
+        }
+    }
+    public void onContainerInvClick(InventoryClickEvent event) {
         event.setCancelled(true);
+        int slot = event.getSlot();
+        InventoryButton button = this.buttonMap.get(slot);
+        if (button != null) {
+            if (button.getEventConsumer() != null) {
+                button.getEventConsumer().accept(event);
+            }
+        }
     }
 
-    @EventHandler
     public void onPlayerInvClick(InventoryClickEvent event) {
         if (event.isShiftClick()) {
             event.setCancelled(true);
         }
 
-        if (event.getAction() == InventoryAction.COLLECT_TO_CURSOR) {
+        if (event.getAction() == InventoryAction.COLLECT_TO_CURSOR && event.getView().getTopInventory().containsAtLeast(event.getCursor(), 1)) {
             event.setCancelled(true);
         }
 
@@ -143,10 +178,6 @@ public abstract class InventoryGUI implements InventoryHandler {
                 break;
             }
         }
-    }
-
-    @EventHandler
-    public void onPlayerInvDrag(InventoryDragEvent event) {
     }
 
     public int getSize() {
@@ -195,8 +226,16 @@ public abstract class InventoryGUI implements InventoryHandler {
     }
 
     protected InventoryButton emptyButton(int slot) {
+        ItemStack itemStack = new ItemStack(Material.GRAY_STAINED_GLASS_PANE);
+
+        ItemMeta itemMeta = itemStack.getItemMeta();
+        if (itemMeta != null) {
+            itemMeta.setDisplayName(" ");
+            itemStack.setItemMeta(itemMeta);
+        }
+
         return new InventoryButton()
-                .creator((player) -> new ItemStack(Material.GRAY_STAINED_GLASS_PANE))
+                .creator((player) -> itemStack)
                 .consumer(event -> {});
     }
 

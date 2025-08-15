@@ -26,11 +26,7 @@ public interface InventoryHandler {
     void onOpen(InventoryOpenEvent event);
 
     void onClose(InventoryCloseEvent event);
-
     void onDrag(InventoryDragEvent event);
-
-    void onPlayerInvClick(InventoryClickEvent event);
-    void onPlayerInvDrag(InventoryDragEvent event);
 
     void reloadGui();
 
