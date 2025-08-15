@@ -22,7 +22,7 @@ public abstract class LunaticCommand implements Command, HasMessageKeys {
     @Override
     public List<String> tabComplete(Sender sender, String[] args) {
         List<String> list = new ArrayList<>();
-        if (sender.hasPermission(getPermission())) {
+        if (this.checkPermission(sender, args, true)) {
             if (args.length == 0) {
                 list.addAll(getAliases());
             } else if (args.length == 1) {
@@ -108,7 +108,7 @@ public abstract class LunaticCommand implements Command, HasMessageKeys {
         List<Component> list = new ArrayList<>();
 
         for (String alias : getAliases()) {
-                list.add(Component.text(alias));
+            list.add(Component.text(alias));
         }
         return list;
     }
@@ -135,11 +135,18 @@ public abstract class LunaticCommand implements Command, HasMessageKeys {
     }
 
     @Override
-    public boolean checkPermission(Sender commandSender, String[] args) {
+    public final boolean checkPermission(Sender commandSender, String[] args) {
+        return checkPermission(commandSender, args, false);
+    }
+
+    @Override
+    public boolean checkPermission(Sender commandSender, String[] args, boolean silent) {
         if (commandSender.hasPermission(getPermission())) {
             return true;
         } else {
-            commandSender.sendMessage(noPermissionMessage(commandSender, args));
+            if (!silent) {
+                commandSender.sendMessage(noPermissionMessage(commandSender, args));
+            }
             return false;
         }
     }
@@ -173,35 +180,48 @@ public abstract class LunaticCommand implements Command, HasMessageKeys {
         }
 
 
-            replacements.add(TextReplacementConfig.builder()
-                    .match("%subcommand%")
-                    .replacement("%subcommand1%")
-                    .build());
+        replacements.add(TextReplacementConfig.builder()
+                .match("%subcommand%")
+                .replacement("%subcommand1%")
+                .build());
 
-            Command parentCommand = command;
+        Command parentCommand = command;
 
-            int depth = getCommandDepth();
+        int depth = getCommandDepth();
 
-            while (parentCommand instanceof HasParentCommand hasParentCommand1) {
-                parentCommand = hasParentCommand1.getParentCommand();
+        boolean replacedCommand = false;
 
-                String pattern = "%subcommand" + depth + "%";
-
-                replacements.add(TextReplacementConfig.builder()
-                        .match(pattern)
-                        .replacement(getAliasesHover(sender, hasParentCommand1))
-                        .build());
-
-                depth--;
+        while (parentCommand instanceof HasParentCommand hasParentCommand) {
+            if (hasParentCommand.isPrimaryCommand()) {
+                TextReplacementConfig commandReplacement = TextReplacementConfig.builder()
+                        .match("%command%")
+                        .replacement(getAliasesHover(sender, hasParentCommand))
+                        .build();
+                replacements.add(commandReplacement);
+                replacedCommand = true;
             }
 
+
+            parentCommand = hasParentCommand.getParentCommand();
+
+            String pattern = "%subcommand" + depth + "%";
+            Logger.debugLog("Pattern: " + pattern + " Command: " + parentCommand.getName() + " Depth: " + depth);
+
+            replacements.add(TextReplacementConfig.builder()
+                    .match(pattern)
+                    .replacement(getAliasesHover(sender, hasParentCommand))
+                    .build());
+
+            depth--;
+        }
+
+        if (!replacedCommand) {
             TextReplacementConfig commandReplacement = TextReplacementConfig.builder()
                     .match("%command%")
                     .replacement(getAliasesHover(sender, parentCommand))
                     .build();
-
-
             replacements.add(commandReplacement);
+        }
 
         for (TextReplacementConfig replacement : replacements) {
             message = message.replaceText(replacement);
@@ -250,12 +270,12 @@ public abstract class LunaticCommand implements Command, HasMessageKeys {
     private int getCommandDepth() {
         int depth = 0;
 
-        if (!this.isPrimaryCommand() && this instanceof HasParentCommand hasParentCommand) {
-            Command command = hasParentCommand.getParentCommand();
+        if (!this.isPrimaryCommand() && this instanceof HasParentCommand hasParentCommand1) {
+            Command command = hasParentCommand1.getParentCommand();
             depth++;
 
-            while (command instanceof HasParentCommand hasParentCommand1) {
-                command = hasParentCommand1.getParentCommand();
+            while (command instanceof HasParentCommand hasParentCommand2 && !command.isPrimaryCommand()) {
+                command = hasParentCommand2.getParentCommand();
                 depth++;
             }
         }
