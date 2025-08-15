@@ -226,8 +226,16 @@ public abstract class InventoryGUI implements InventoryHandler {
     }
 
     protected InventoryButton emptyButton(int slot) {
+        ItemStack itemStack = new ItemStack(Material.GRAY_STAINED_GLASS_PANE);
+
+        ItemMeta itemMeta = itemStack.getItemMeta();
+        if (itemMeta != null) {
+            itemMeta.setDisplayName(" ");
+            itemStack.setItemMeta(itemMeta);
+        }
+
         return new InventoryButton()
-                .creator((player) -> new ItemStack(Material.GRAY_STAINED_GLASS_PANE))
+                .creator((player) -> itemStack)
                 .consumer(event -> {});
     }
 
