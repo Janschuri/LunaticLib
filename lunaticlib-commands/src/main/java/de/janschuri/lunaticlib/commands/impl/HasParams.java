@@ -1,7 +1,7 @@
 package de.janschuri.lunaticlib.commands.impl;
 
 import de.janschuri.lunaticlib.commands.Command;
-import de.janschuri.lunaticlib.commands.LunaticCommands;
+import de.janschuri.lunaticlib.commands.LunaticLibCommands;
 import de.janschuri.lunaticlib.sender.PlayerSender;
 import de.janschuri.lunaticlib.sender.Sender;
 import net.kyori.adventure.text.Component;
@@ -49,7 +49,7 @@ public interface HasParams extends Command {
     }
 
     default Map<String, String> getOnlinePlayersParam(String permission) {
-        Collection<PlayerSender> players = LunaticCommands.getPlatform().getOnlinePlayers();
+        Collection<PlayerSender> players = LunaticLibCommands.getPlatform().getOnlinePlayers();
         Map<String, String> playerParams = new HashMap<>();
 
         for (PlayerSender player : players) {

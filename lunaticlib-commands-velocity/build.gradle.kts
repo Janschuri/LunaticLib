@@ -17,6 +17,7 @@ repositories {
 
 dependencies {
     api(project(":lunaticlib-interfaces"))
+    api(project(":lunaticlib-sender-velocity"))
     api(project(":lunaticlib-commands"))
 
     compileOnly(libs.com.velocitypowered.velocity.api)

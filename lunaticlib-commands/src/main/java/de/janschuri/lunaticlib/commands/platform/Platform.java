@@ -8,6 +8,5 @@ import java.util.Collection;
 
 public interface Platform<P, T> {
     void registerCommand(P plugin, Command command);
-    Sender getSender(T sender);
     Collection<PlayerSender> getOnlinePlayers();
 }

@@ -13,7 +13,7 @@ val lunaticlibVersion: String by lazy {
 extra["lunaticlibVersion"] = lunaticlibVersion
 
 group = "de.janschuri"
-version = "2.0.0"
+version = lunaticlibVersion
 
 repositories {
     mavenLocal()
@@ -30,6 +30,14 @@ val submodulesToPublish = listOf(
     "lunaticlib-commands-paper",
     "lunaticlib-commands-velocity",
     "lunaticlib-commands-waterfall",
+    "lunaticlib-sender",
+    "lunaticlib-sender-paper",
+    "lunaticlib-sender-velocity",
+    "lunaticlib-sender-waterfall",
+    "lunaticlib-proxyrequests",
+    "lunaticlib-proxyrequests-paper",
+    "lunaticlib-proxyrequests-velocity",
+    "lunaticlib-proxyrequests-waterfall"
 )
 
 tasks.register("publishModulesToMavenLocal") {

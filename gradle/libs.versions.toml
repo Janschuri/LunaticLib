@@ -14,6 +14,7 @@ io-github-waterfallmc-waterfall-api = "1.19-R0.1-SNAPSHOT"
 net-kyori-adventure-platform-bungeecord = "4.3.3"
 org-yaml-snakeyaml = "2.2"
 org-reflections-reflections = "0.10.2"
+com-google-guava-guava = "32.1.2-jre"
 
 [libraries]
 de-janschuri-lunaticlib-interfaces = { module = "de.janschuri:lunaticlib-interfaces", version.ref = "de-janschuri-lunaticlib" }
@@ -30,4 +31,5 @@ com-velocitypowered-velocity-api = { module = "com.velocitypowered:velocity-api"
 io-github-waterfallmc-waterfall-api = { module = "io.github.waterfallmc:waterfall-api", version.ref = "io-github-waterfallmc-waterfall-api" }
 net-kyori-adventure-platform-bungeecord = { module = "net.kyori:adventure-platform-bungeecord", version.ref = "net-kyori-adventure-platform-bungeecord" }
 org-yaml-snakeyaml = { module = "org.yaml:snakeyaml", version.ref = "org-yaml-snakeyaml" }
-org-reflections-reflections = { module = "org.reflections:reflections", version.ref = "org-reflections-reflections" }
+org-reflections-reflections = { module = "org.reflections:reflections", version.ref = "org-reflections-reflections"}
+com-google-guava-guava = { module = "com.google.guava:guava", version.ref = "com-google-guava-guava" }

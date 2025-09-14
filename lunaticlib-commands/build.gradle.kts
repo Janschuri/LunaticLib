@@ -17,7 +17,6 @@ dependencies {
     api(project(":lunaticlib-utils"))
 
     compileOnly(libs.net.kyori.adventure.api)
-    compileOnly(libs.net.kyori.adventure.text.serializer.legacy)
 }
 
 val targetJavaVersion = 17

@@ -1,5 +1,6 @@
 package de.janschuri.lunaticlib.inventorygui;
 
+import de.janschuri.lunaticlib.inventorygui.handler.GUIManager;
 import de.janschuri.lunaticlib.inventorygui.listener.GUIListener;
 import de.janschuri.lunaticlib.utils.Logger;
 import de.janschuri.lunaticlib.utils.impl.LunaticLogger;
@@ -15,6 +16,11 @@ public class LunaticLibInventoryGui {
         LunaticLibInventoryGui.plugin = plugin;
 
         Bukkit.getServer().getPluginManager().registerEvents(new GUIListener(), getPluginInstance());
+    }
+
+    public static void disable() {
+        GUIManager.closeAll();
+        logger.info("LunaticLib-InventoryGui disabled.");
     }
 
     public static void logger(Logger logger) {

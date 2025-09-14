@@ -18,6 +18,7 @@ repositories {
 
 dependencies {
     api(project(":lunaticlib-interfaces"))
+    api(project(":lunaticlib-sender-paper"))
     api(project(":lunaticlib-commands"))
 
     compileOnly(libs.io.papermc.paper.paper.api)

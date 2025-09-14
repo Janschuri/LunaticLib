@@ -14,6 +14,7 @@ repositories {
 
 dependencies {
     api(project(":lunaticlib-interfaces"))
+    api(project(":lunaticlib-sender-waterfall"))
     api(project(":lunaticlib-commands"))
 
     compileOnly(libs.io.github.waterfallmc.waterfall.api)
