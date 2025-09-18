@@ -3,9 +3,8 @@ package de.janschuri.lunaticlib.proxyrequests.requests;
 import com.google.common.io.ByteArrayDataInput;
 import com.google.common.io.ByteArrayDataOutput;
 import com.google.common.io.ByteStreams;
-import de.janschuri.lunaticlib.proxyrequests.LunaticLibProxyRequests;
+import de.janschuri.lunaticlib.proxyrequests.LunaticProxyRequestsHandler;
 import de.janschuri.lunaticlib.proxyrequests.ProxyRequestsLogger;
-import de.janschuri.lunaticlib.proxyrequests.handler.ProxyRequestsHandler;
 import de.janschuri.lunaticlib.utils.Utils;
 
 import java.util.Set;
@@ -94,11 +93,11 @@ public abstract class ProxyRequest<R> {
         out.write(data);
 
         if (serverName != null) {
-            if (!LunaticLibProxyRequests.getPlatform().sendPluginMessage(serverName, out.toByteArray())) {
+            if (!LunaticProxyRequestsHandler.adapter().sendPluginMessage(serverName, out.toByteArray())) {
                 responseFuture.completeExceptionally(new RuntimeException("Failed to send plugin message"));
             }
         } else {
-            if (!LunaticLibProxyRequests.getPlatform().sendPluginMessage(out.toByteArray())) {
+            if (!LunaticProxyRequestsHandler.adapter().sendPluginMessage(out.toByteArray())) {
                 responseFuture.completeExceptionally(new RuntimeException("Failed to send plugin message"));
             }
         }
@@ -125,7 +124,7 @@ public abstract class ProxyRequest<R> {
         out.writeInt(requestId);
         out.write(data);
 
-        return LunaticLibProxyRequests.getPlatform().sendPluginMessage(out.toByteArray());
+        return LunaticProxyRequestsHandler.adapter().sendPluginMessage(out.toByteArray());
     }
 
     protected void completeRequest(int requestId, R response) {
@@ -137,7 +136,7 @@ public abstract class ProxyRequest<R> {
     }
 
     public void unregister() {
-        ProxyRequestsHandler.unregisterRequest(requestName);
+        LunaticProxyRequestsHandler.unregisterRequest(requestName);
         for (CompletableFuture<R> future : requestMap.values()) {
             future.complete(null);
         }

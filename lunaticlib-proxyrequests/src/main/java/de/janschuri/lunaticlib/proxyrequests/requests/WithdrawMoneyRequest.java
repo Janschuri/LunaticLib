@@ -3,7 +3,7 @@ package de.janschuri.lunaticlib.proxyrequests.requests;
 import com.google.common.io.ByteArrayDataInput;
 import com.google.common.io.ByteArrayDataOutput;
 import com.google.common.io.ByteStreams;
-import de.janschuri.lunaticlib.proxyrequests.LunaticLibProxyRequests;
+import de.janschuri.lunaticlib.proxyrequests.LunaticProxyRequestsHandler;
 import de.janschuri.lunaticlib.proxyrequests.ProxyRequestsLogger;
 import de.janschuri.lunaticlib.proxyrequests.external.Vault;
 
@@ -26,7 +26,7 @@ public class WithdrawMoneyRequest extends ProxyRequest<Boolean> {
         UUID uuid = UUID.fromString(in.readUTF());
         double amount = in.readDouble();
 
-        Vault vault = LunaticLibProxyRequests.getPlatform().getVault();
+        Vault vault = LunaticProxyRequestsHandler.adapter().getVault();
         ByteArrayDataOutput out = ByteStreams.newDataOutput();
 
         if (vault != null) {

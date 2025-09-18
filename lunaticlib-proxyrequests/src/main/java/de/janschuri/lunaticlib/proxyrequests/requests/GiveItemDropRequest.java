@@ -3,7 +3,7 @@ package de.janschuri.lunaticlib.proxyrequests.requests;
 import com.google.common.io.ByteArrayDataInput;
 import com.google.common.io.ByteArrayDataOutput;
 import com.google.common.io.ByteStreams;
-import de.janschuri.lunaticlib.proxyrequests.LunaticLibProxyRequests;
+import de.janschuri.lunaticlib.proxyrequests.LunaticProxyRequestsHandler;
 import de.janschuri.lunaticlib.proxyrequests.sender.ProxyRequestsPlayerSender;
 
 import java.util.UUID;
@@ -25,7 +25,7 @@ public class GiveItemDropRequest extends ProxyRequest<Boolean> {
         byte[] item = new byte[length];
         in.readFully(item);
 
-        ProxyRequestsPlayerSender player = LunaticLibProxyRequests.getPlatform().getPlayerSender(uuid);
+        ProxyRequestsPlayerSender player = LunaticProxyRequestsHandler.adapter().getPlayerSender(uuid);
 
         boolean dropped = player.giveItemDrop(item);
 

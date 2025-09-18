@@ -1,6 +1,6 @@
 rootProject.name = "lunaticlib"
 
-include(":lunaticlib-interfaces")
+include(":lunaticlib-api")
 include(":lunaticlib-config")
 include(":lunaticlib-utils")
 include(":lunaticlib-utils-paper")
@@ -17,3 +17,7 @@ include(":lunaticlib-proxyrequests")
 include(":lunaticlib-proxyrequests-paper")
 include(":lunaticlib-proxyrequests-waterfall")
 include(":lunaticlib-proxyrequests-velocity")
+include("lunaticlib-sender")
+include("lunaticlib-paper")
+include("lunaticlib-velocity")
+include("lunaticlib-waterfall")

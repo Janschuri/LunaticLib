@@ -3,7 +3,7 @@ package de.janschuri.lunaticlib.proxyrequests.requests;
 import com.google.common.io.ByteArrayDataInput;
 import com.google.common.io.ByteArrayDataOutput;
 import com.google.common.io.ByteStreams;
-import de.janschuri.lunaticlib.proxyrequests.LunaticLibProxyRequests;
+import de.janschuri.lunaticlib.proxyrequests.LunaticProxyRequestsHandler;
 import de.janschuri.lunaticlib.proxyrequests.sender.ProxyRequestsPlayerSender;
 
 import java.util.UUID;
@@ -25,13 +25,13 @@ public class IsInRangeRequest extends ProxyRequest<Boolean> {
         UUID uuid2 = UUID.fromString(in.readUTF());
         double range = in.readDouble();
 
-        ProxyRequestsPlayerSender player = LunaticLibProxyRequests.getPlatform().getPlayerSender(uuid1);
-        ProxyRequestsPlayerSender partner = LunaticLibProxyRequests.getPlatform().getPlayerSender(uuid2);
-        if (!player.isOnline() || !partner.isOnline()) {
+        ProxyRequestsPlayerSender player = LunaticProxyRequestsHandler.adapter().getPlayerSender(uuid1);
+        ProxyRequestsPlayerSender partner = LunaticProxyRequestsHandler.adapter().getPlayerSender(uuid2);
+        if (player == null  || partner == null) {
             return;
         }
 
-        boolean isInRange = player.isInRange(uuid2, range);
+        boolean isInRange = player.isInRange(partner, range);
         ByteArrayDataOutput out = ByteStreams.newDataOutput();
         out.writeBoolean(isInRange);
         sendResponse(requestId, out.toByteArray());

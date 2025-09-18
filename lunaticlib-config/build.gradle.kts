@@ -13,7 +13,7 @@ repositories {
 }
 
 dependencies {
-    api(project(":lunaticlib-interfaces"))
+    api(project(":lunaticlib-api"))
     api(project(":lunaticlib-commands"))
     api(project(":lunaticlib-utils"))
 

@@ -16,7 +16,7 @@ repositories {
 }
 
 dependencies {
-    api(project(":lunaticlib-interfaces"))
+    api(project(":lunaticlib-api"))
     api(project(":lunaticlib-sender-velocity"))
     api(project(":lunaticlib-commands"))
 

@@ -17,7 +17,7 @@ repositories {
 }
 
 dependencies {
-    api(project(":lunaticlib-interfaces"))
+    api(project(":lunaticlib-api"))
     api(project(":lunaticlib-utils"))
 
     compileOnly(libs.io.papermc.paper.paper.api)

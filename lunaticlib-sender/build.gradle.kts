@@ -1,23 +1,17 @@
 plugins {
-    `java-library`
+    id("java-library")
     `maven-publish`
 }
-val lunaticlibVersion: String by rootProject.extra
 
 group = "de.janschuri"
-version = "$lunaticlibVersion"
+version = "2.0.0"
 
 repositories {
-    mavenLocal()
     mavenCentral()
 }
 
 dependencies {
-    api(project(":lunaticlib-interfaces"))
-    api(project(":lunaticlib-utils"))
-
-    compileOnly(libs.net.kyori.adventure.api)
-    compileOnly(libs.net.kyori.adventure.text.serializer.legacy)
+    api(project(":lunaticlib-api"))
 }
 
 val targetJavaVersion = 17
@@ -37,11 +31,8 @@ tasks.withType<JavaCompile>().configureEach {
     }
 }
 
-
-
 publishing {
     publications.create<MavenPublication>("maven") {
         from(components["java"])
     }
 }
-

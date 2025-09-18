@@ -3,7 +3,7 @@ package de.janschuri.lunaticlib.proxyrequests.requests;
 import com.google.common.io.ByteArrayDataInput;
 import com.google.common.io.ByteArrayDataOutput;
 import com.google.common.io.ByteStreams;
-import de.janschuri.lunaticlib.proxyrequests.LunaticLibProxyRequests;
+import de.janschuri.lunaticlib.proxyrequests.LunaticProxyRequestsHandler;
 import de.janschuri.lunaticlib.proxyrequests.sender.ProxyRequestsPlayerSender;
 
 import java.util.UUID;
@@ -22,7 +22,7 @@ public class GetPositionRequest extends ProxyRequest<double[]> {
     @Override
     protected void handleRequest(int requestId, ByteArrayDataInput in) {
         UUID uuid = UUID.fromString(in.readUTF());
-        ProxyRequestsPlayerSender player = LunaticLibProxyRequests.getPlatform().getPlayerSender(uuid);
+        ProxyRequestsPlayerSender player = LunaticProxyRequestsHandler.adapter().getPlayerSender(uuid);
         double[] position = player.getPosition();
 
         ByteArrayDataOutput out = ByteStreams.newDataOutput();

@@ -1,6 +1,0 @@
-name: lunaticlib-commands-common
-version: '1.0-SNAPSHOT'
-main: de.janschuri.lunaticlib.commands
-api-version: '1.19'
-load: STARTUP
-authors: [Janschuri]

@@ -15,13 +15,9 @@ net-kyori-adventure-platform-bungeecord = "4.3.3"
 org-yaml-snakeyaml = "2.2"
 org-reflections-reflections = "0.10.2"
 com-google-guava-guava = "32.1.2-jre"
+com-github-milkbowl-vaultapi = "1.7"
 
 [libraries]
-de-janschuri-lunaticlib-interfaces = { module = "de.janschuri:lunaticlib-interfaces", version.ref = "de-janschuri-lunaticlib" }
-de-janschuri-lunaticlib-utils = { module = "de.janschuri:lunaticlib-utils", version.ref = "de-janschuri-lunaticlib" }
-de-janschuri-lunaticlib-utils-paper = { module = "de.janschuri:lunaticlib-utils-paper", version.ref = "de-janschuri-lunaticlib" }
-de-janschuri-lunaticlib-commands = { module = "de.janschuri:lunaticlib-commands", version.ref = "de-janschuri-lunaticlib" }
-
 de-rapha149-signgui-signgui = { module = "de.rapha149.signgui:signgui", version.ref = "de-rapha149-signgui-signgui" }
 org-slf4j-slf4j-api = { module = "org.slf4j:slf4j-api", version.ref = "org-slf4j-slf4j-api" }
 net-kyori-adventure-api = { module = "net.kyori:adventure-api", version.ref = "net-kyori-adventure-api" }
@@ -33,3 +29,4 @@ net-kyori-adventure-platform-bungeecord = { module = "net.kyori:adventure-platfo
 org-yaml-snakeyaml = { module = "org.yaml:snakeyaml", version.ref = "org-yaml-snakeyaml" }
 org-reflections-reflections = { module = "org.reflections:reflections", version.ref = "org-reflections-reflections"}
 com-google-guava-guava = { module = "com.google.guava:guava", version.ref = "com-google-guava-guava" }
+com-github-milkbowl-vaultapi = { module = "com.github.MilkBowl:VaultAPI", version.ref = "com-github-milkbowl-vaultapi" }

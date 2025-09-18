@@ -21,7 +21,7 @@ repositories {
 }
 
 val submodulesToPublish = listOf(
-    "lunaticlib-interfaces",
+    "lunaticlib-api",
     "lunaticlib-utils",
     "lunaticlib-utils-paper",
     "lunaticlib-inventorygui",
@@ -37,7 +37,10 @@ val submodulesToPublish = listOf(
     "lunaticlib-proxyrequests",
     "lunaticlib-proxyrequests-paper",
     "lunaticlib-proxyrequests-velocity",
-    "lunaticlib-proxyrequests-waterfall"
+    "lunaticlib-proxyrequests-waterfall",
+    "lunaticlib-paper",
+    "lunaticlib-velocity",
+    "lunaticlib-waterfall",
 )
 
 tasks.register("publishModulesToMavenLocal") {

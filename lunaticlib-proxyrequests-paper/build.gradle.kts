@@ -19,6 +19,7 @@ dependencies {
 
     compileOnly(project(":lunaticlib-inventorygui"))
     compileOnly(libs.io.papermc.paper.paper.api)
+    compileOnly(libs.com.github.milkbowl.vaultapi)
 }
 
 val targetJavaVersion = 17

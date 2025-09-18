@@ -3,7 +3,7 @@ package de.janschuri.lunaticlib.proxyrequests.requests;
 import com.google.common.io.ByteArrayDataInput;
 import com.google.common.io.ByteArrayDataOutput;
 import com.google.common.io.ByteStreams;
-import de.janschuri.lunaticlib.proxyrequests.LunaticLibProxyRequests;
+import de.janschuri.lunaticlib.proxyrequests.LunaticProxyRequestsHandler;
 import de.janschuri.lunaticlib.proxyrequests.ProxyRequestsLogger;
 import de.janschuri.lunaticlib.sender.PlayerSender;
 
@@ -26,9 +26,9 @@ public class RunCommandRequest extends ProxyRequest<Boolean> {
         UUID uuid = UUID.fromString(in.readUTF());
         String command = in.readUTF();
 
-        PlayerSender player = LunaticLibProxyRequests.getPlatform().getPlayerSender(uuid);
+        PlayerSender player = LunaticProxyRequestsHandler.adapter().getPlayerSender(uuid);
 
-        boolean found = player != null && player.isOnline();
+        boolean found = player != null;
         boolean success = false;
 
         if (found) {
