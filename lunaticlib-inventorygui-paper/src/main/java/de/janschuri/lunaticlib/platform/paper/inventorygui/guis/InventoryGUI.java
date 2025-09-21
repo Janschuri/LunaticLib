@@ -1,5 +1,6 @@
 package de.janschuri.lunaticlib.platform.paper.inventorygui.guis;
 
+import de.janschuri.lunaticlib.platform.paper.inventorygui.Logger;
 import de.janschuri.lunaticlib.platform.paper.inventorygui.PaperInventoryGUIHandler;
 import de.janschuri.lunaticlib.platform.paper.inventorygui.buttons.InventoryButton;
 import de.janschuri.lunaticlib.platform.paper.inventorygui.buttons.PlayerInvButton;
@@ -8,6 +9,7 @@ import de.janschuri.lunaticlib.platform.paper.inventorygui.interfaces.InventoryH
 import de.janschuri.lunaticlib.utils.Utils;
 import de.janschuri.lunaticlib.utils.LunaticPlaceholder;
 import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.TextColor;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
@@ -81,40 +83,47 @@ public abstract class InventoryGUI implements InventoryHandler {
 
     @Override
     public void init(Player player) {
-        for (int i = 0; i < getInventory().getSize(); i++) {
-            InventoryButton button = this.buttonMap.get(i);
-            ItemStack icon;
+        try {
+            for (int i = 0; i < getInventory().getSize(); i++) {
+                InventoryButton button = this.buttonMap.get(i);
+                ItemStack icon;
 
-            if (button != null) {
-                icon = button.getIconCreator().apply(player);
-            } else {
-                icon = emptyButton(i).getIconCreator().apply(player);
-            }
-
-            ItemStack item = getInventory().getItem(i);
-
-            if (isSameButton(item, icon)) {
-                continue;
-            }
-
-            if (icon == null) {
-                icon = new ItemStack(Material.AIR);
-            }
-
-            ItemMeta meta = icon.getItemMeta();
-
-            if (meta != null) {
-                NamespacedKey key = getGuiIdKey();
-                PersistentDataContainer container = meta.getPersistentDataContainer();
-
-                if (!container.has(key, PersistentDataType.STRING)) {
-                    container.set(key, PersistentDataType.STRING, UUID.randomUUID().toString());
+                if (button != null) {
+                    icon = button.getIconCreator().apply(player);
+                } else {
+                    icon = emptyButton(i).getIconCreator().apply(player);
                 }
 
-                icon.setItemMeta(meta);
-            }
+                ItemStack item = getInventory().getItem(i);
 
-            getInventory().setItem(i, icon);
+                if (isSameButton(item, icon)) {
+                    continue;
+                }
+
+                if (icon == null) {
+                    icon = new ItemStack(Material.AIR);
+                }
+
+                ItemMeta meta = icon.getItemMeta();
+
+                if (meta != null) {
+                    NamespacedKey key = getGuiIdKey();
+                    PersistentDataContainer container = meta.getPersistentDataContainer();
+
+                    if (!container.has(key, PersistentDataType.STRING)) {
+                        container.set(key, PersistentDataType.STRING, UUID.randomUUID().toString());
+                    }
+
+                    icon.setItemMeta(meta);
+                }
+
+                getInventory().setItem(i, icon);
+            }
+        } catch (Exception e) {
+            Logger.error("Error initializing GUI for player " + player.getName() + ": " + e.getMessage());
+            e.printStackTrace();
+            player.closeInventory();
+            player.sendMessage(Component.text("An error occurred while opening the inventory. Please try again later.").color(TextColor.fromHexString("FF5555")));
         }
     }
 
