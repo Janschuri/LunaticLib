@@ -16,6 +16,7 @@ repositories {
 }
 
 dependencies {
+    api(project(":lunaticlib-config"))
     api(project(":lunaticlib-proxyrequests-velocity"))
     api(project(":lunaticlib-commands-velocity"))
 

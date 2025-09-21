@@ -16,6 +16,8 @@ repositories {
 }
 
 dependencies {
+    api(project(":lunaticlib-config"))
+    api(project(":lunaticlib-utils-paper"))
     api(project(":lunaticlib-commands-paper"))
     api(project(":lunaticlib-inventorygui-paper"))
     api(project(":lunaticlib-proxyrequests-paper"))

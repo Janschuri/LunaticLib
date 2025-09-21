@@ -16,6 +16,7 @@ repositories {
 }
 
 dependencies {
+    api(project(":lunaticlib-config"))
     api(project(":lunaticlib-commands-waterfall"))
     api(project(":lunaticlib-proxyrequests-waterfall"))
 
