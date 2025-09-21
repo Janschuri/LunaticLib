@@ -1,26 +1,26 @@
 package de.janschuri.lunaticlib.sender;
 
-import java.util.Objects;
+import de.janschuri.lunaticlib.utils.SingletonHolder;
 
 public class LunaticSenderHandler {
 
-    private LunaticSenderHandler(){}
+    private LunaticSenderHandler() {}
 
-    private static SenderAdapter<?, ?> adapter;
+    private static final SingletonHolder<SenderAdapter<?>> HOLDER = new SingletonHolder<>();
 
-    public static void enable(SenderAdapter<?, ?> adapter) {
-        if (LunaticSenderHandler.adapter == null) {
-            synchronized (LunaticSenderHandler.class) {
-                if (LunaticSenderHandler.adapter == null) {
-                    LunaticSenderHandler.adapter = adapter;
-                }
-            }
-        } else {
-            throw new IllegalStateException("LunaticCommandHandler already is enabled.");
-        }
+    public static void initialize(SenderAdapter<?> adapter) {
+        HOLDER.initialize(adapter);
     }
 
-    public static SenderAdapter<?, ?> adapter() {
-        return Objects.requireNonNull(adapter, "LunaticCommandHandler not enabled. Call LunaticCommandHandler.enable(adapter) first.");
+    public static void shutdown() {
+        HOLDER.shutdown();
+    }
+
+    public static SenderAdapter getAdapter() {
+        return HOLDER.get();
+    }
+
+    public static boolean isEnabled() {
+        return HOLDER.isInitialized();
     }
 }

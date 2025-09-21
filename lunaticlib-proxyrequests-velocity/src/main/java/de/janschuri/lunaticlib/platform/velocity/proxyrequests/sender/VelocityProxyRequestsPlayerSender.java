@@ -23,7 +23,7 @@ public class VelocityProxyRequestsPlayerSender extends VelocityPlayerSender impl
 
     @Override
     public String getSkinURL() {
-        Optional<com.velocitypowered.api.proxy.Player> player = VelocityProxyRequestsHandler.adapter().getProxy().getPlayer(uuid);
+        Optional<com.velocitypowered.api.proxy.Player> player = VelocityProxyRequestsHandler.getAdapter().getProxy().getPlayer(uuid);
         if (player.isPresent()) {
             List<GameProfile.Property> properties = player.get().getGameProfile().getProperties();
             for (GameProfile.Property property : properties) {

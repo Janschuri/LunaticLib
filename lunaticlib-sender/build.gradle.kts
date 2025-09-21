@@ -12,6 +12,7 @@ repositories {
 
 dependencies {
     api(project(":lunaticlib-api"))
+    api(project(":lunaticlib-utils"))
 }
 
 val targetJavaVersion = 17

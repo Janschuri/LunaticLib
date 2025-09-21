@@ -23,7 +23,7 @@ public class GetSkinURLRequest extends ProxyRequest<String> {
     @Override
     protected void handleRequest(int requestId, ByteArrayDataInput in) {
         UUID uuid = UUID.fromString(in.readUTF());
-        ProxyRequestsPlayerSender player = LunaticProxyRequestsHandler.adapter().getPlayerSender(uuid);
+        ProxyRequestsPlayerSender player = LunaticProxyRequestsHandler.getAdapter().getPlayerSender(uuid);
         String skin = player.getSkinURL();
 
         boolean found = skin != null;

@@ -2,23 +2,26 @@ package de.janschuri.lunaticlib.platform.velocity.commands;
 
 import com.velocitypowered.api.command.CommandManager;
 import com.velocitypowered.api.command.CommandMeta;
+import com.velocitypowered.api.command.CommandSource;
 import com.velocitypowered.api.plugin.PluginContainer;
 import com.velocitypowered.api.proxy.Player;
 import com.velocitypowered.api.proxy.ProxyServer;
 import de.janschuri.lunaticlib.commands.Command;
 import de.janschuri.lunaticlib.commands.CommandAdapter;
 import de.janschuri.lunaticlib.platform.velocity.sender.VelocityPlayerSender;
+import de.janschuri.lunaticlib.platform.velocity.sender.VelocitySenderAdapter;
 import de.janschuri.lunaticlib.sender.PlayerSender;
 
 import java.util.ArrayList;
 import java.util.Collection;
 
-public class VelocityCommandAdapter implements CommandAdapter<PluginContainer> {
+public class VelocityCommandAdapter extends VelocitySenderAdapter implements CommandAdapter<PluginContainer, CommandSource> {
 
     private final Object instance;
     private final ProxyServer proxy;
 
     public VelocityCommandAdapter(Object instance, ProxyServer proxyServer) {
+        super(proxyServer);
         this.instance = instance;
         this.proxy = proxyServer;
     }
@@ -33,7 +36,7 @@ public class VelocityCommandAdapter implements CommandAdapter<PluginContainer> {
                 .build();
 
 
-        commandManager.register(commandMeta, new VelocityCommandHandler.VelocityCommand(proxy, instance, lunaticCommand));
+        commandManager.register(commandMeta, new VelocityCommand(proxy, instance, lunaticCommand));
     }
 
     @Override

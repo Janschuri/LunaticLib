@@ -26,7 +26,7 @@ public class WithdrawMoneyRequest extends ProxyRequest<Boolean> {
         UUID uuid = UUID.fromString(in.readUTF());
         double amount = in.readDouble();
 
-        Vault vault = LunaticProxyRequestsHandler.adapter().getVault();
+        Vault vault = LunaticProxyRequestsHandler.getAdapter().getVault();
         ByteArrayDataOutput out = ByteStreams.newDataOutput();
 
         if (vault != null) {

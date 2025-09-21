@@ -26,7 +26,7 @@ public class RunCommandRequest extends ProxyRequest<Boolean> {
         UUID uuid = UUID.fromString(in.readUTF());
         String command = in.readUTF();
 
-        PlayerSender player = LunaticProxyRequestsHandler.adapter().getPlayerSender(uuid);
+        PlayerSender player = LunaticProxyRequestsHandler.getAdapter().getPlayerSender(uuid);
 
         boolean found = player != null;
         boolean success = false;

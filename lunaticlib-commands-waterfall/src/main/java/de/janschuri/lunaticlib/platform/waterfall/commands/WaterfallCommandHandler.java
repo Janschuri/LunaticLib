@@ -1,56 +1,45 @@
 package de.janschuri.lunaticlib.platform.waterfall.commands;
 
-import de.janschuri.lunaticlib.commands.Command;
+import de.janschuri.lunaticlib.commands.LunaticCommandHandler;
 import de.janschuri.lunaticlib.platform.waterfall.sender.WaterfallSenderHandler;
-import de.janschuri.lunaticlib.sender.Sender;
-import net.kyori.adventure.text.Component;
-import net.kyori.adventure.text.format.TextColor;
-import net.md_5.bungee.api.CommandSender;
-import net.md_5.bungee.api.ProxyServer;
-import net.md_5.bungee.api.plugin.Plugin;
-import net.md_5.bungee.api.plugin.TabExecutor;
+import de.janschuri.lunaticlib.utils.SingletonHolder;
+
+import java.util.Objects;
 
 public final class WaterfallCommandHandler {
 
-    private static WaterfallCommandAdapter adapter;
+    private WaterfallCommandHandler() {}
 
-    public static void enable(ProxyServer proxy) {
-        if (adapter == null) {
-            adapter = new WaterfallCommandAdapter(proxy);
+    private static final SingletonHolder<WaterfallCommandAdapter> HOLDER = new SingletonHolder<>();
+
+    public static void initialize(WaterfallCommandAdapter adapter) {
+        initialize(adapter, true);
+    }
+    public static void initialize(WaterfallCommandAdapter adapter, boolean initSenderHandler) {
+        if (initSenderHandler) {
+            WaterfallSenderHandler.initialize(adapter);
+        }
+
+        LunaticCommandHandler.initialize(adapter);
+    }
+
+    public static void shutdown() {
+        shutdown(true);
+    }
+
+    public static void shutdown(boolean shutdownSenderHandler) {
+        LunaticCommandHandler.shutdown();
+
+        if (shutdownSenderHandler) {
+            WaterfallSenderHandler.shutdown();
         }
     }
 
-    public static class WaterfallCommand extends net.md_5.bungee.api.plugin.Command implements TabExecutor {
+    public static WaterfallCommandAdapter getAdapter() {
+        return (WaterfallCommandAdapter) LunaticCommandHandler.getAdapter();
+    }
 
-        private final Plugin plugin;
-        private final Command lunaticCommand;
-
-        public WaterfallCommand(Plugin plugin, Command lunaticCommand) {
-            super(lunaticCommand.getName(), lunaticCommand.getPermission(), lunaticCommand.getAliases().toArray(new String[0]));
-            this.plugin = plugin;
-            this.lunaticCommand = lunaticCommand;
-        }
-
-        @Override
-        public void execute(CommandSender sender, String[] args) {
-
-            ProxyServer.getInstance().getScheduler().runAsync(plugin, () -> {
-                Sender commandSender = WaterfallSenderHandler.adapter().getSender(sender);
-                if (!lunaticCommand.checkAndExecute(commandSender, args)) {
-                    Component errorMessage = Component.text("Internal server error. Please check the console for more information.")
-                            .color(TextColor.fromHexString("#FF0000"));
-                    commandSender.sendMessage(errorMessage);
-                }
-            });
-        }
-
-        @Override
-        public Iterable<String> onTabComplete(CommandSender sender, String[] args) {
-            String[] newArgs = new String[args.length + 1];
-            newArgs[0] = lunaticCommand.getName();
-            System.arraycopy(args, 0, newArgs, 1, args.length);
-            Sender commandSender = WaterfallSenderHandler.adapter().getSender(sender);
-            return lunaticCommand.tabComplete(commandSender, newArgs);
-        }
+    public static boolean isEnabled() {
+        return LunaticCommandHandler.isEnabled();
     }
 }

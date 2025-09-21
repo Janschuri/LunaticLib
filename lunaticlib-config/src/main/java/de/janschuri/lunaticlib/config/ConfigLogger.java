@@ -1,7 +1,7 @@
 package de.janschuri.lunaticlib.config;
 
 import de.janschuri.lunaticlib.utils.Logger;
-import de.janschuri.lunaticlib.utils.impl.LunaticLogger;
+import de.janschuri.lunaticlib.utils.LunaticLogger;
 
 public class ConfigLogger {
 

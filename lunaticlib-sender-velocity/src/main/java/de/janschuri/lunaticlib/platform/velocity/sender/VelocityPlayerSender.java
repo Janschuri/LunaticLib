@@ -36,7 +36,7 @@ public class VelocityPlayerSender extends VelocitySender implements PlayerSender
 
     @Override
     public void runCommand(String command) {
-            CommandManager commandManager = ((VelocitySenderAdapter) VelocitySenderHandler.adapter()).proxy().getCommandManager();
+            CommandManager commandManager = ((VelocitySenderAdapter) VelocitySenderHandler.getAdapter()).getProxy().getCommandManager();
             commandManager.executeAsync(player, command);
     }
 

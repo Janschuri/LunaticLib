@@ -22,7 +22,7 @@ public class RemoveItemInMainHandRequest extends ProxyRequest<Boolean> {
     @Override
     protected void handleRequest(int requestId, ByteArrayDataInput in) {
         UUID uuid = UUID.fromString(in.readUTF());
-         ProxyRequestsPlayerSender player = LunaticProxyRequestsHandler.adapter().getPlayerSender(uuid);
+         ProxyRequestsPlayerSender player = LunaticProxyRequestsHandler.getAdapter().getPlayerSender(uuid);
          boolean removed = player.removeItemInMainHand();
 
          ByteArrayDataOutput out = ByteStreams.newDataOutput();

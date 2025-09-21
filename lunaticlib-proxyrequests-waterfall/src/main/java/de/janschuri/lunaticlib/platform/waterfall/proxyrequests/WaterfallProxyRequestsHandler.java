@@ -5,34 +5,56 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.UUID;
 
+import de.janschuri.lunaticlib.platform.waterfall.sender.WaterfallSenderHandler;
 import de.janschuri.lunaticlib.proxyrequests.LunaticProxyRequestsHandler;
 import de.janschuri.lunaticlib.platform.waterfall.proxyrequests.listener.PluginMessageListener;
 import de.janschuri.lunaticlib.platform.waterfall.proxyrequests.listener.ServerConnectListener;
+import de.janschuri.lunaticlib.utils.SingletonHolder;
 import net.md_5.bungee.api.ProxyServer;
 import net.md_5.bungee.api.plugin.Plugin;
 
+import static de.janschuri.lunaticlib.proxyrequests.LunaticProxyRequestsHandler.IDENTIFIER;
+
 public class WaterfallProxyRequestsHandler {
 
-    private static WaterfallProxyRequestsAdapter adapter;
     private static Map<UUID, String> SKIN_CACHE = new HashMap<>();
 
-    public static void enable(Plugin plugin) {
-        if (adapter == null) {
-            synchronized (WaterfallProxyRequestsHandler.class) {
-                if (adapter == null) {
-                    adapter = new WaterfallProxyRequestsAdapter(plugin);
-                    LunaticProxyRequestsHandler.enable(adapter);
-                }
-            }
-            registerPluginMessageListener(plugin);
-            return;
-        }
+    private WaterfallProxyRequestsHandler() {}
 
-        throw new IllegalStateException("LunaticLibProxyRequests already is enabled.");
+    public static void initialize(WaterfallProxyRequestsAdapter adapter) {
+        initialize(adapter, true);
     }
 
-    public static WaterfallProxyRequestsAdapter adapter() {
-        return Objects.requireNonNull(adapter,"LunaticLibProxyRequests not enabled. Call WaterfallProxyRequestsHandler.enable(proxy) first.");
+    public static void initialize(WaterfallProxyRequestsAdapter adapter, boolean initSenderHandler) {
+        if (initSenderHandler) {
+            WaterfallSenderHandler.initialize(adapter);
+        }
+
+        LunaticProxyRequestsHandler.initialize(adapter);
+        adapter.getPlugin().getProxy().registerChannel(IDENTIFIER);
+        registerPluginMessageListener(adapter.getPlugin());
+    }
+
+    public static void shutdown() {
+        shutdown(true);
+    }
+
+    public static void shutdown(boolean shutdownSenderHandler) {
+        ProxyServer.getInstance().unregisterChannel(IDENTIFIER);
+        SKIN_CACHE.clear();
+        LunaticProxyRequestsHandler.shutdown();
+
+        if (shutdownSenderHandler) {
+            WaterfallSenderHandler.shutdown();
+        }
+    }
+
+    public static WaterfallProxyRequestsAdapter getAdapter() {
+        return (WaterfallProxyRequestsAdapter) LunaticProxyRequestsHandler.getAdapter();
+    }
+
+    public static boolean isEnabled() {
+        return LunaticProxyRequestsHandler.isEnabled();
     }
 
     public static String getSkinCache(UUID uuid) {

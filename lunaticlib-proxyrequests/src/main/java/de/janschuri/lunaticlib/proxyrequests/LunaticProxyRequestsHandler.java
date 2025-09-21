@@ -3,7 +3,8 @@ package de.janschuri.lunaticlib.proxyrequests;
 import com.google.common.io.ByteArrayDataInput;
 import de.janschuri.lunaticlib.proxyrequests.requests.*;
 import de.janschuri.lunaticlib.utils.Logger;
-import de.janschuri.lunaticlib.utils.impl.LunaticLogger;
+import de.janschuri.lunaticlib.utils.LunaticLogger;
+import de.janschuri.lunaticlib.utils.SingletonHolder;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -16,8 +17,6 @@ public class LunaticProxyRequestsHandler {
     public static final String IDENTIFIER = "lunaticlib:proxyrequests";
 
     private static final Map<String, ProxyRequest> requests = new HashMap<>();
-
-    private static ProxyRequestsAdapter adapter;
 
     private static final ProxyRequest[] defaultRequests = {
             new GetItemInMainHandRequest(),
@@ -35,32 +34,33 @@ public class LunaticProxyRequestsHandler {
 
     static Logger logger = LunaticLogger.getLogger("LunaticLib-ProxyRequests");
 
-
-
     private LunaticProxyRequestsHandler() {}
 
-    public static void enable(ProxyRequestsAdapter adapter) {
-        if (LunaticProxyRequestsHandler.adapter == null) {
-            synchronized (LunaticProxyRequestsHandler.class) {
-                if (LunaticProxyRequestsHandler.adapter == null) {
-                    LunaticProxyRequestsHandler.adapter = adapter;
-                }
-            }
-        } else {
-            throw new IllegalStateException("ProxyRequestsHandler already is enabled.");
-        }
+    private static final SingletonHolder<ProxyRequestsAdapter> HOLDER = new SingletonHolder<>();
 
+    public static void initialize(ProxyRequestsAdapter adapter) {
+        HOLDER.initialize(adapter);
         registerDefaultRequests();
         logger.info("LunaticLib-ProxyRequests enabled.");
     }
 
-    public static void disable() {
-        shutdown();
+    public static void shutdown() {
+        List<ProxyRequest> tempRequests = new ArrayList<>(requests.values());
+        for (ProxyRequest request : tempRequests) {
+            request.unregister();
+        }
+        requests.clear();
+
+        HOLDER.shutdown();
         logger.info("LunaticLib-ProxyRequests disabled.");
     }
 
-    public static ProxyRequestsAdapter adapter() {
-        return adapter;
+    public static ProxyRequestsAdapter getAdapter() {
+        return HOLDER.get();
+    }
+
+    public static boolean isEnabled() {
+        return HOLDER.isInitialized();
     }
 
     private static void registerDefaultRequests() {
@@ -93,13 +93,5 @@ public class LunaticProxyRequestsHandler {
 
     public static void unregisterRequest(String requestName) {
         requests.remove(requestName);
-    }
-
-    public static void shutdown() {
-        List<ProxyRequest> tempRequests = new ArrayList<>(requests.values());
-        for (ProxyRequest request : tempRequests) {
-            request.unregister();
-        }
-        requests.clear();
     }
 }

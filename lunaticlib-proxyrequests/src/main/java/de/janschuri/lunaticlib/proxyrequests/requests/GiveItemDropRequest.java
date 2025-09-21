@@ -25,7 +25,7 @@ public class GiveItemDropRequest extends ProxyRequest<Boolean> {
         byte[] item = new byte[length];
         in.readFully(item);
 
-        ProxyRequestsPlayerSender player = LunaticProxyRequestsHandler.adapter().getPlayerSender(uuid);
+        ProxyRequestsPlayerSender player = LunaticProxyRequestsHandler.getAdapter().getPlayerSender(uuid);
 
         boolean dropped = player.giveItemDrop(item);
 

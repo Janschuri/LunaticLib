@@ -16,6 +16,9 @@ org-yaml-snakeyaml = "2.2"
 org-reflections-reflections = "0.10.2"
 com-google-guava-guava = "32.1.2-jre"
 com-github-milkbowl-vaultapi = "1.7"
+org-bstats-bstats-bukkit = "3.0.1"
+org-bstats-bstats-bungeecord = "3.0.1"
+org-bstats-bstats-velocity = "3.0.1"
 
 [libraries]
 de-rapha149-signgui-signgui = { module = "de.rapha149.signgui:signgui", version.ref = "de-rapha149-signgui-signgui" }
@@ -30,3 +33,6 @@ org-yaml-snakeyaml = { module = "org.yaml:snakeyaml", version.ref = "org-yaml-sn
 org-reflections-reflections = { module = "org.reflections:reflections", version.ref = "org-reflections-reflections"}
 com-google-guava-guava = { module = "com.google.guava:guava", version.ref = "com-google-guava-guava" }
 com-github-milkbowl-vaultapi = { module = "com.github.MilkBowl:VaultAPI", version.ref = "com-github-milkbowl-vaultapi" }
+org-bstats-bstats-bukkit = { module = "org.bstats:bstats-bukkit", version.ref = "org-bstats-bstats-bukkit" }
+org-bstats-bstats-bungeecord = { module = "org.bstats:bstats-bungeecord", version.ref = "org-bstats-bstats-bungeecord" }
+org-bstats-bstats-velocity = { module = "org.bstats:bstats-velocity", version.ref = "org-bstats-bstats-velocity" }

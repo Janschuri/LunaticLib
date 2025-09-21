@@ -1,0 +1,308 @@
+package de.janschuri.lunaticlib.platform.paper.inventorygui.guis;
+
+import de.janschuri.lunaticlib.platform.paper.inventorygui.PaperInventoryGUIHandler;
+import de.janschuri.lunaticlib.platform.paper.inventorygui.buttons.InventoryButton;
+import de.janschuri.lunaticlib.platform.paper.inventorygui.buttons.PlayerInvButton;
+import de.janschuri.lunaticlib.platform.paper.inventorygui.handler.GUIManager;
+import de.janschuri.lunaticlib.platform.paper.inventorygui.interfaces.InventoryHandler;
+import de.janschuri.lunaticlib.utils.Utils;
+import de.janschuri.lunaticlib.utils.LunaticPlaceholder;
+import net.kyori.adventure.text.Component;
+import org.bukkit.Bukkit;
+import org.bukkit.Material;
+import org.bukkit.NamespacedKey;
+import org.bukkit.entity.HumanEntity;
+import org.bukkit.entity.Player;
+import org.bukkit.event.inventory.*;
+import org.bukkit.inventory.Inventory;
+import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.ItemMeta;
+import org.bukkit.persistence.PersistentDataContainer;
+import org.bukkit.persistence.PersistentDataType;
+
+import java.util.*;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicInteger;
+
+public abstract class InventoryGUI implements InventoryHandler {
+
+    private final static AtomicInteger idCreator = new AtomicInteger(0);
+    private static final Map<Integer, InventoryGUI> guiMap = new HashMap<>();
+
+    private final int id;
+    private Inventory inventory;
+    private boolean processingClickEvent;
+    private String title;
+    private final int size;
+    private final Map<Integer, InventoryButton> buttonMap;
+    private final List<PlayerInvButton> playerInvButtonList;
+
+    public InventoryGUI() {
+        this(null, 54);
+    }
+
+    public InventoryGUI(String title, int size) {
+        this.id = idCreator.getAndIncrement();
+        this.processingClickEvent = false;
+        this.title = title == null ? getDefaultTitle() : title;
+        this.size = size;
+        this.inventory = createInventory();
+        this.buttonMap = new HashMap<>();
+        this.playerInvButtonList = new ArrayList<>();
+
+        guiMap.put(this.id, this);
+    }
+
+    protected static InventoryGUI getGUI(int id) {
+        return guiMap.get(id);
+    }
+
+    public int getId() {
+        return this.id;
+    }
+
+    public Inventory getInventory() {
+        return this.inventory;
+    }
+
+    private Inventory createInventory() {
+        return Bukkit.createInventory(null, getSize(), getTitle());
+    }
+
+    @Override
+    public void addButton(int slot, InventoryButton button) {
+        this.buttonMap.put(slot, button);
+    }
+
+    @Override
+    public void addButton(PlayerInvButton button) {
+        this.playerInvButtonList.add(button);
+    }
+
+    @Override
+    public void init(Player player) {
+        for (int i = 0; i < getInventory().getSize(); i++) {
+            InventoryButton button = this.buttonMap.get(i);
+            ItemStack icon;
+
+            if (button != null) {
+                icon = button.getIconCreator().apply(player);
+            } else {
+                icon = emptyButton(i).getIconCreator().apply(player);
+            }
+
+            ItemStack item = getInventory().getItem(i);
+
+            if (isSameButton(item, icon)) {
+                continue;
+            }
+
+            if (icon == null) {
+                icon = new ItemStack(Material.AIR);
+            }
+
+            ItemMeta meta = icon.getItemMeta();
+
+            if (meta != null) {
+                NamespacedKey key = getGuiIdKey();
+                PersistentDataContainer container = meta.getPersistentDataContainer();
+
+                if (!container.has(key, PersistentDataType.STRING)) {
+                    container.set(key, PersistentDataType.STRING, UUID.randomUUID().toString());
+                }
+
+                icon.setItemMeta(meta);
+            }
+
+            getInventory().setItem(i, icon);
+        }
+    }
+
+    @Override
+    public void onClick(InventoryClickEvent event) {
+        Inventory playerInv = event.getWhoClicked().getInventory();
+
+        if (event.getClickedInventory() != playerInv) {
+            onContainerInvClick(event);
+        } else {
+            onPlayerInvClick(event);
+        }
+    }
+
+    @Override
+    public void onOpen(InventoryOpenEvent event) {
+        this.init((Player) event.getPlayer());
+    }
+
+    @Override
+    public void onClose(InventoryCloseEvent event) {
+    }
+
+    public void onDrag(InventoryDragEvent event) {
+        boolean draggingIntoGUI = false;
+
+        for (int slot : event.getInventorySlots()) {
+            if (slot > 36) {
+                draggingIntoGUI = true;
+                break;
+            }
+        }
+
+        if (draggingIntoGUI) {
+            event.setCancelled(true);
+        }
+    }
+    public void onContainerInvClick(InventoryClickEvent event) {
+        event.setCancelled(true);
+        int slot = event.getSlot();
+        InventoryButton button = this.buttonMap.get(slot);
+        if (button != null) {
+            if (button.getEventConsumer() != null) {
+                button.getEventConsumer().accept(event);
+            }
+        }
+    }
+
+    public void onPlayerInvClick(InventoryClickEvent event) {
+        if (event.isShiftClick()) {
+            event.setCancelled(true);
+        }
+
+        if (event.getAction() == InventoryAction.COLLECT_TO_CURSOR && event.getView().getTopInventory().containsAtLeast(event.getCursor(), 1)) {
+            event.setCancelled(true);
+        }
+
+        for (PlayerInvButton playerInvButton : this.playerInvButtonList) {
+            if (playerInvButton.getCondition().apply(event)) {
+                playerInvButton.getEventConsumer().accept(event);
+                break;
+            }
+        }
+    }
+
+    public int getSize() {
+        return size;
+    }
+
+    public void setTitle(String title) {
+        this.title = title;
+    }
+
+    public String getDefaultTitle() {
+        return this.getClass().getSimpleName();
+    }
+
+    public final String getTitle() {
+        if (title == null) {
+            title = "InventoryGUI";
+        }
+
+        return title;
+    }
+
+    public void reloadGui() {
+        reloadGui(false);
+    }
+
+    public void reloadGui(boolean forceNewInventory) {
+        this.buttonMap.clear();
+
+        List<HumanEntity> humanEntities = getInventory().getViewers();
+
+        if (humanEntities.isEmpty()) {
+            return;
+        }
+
+        if (forceNewInventory) {
+            this.inventory = createInventory();
+        }
+
+        for (HumanEntity humanEntity : humanEntities) {
+
+            if (humanEntity instanceof Player p) {
+                GUIManager.openGUI(this, p);
+            }
+        }
+    }
+
+    protected InventoryButton emptyButton(int slot) {
+        ItemStack itemStack = new ItemStack(Material.GRAY_STAINED_GLASS_PANE);
+
+        ItemMeta itemMeta = itemStack.getItemMeta();
+        if (itemMeta != null) {
+            itemMeta.setDisplayName(" ");
+            itemStack.setItemMeta(itemMeta);
+        }
+
+        return new InventoryButton()
+                .creator((player) -> itemStack)
+                .consumer(event -> {});
+    }
+
+    public boolean processingClickEvent() {
+        boolean result = processingClickEvent;
+
+        processingClickEvent = true;
+        Runnable runnable = () -> {
+            processingClickEvent = false;
+        };
+
+        Utils.scheduleTask(runnable, 100, TimeUnit.MILLISECONDS);
+        return result;
+    }
+
+    @Override
+    public final NamespacedKey getGuiIdKey() {
+        return new NamespacedKey(PaperInventoryGUIHandler.getPluginInstance(), "item-gui-id");
+    }
+
+    @Override
+    public final ItemStack getItemWithGuiId(ItemStack item, String name) {
+        ItemMeta meta = item.getItemMeta();
+        assert meta != null;
+
+        NamespacedKey key = getGuiIdKey();
+
+        PersistentDataContainer container = meta.getPersistentDataContainer();
+        container.set(key, PersistentDataType.STRING, name);
+
+        item.setItemMeta(meta);
+        return item;
+    }
+
+    @Override
+    public boolean isSameButton(ItemStack button1, ItemStack button2) {
+        if (button1 == null || button2 == null) {
+            return false;
+        }
+
+        ItemMeta itemMeta = button1.getItemMeta();
+        ItemMeta buttonMeta = button2.getItemMeta();
+
+        if (itemMeta == null || buttonMeta == null) {
+            return false;
+        }
+
+        NamespacedKey key = getGuiIdKey();
+
+        PersistentDataContainer button1Container = itemMeta.getPersistentDataContainer();
+        PersistentDataContainer button2Container = buttonMeta.getPersistentDataContainer();
+
+        String button1Name = button1Container.get(key, PersistentDataType.STRING);
+        String button2Name = button2Container.get(key, PersistentDataType.STRING);
+
+        return button1Name != null && button1Name.equals(button2Name);
+    }
+
+    protected LunaticPlaceholder placeholder(String key, String value) {
+        if (value == null) {
+            value = "null";
+        }
+
+        return new LunaticPlaceholder(key, Component.text(value));
+    }
+
+    protected LunaticPlaceholder placeholder(String key, Component value) {
+        return new LunaticPlaceholder(key, value);
+    }
+}

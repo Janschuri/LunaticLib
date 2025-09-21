@@ -3,14 +3,14 @@ package de.janschuri.lunaticlib.platform.waterfall.proxyrequests.sender;
 import de.janschuri.lunaticlib.platform.waterfall.proxyrequests.WaterfallProxyRequestsHandler;
 import de.janschuri.lunaticlib.proxyrequests.requests.*;
 import de.janschuri.lunaticlib.proxyrequests.sender.ProxyRequestsPlayerSender;
-import de.janschuri.lunaticlib.platform.waterfall.sender.PlayerSenderImpl;
+import de.janschuri.lunaticlib.platform.waterfall.sender.WaterfallPlayerSender;
 import de.janschuri.lunaticlib.utils.DecisionMessage;
 import net.md_5.bungee.api.CommandSender;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
 
 import java.util.UUID;
 
-public class WaterfallProxyRequestsPlayerSender extends PlayerSenderImpl implements ProxyRequestsPlayerSender<ProxiedPlayer, CommandSender> {
+public class WaterfallProxyRequestsPlayerSender extends WaterfallPlayerSender implements ProxyRequestsPlayerSender<ProxiedPlayer, CommandSender> {
 
     private final UUID uuid;
 

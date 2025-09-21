@@ -5,7 +5,7 @@ import de.janschuri.lunaticlib.config.LanguageConfig;
 import de.janschuri.lunaticlib.config.MessageKey;
 import de.janschuri.lunaticlib.utils.Placeholder;
 import de.janschuri.lunaticlib.sender.Sender;
-import de.janschuri.lunaticlib.utils.impl.LunaticPlaceholder;
+import de.janschuri.lunaticlib.utils.LunaticPlaceholder;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.ComponentBuilder;
 import net.kyori.adventure.text.TextReplacementConfig;

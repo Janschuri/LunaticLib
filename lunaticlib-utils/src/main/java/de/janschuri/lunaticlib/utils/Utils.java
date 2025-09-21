@@ -1,6 +1,5 @@
 package de.janschuri.lunaticlib.utils;
 
-import de.janschuri.lunaticlib.utils.impl.LunaticLogger;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

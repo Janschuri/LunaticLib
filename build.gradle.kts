@@ -20,33 +20,10 @@ repositories {
     mavenCentral()
 }
 
-val submodulesToPublish = listOf(
-    "lunaticlib-api",
-    "lunaticlib-utils",
-    "lunaticlib-utils-paper",
-    "lunaticlib-inventorygui",
-    "lunaticlib-config",
-    "lunaticlib-commands",
-    "lunaticlib-commands-paper",
-    "lunaticlib-commands-velocity",
-    "lunaticlib-commands-waterfall",
-    "lunaticlib-sender",
-    "lunaticlib-sender-paper",
-    "lunaticlib-sender-velocity",
-    "lunaticlib-sender-waterfall",
-    "lunaticlib-proxyrequests",
-    "lunaticlib-proxyrequests-paper",
-    "lunaticlib-proxyrequests-velocity",
-    "lunaticlib-proxyrequests-waterfall",
-    "lunaticlib-paper",
-    "lunaticlib-velocity",
-    "lunaticlib-waterfall",
-)
-
-tasks.register("publishModulesToMavenLocal") {
+tasks.register("publishAllModulesToMavenLocal") {
     group = "publishing"
-    description = "Publishes selected submodules to Maven Local"
+    description = "Publishes all submodules to Maven Local"
     dependsOn(
-        submodulesToPublish.map { ":$it:publishToMavenLocal" }
+        subprojects.map { it.path + ":publishToMavenLocal" }
     )
 }

@@ -47,7 +47,7 @@ public interface HasParams extends Command {
     }
 
     default Map<String, String> getOnlinePlayersParam(String permission) {
-        Collection<PlayerSender> players = LunaticCommandHandler.adapter().getOnlinePlayers();
+        Collection<PlayerSender> players = LunaticCommandHandler.getAdapter().getOnlinePlayers();
         Map<String, String> playerParams = new HashMap<>();
 
         for (PlayerSender player : players) {

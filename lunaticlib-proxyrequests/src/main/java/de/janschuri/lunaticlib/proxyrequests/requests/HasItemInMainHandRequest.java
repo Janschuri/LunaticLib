@@ -21,7 +21,7 @@ public class HasItemInMainHandRequest extends ProxyRequest<Boolean> {
     @Override
     protected void handleRequest(int requestId, ByteArrayDataInput in) {
         UUID uuid = UUID.fromString(in.readUTF());
-        ProxyRequestsPlayerSender player = LunaticProxyRequestsHandler.adapter().getPlayerSender(uuid);
+        ProxyRequestsPlayerSender player = LunaticProxyRequestsHandler.getAdapter().getPlayerSender(uuid);
         boolean hasItemInMainHand = player.hasItemInMainHand();
 
         ByteArrayDataOutput out = ByteStreams.newDataOutput();

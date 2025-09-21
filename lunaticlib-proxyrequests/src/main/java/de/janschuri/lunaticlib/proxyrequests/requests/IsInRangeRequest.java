@@ -25,8 +25,8 @@ public class IsInRangeRequest extends ProxyRequest<Boolean> {
         UUID uuid2 = UUID.fromString(in.readUTF());
         double range = in.readDouble();
 
-        ProxyRequestsPlayerSender player = LunaticProxyRequestsHandler.adapter().getPlayerSender(uuid1);
-        ProxyRequestsPlayerSender partner = LunaticProxyRequestsHandler.adapter().getPlayerSender(uuid2);
+        ProxyRequestsPlayerSender player = LunaticProxyRequestsHandler.getAdapter().getPlayerSender(uuid1);
+        ProxyRequestsPlayerSender partner = LunaticProxyRequestsHandler.getAdapter().getPlayerSender(uuid2);
         if (player == null  || partner == null) {
             return;
         }

@@ -93,11 +93,11 @@ public abstract class ProxyRequest<R> {
         out.write(data);
 
         if (serverName != null) {
-            if (!LunaticProxyRequestsHandler.adapter().sendPluginMessage(serverName, out.toByteArray())) {
+            if (!LunaticProxyRequestsHandler.getAdapter().sendPluginMessage(serverName, out.toByteArray())) {
                 responseFuture.completeExceptionally(new RuntimeException("Failed to send plugin message"));
             }
         } else {
-            if (!LunaticProxyRequestsHandler.adapter().sendPluginMessage(out.toByteArray())) {
+            if (!LunaticProxyRequestsHandler.getAdapter().sendPluginMessage(out.toByteArray())) {
                 responseFuture.completeExceptionally(new RuntimeException("Failed to send plugin message"));
             }
         }
@@ -124,7 +124,7 @@ public abstract class ProxyRequest<R> {
         out.writeInt(requestId);
         out.write(data);
 
-        return LunaticProxyRequestsHandler.adapter().sendPluginMessage(out.toByteArray());
+        return LunaticProxyRequestsHandler.getAdapter().sendPluginMessage(out.toByteArray());
     }
 
     protected void completeRequest(int requestId, R response) {

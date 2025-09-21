@@ -2,30 +2,26 @@ package de.janschuri.lunaticlib.platform.waterfall.sender;
 
 import de.janschuri.lunaticlib.platform.waterfall.sender.external.AdventureAPI;
 import de.janschuri.lunaticlib.sender.LunaticSenderHandler;
-import net.md_5.bungee.api.plugin.Plugin;
 
 public final class WaterfallSenderHandler {
 
-    private static WaterfallAdapter adapter;
+    private WaterfallSenderHandler() {}
 
-    public static void enable(Plugin plugin) {
-        if (adapter == null) {
-            synchronized (WaterfallSenderHandler.class) {
-                if (adapter == null) {
-                    adapter = new WaterfallAdapter();
-                    LunaticSenderHandler.enable(adapter);
-                }
-            }
-        }
-
-        AdventureAPI.initialize(plugin);
+    public static void initialize(WaterfallSenderAdapter adapter) {
+        LunaticSenderHandler.initialize(adapter);
+        AdventureAPI.initialize(adapter.getPlugin());
     }
 
-    public static void disable() {
+    public static void shutdown() {
         AdventureAPI.close();
+        LunaticSenderHandler.shutdown();
     }
 
-    public static WaterfallAdapter adapter() {
-        return adapter;
+    public static WaterfallSenderAdapter getAdapter() {
+        return (WaterfallSenderAdapter) LunaticSenderHandler.getAdapter();
+    }
+
+    public static boolean isEnabled() {
+        return LunaticSenderHandler.isEnabled();
     }
 }

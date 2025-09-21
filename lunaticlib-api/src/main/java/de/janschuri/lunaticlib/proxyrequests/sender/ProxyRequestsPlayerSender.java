@@ -5,7 +5,7 @@ import de.janschuri.lunaticlib.utils.DecisionMessage;
 
 import java.util.UUID;
 
-public interface ProxyRequestsPlayerSender<P extends C, C> extends PlayerSender<P, C> {
+public interface ProxyRequestsPlayerSender<P extends C, C> extends ProxyRequestsSender<C>, PlayerSender<P, C> {
 
     String getSkinURL();
 

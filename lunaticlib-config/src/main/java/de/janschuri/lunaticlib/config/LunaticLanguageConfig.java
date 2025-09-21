@@ -3,7 +3,7 @@ package de.janschuri.lunaticlib.config;
 import de.janschuri.lunaticlib.commands.Command;
 import de.janschuri.lunaticlib.commands.HasHelpCommand;
 import de.janschuri.lunaticlib.utils.Placeholder;
-import de.janschuri.lunaticlib.utils.impl.LunaticPlaceholder;
+import de.janschuri.lunaticlib.utils.LunaticPlaceholder;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.TextComponent;
 import net.kyori.adventure.text.TextReplacementConfig;

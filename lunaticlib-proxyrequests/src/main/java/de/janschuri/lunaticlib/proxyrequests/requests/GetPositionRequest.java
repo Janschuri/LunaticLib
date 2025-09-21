@@ -22,7 +22,7 @@ public class GetPositionRequest extends ProxyRequest<double[]> {
     @Override
     protected void handleRequest(int requestId, ByteArrayDataInput in) {
         UUID uuid = UUID.fromString(in.readUTF());
-        ProxyRequestsPlayerSender player = LunaticProxyRequestsHandler.adapter().getPlayerSender(uuid);
+        ProxyRequestsPlayerSender player = LunaticProxyRequestsHandler.getAdapter().getPlayerSender(uuid);
         double[] position = player.getPosition();
 
         ByteArrayDataOutput out = ByteStreams.newDataOutput();

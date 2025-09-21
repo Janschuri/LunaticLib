@@ -6,7 +6,7 @@ import com.google.common.io.ByteStreams;
 import de.janschuri.lunaticlib.proxyrequests.LunaticProxyRequestsHandler;
 import de.janschuri.lunaticlib.proxyrequests.sender.ProxyRequestsPlayerSender;
 import de.janschuri.lunaticlib.utils.DecisionMessage;
-import de.janschuri.lunaticlib.utils.impl.LunaticDecisionMessage;
+import de.janschuri.lunaticlib.utils.LunaticDecisionMessage;
 
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
@@ -23,7 +23,7 @@ public class OpenDecisionGUIRequest extends ProxyRequest<Boolean> {
     @Override
     protected void handleRequest(int requestId, ByteArrayDataInput in) {
         UUID uuid = UUID.fromString(in.readUTF());
-        ProxyRequestsPlayerSender player = LunaticProxyRequestsHandler.adapter().getPlayerSender(uuid);
+        ProxyRequestsPlayerSender player = LunaticProxyRequestsHandler.getAdapter().getPlayerSender(uuid);
 
         int length = in.readInt();
         String[] message = new String[length];
