@@ -4,8 +4,6 @@ import de.janschuri.lunaticlib.commands.LunaticCommandHandler;
 import de.janschuri.lunaticlib.platform.waterfall.sender.WaterfallSenderHandler;
 import de.janschuri.lunaticlib.utils.SingletonHolder;
 
-import java.util.Objects;
-
 public final class WaterfallCommandHandler {
 
     private WaterfallCommandHandler() {}

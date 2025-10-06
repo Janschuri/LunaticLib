@@ -3,7 +3,7 @@ package de.janschuri.lunaticlib.platform.paper.inventorygui.guis;
 import de.janschuri.lunaticlib.platform.paper.inventorygui.buttons.InventoryButton;
 import de.janschuri.lunaticlib.platform.paper.inventorygui.interfaces.list.PaginatedList;
 import de.janschuri.lunaticlib.platform.paper.inventorygui.interfaces.list.SearchableList;
-import de.janschuri.lunaticlib.utils.paper.ItemStackUtils;
+import de.janschuri.lunaticlib.platform.paper.utils.ItemStackUtils;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;

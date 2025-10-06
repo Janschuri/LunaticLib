@@ -1,7 +1,7 @@
 package de.janschuri.lunaticlib.platform.paper.inventorygui.interfaces.list;
 
 import de.janschuri.lunaticlib.platform.paper.inventorygui.buttons.InventoryButton;
-import de.janschuri.lunaticlib.utils.paper.ItemStackUtils;
+import de.janschuri.lunaticlib.platform.paper.utils.ItemStackUtils;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;

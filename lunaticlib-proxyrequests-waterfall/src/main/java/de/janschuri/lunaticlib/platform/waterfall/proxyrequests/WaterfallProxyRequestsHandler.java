@@ -2,14 +2,12 @@ package de.janschuri.lunaticlib.platform.waterfall.proxyrequests;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Objects;
 import java.util.UUID;
 
 import de.janschuri.lunaticlib.platform.waterfall.sender.WaterfallSenderHandler;
 import de.janschuri.lunaticlib.proxyrequests.LunaticProxyRequestsHandler;
 import de.janschuri.lunaticlib.platform.waterfall.proxyrequests.listener.PluginMessageListener;
 import de.janschuri.lunaticlib.platform.waterfall.proxyrequests.listener.ServerConnectListener;
-import de.janschuri.lunaticlib.utils.SingletonHolder;
 import net.md_5.bungee.api.ProxyServer;
 import net.md_5.bungee.api.plugin.Plugin;
 

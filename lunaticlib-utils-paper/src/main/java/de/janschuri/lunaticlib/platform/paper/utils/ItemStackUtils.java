@@ -1,4 +1,4 @@
-package de.janschuri.lunaticlib.utils.paper;
+package de.janschuri.lunaticlib.platform.paper.utils;
 
 import de.janschuri.lunaticlib.utils.Utils;
 import de.janschuri.lunaticlib.utils.UtilsLogger;
