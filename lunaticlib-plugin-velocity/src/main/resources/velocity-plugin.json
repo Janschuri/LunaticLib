@@ -1,7 +1,0 @@
-{
-  "id": "lunaticlib",
-  "name": "LunaticLib",
-  "version": "${version}",
-  "authors": ["janschuri"],
-  "main": "de.janschuri.lunaticlib.platform.velocity.VelocityLunaticLib"
-}

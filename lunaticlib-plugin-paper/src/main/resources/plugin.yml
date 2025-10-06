@@ -1,8 +1,0 @@
-name: LunaticLib
-version:  '${project.version}'
-main: de.janschuri.lunaticlib.platform.paper.PaperLunaticLib
-api-version: '1.19'
-author: Janschuri
-description: A Library for Lunatic plugins.
-softdepend:
-  - Vault
