@@ -2,7 +2,7 @@
 # https://docs.gradle.org/current/userguide/platforms.html#sub::toml-dependencies-format
 
 [versions]
-de-janschuri-lunaticlib = "2.0.0"
+de-janschuri-lunaticlib = "2.0.0-SNAPSHOT"
 
 org-slf4j-slf4j-api = "2.0.13"
 de-rapha149-signgui-signgui = "2.5.0"
@@ -33,6 +33,3 @@ org-yaml-snakeyaml = { module = "org.yaml:snakeyaml", version.ref = "org-yaml-sn
 org-reflections-reflections = { module = "org.reflections:reflections", version.ref = "org-reflections-reflections"}
 com-google-guava-guava = { module = "com.google.guava:guava", version.ref = "com-google-guava-guava" }
 com-github-milkbowl-vaultapi = { module = "com.github.MilkBowl:VaultAPI", version.ref = "com-github-milkbowl-vaultapi" }
-org-bstats-bstats-bukkit = { module = "org.bstats:bstats-bukkit", version.ref = "org-bstats-bstats-bukkit" }
-org-bstats-bstats-bungeecord = { module = "org.bstats:bstats-bungeecord", version.ref = "org-bstats-bstats-bungeecord" }
-org-bstats-bstats-velocity = { module = "org.bstats:bstats-velocity", version.ref = "org-bstats-bstats-velocity" }

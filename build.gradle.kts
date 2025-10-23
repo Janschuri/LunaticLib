@@ -42,28 +42,61 @@ subprojects {
 //
 tasks.register<com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar>("lunaticlibPaperFatJar") {
     archiveBaseName.set("lunaticlib-paper")
-    archiveClassifier.set("paper")
-    from(project(":lunaticlib-config").tasks.named("jar"))
-    from(project(":lunaticlib-inventorygui-paper").tasks.named("jar"))
-    from(project(":lunaticlib-proxyrequests-paper").tasks.named("jar"))
-    from(project(":lunaticlib-utils-paper").tasks.named("jar"))
-    from(project(":lunaticlib-commands-paper").tasks.named("jar"))
+    val modules = listOf(
+        ":lunaticlib-api",
+        ":lunaticlib-commands",
+        ":lunaticlib-sender",
+        ":lunaticlib-utils",
+        ":lunaticlib-config",
+        ":lunaticlib-sender-waterfall",
+        ":lunaticlib-proxyrequests-paper",
+        ":lunaticlib-sender-paper",
+        ":lunaticlib-commands-paper",
+        ":lunaticlib-utils-paper",
+        ":lunaticlib-inventorygui-paper"
+    )
+    modules.forEach { module ->
+        from(project(module).tasks.named("jar"))
+        configurations += project(module).configurations.getByName("runtimeClasspath")
+    }
 }
 
 tasks.register<com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar>("lunaticlibVelocityFatJar") {
     archiveBaseName.set("lunaticlib-velocity")
-    archiveClassifier.set("velocity")
-    from(project(":lunaticlib-config").tasks.named("jar"))
-    from(project(":lunaticlib-proxyrequests-paper").tasks.named("jar"))
-    from(project(":lunaticlib-commands-paper").tasks.named("jar"))
+    val modules = listOf(
+        ":lunaticlib-api",
+        ":lunaticlib-commands",
+        ":lunaticlib-sender",
+        ":lunaticlib-utils",
+        ":lunaticlib-config",
+        ":lunaticlib-sender-waterfall",
+        ":lunaticlib-proxyrequests-velocity",
+        ":lunaticlib-sender-velocity",
+        ":lunaticlib-commands-velocity"
+    )
+    modules.forEach { module ->
+        from(project(module).tasks.named("jar"))
+        configurations += project(module).configurations.getByName("runtimeClasspath")
+    }
 }
 
 tasks.register<com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar>("lunaticlibWaterfallFatJar") {
     archiveBaseName.set("lunaticlib-waterfall")
-    archiveClassifier.set("waterfall")
-    from(project(":lunaticlib-config").tasks.named("jar"))
-    from(project(":lunaticlib-proxyrequests-waterfall").tasks.named("jar"))
-    from(project(":lunaticlib-commands-waterfall").tasks.named("jar"))
+    val modules = listOf(
+        ":lunaticlib-api",
+        ":lunaticlib-commands",
+        ":lunaticlib-sender",
+        ":lunaticlib-utils",
+        ":lunaticlib-config",
+        ":lunaticlib-sender-waterfall",
+        ":lunaticlib-proxyrequests-waterfall",
+        ":lunaticlib-sender-waterfall",
+        ":lunaticlib-commands-waterfall"
+    )
+    modules.forEach { module ->
+        from(project(module).tasks.named("jar"))
+        configurations += project(module).configurations.getByName("runtimeClasspath")
+    }
 }
 
 publishing {

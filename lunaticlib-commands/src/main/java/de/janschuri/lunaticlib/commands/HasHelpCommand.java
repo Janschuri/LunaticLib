@@ -11,7 +11,7 @@ public interface HasHelpCommand extends HasSubcommands {
 
     LanguageConfig getLanguageConfig();
 
-    Component pageParam();
+    Component getPageParam();
 
     Component getHelpHeader();
 

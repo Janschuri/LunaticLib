@@ -52,7 +52,7 @@ public class LunaticHelpCommand extends LunaticCommand implements HasParentComma
         }
 
         return List.of(
-                command.pageParam()
+                command.getPageParam()
         );
     }
 

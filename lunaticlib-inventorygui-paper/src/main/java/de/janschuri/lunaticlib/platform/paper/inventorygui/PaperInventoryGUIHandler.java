@@ -12,7 +12,7 @@ public class PaperInventoryGUIHandler {
     private static JavaPlugin plugin;
     static Logger logger = LunaticLogger.getLogger("LunaticLib-InventoryGui");
 
-    public static void enable(JavaPlugin plugin) {
+    public static void initialize(JavaPlugin plugin) {
         PaperInventoryGUIHandler.plugin = plugin;
         Bukkit.getServer().getPluginManager().registerEvents(new GUIListener(), getPluginInstance());
     }
