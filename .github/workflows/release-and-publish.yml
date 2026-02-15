@@ -66,7 +66,7 @@ jobs:
         run: |
           set -euo pipefail
           VERSION='${{ steps.version.outputs.version }}'
-          sed -i -E "s#^(de-janschuri-lunaticlib\s*=\s*").*(")#\1${VERSION}\2#" gradle/libs.versions.toml
+          sed -i -E 's#^(de-janschuri-lunaticlib\s*=\s*").*(")#\1'"$VERSION"'\2#' gradle/libs.versions.toml
           grep -n '^de-janschuri-lunaticlib\s*=\s*"' gradle/libs.versions.toml
 
       - name: Build all modules and fat jars
