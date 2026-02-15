@@ -1,0 +1,89 @@
+name: Release and Publish
+
+on:
+  push:
+    branches:
+      - '**'
+
+permissions:
+  contents: write
+  packages: write
+
+jobs:
+  build-publish:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Set up Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '21'
+          cache: gradle
+
+      - name: Compute version and tag
+        id: version
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          BASE_VERSION=$(sed -nE 's/^de-janschuri-lunaticlib\s*=\s*"([^"]+)"/\1/p' gradle/libs.versions.toml | head -n 1)
+          if [[ -z "$BASE_VERSION" ]]; then
+            echo "Could not determine base version from gradle/libs.versions.toml"
+            exit 1
+          fi
+
+          BRANCH_NAME="${GITHUB_REF_NAME}"
+          SHORT_SHA="${GITHUB_SHA::7}"
+
+          if [[ "$BRANCH_NAME" == "main" ]]; then
+            VERSION="$BASE_VERSION"
+            TAG="v$BASE_VERSION"
+            CREATE_RELEASE="true"
+
+            if ! git rev-parse "$TAG" >/dev/null 2>&1; then
+              git tag "$TAG" "$GITHUB_SHA"
+              git push origin "$TAG"
+            fi
+          else
+            SAFE_BRANCH=$(echo "$BRANCH_NAME" | tr '[:upper:]' '[:lower:]' | sed -E 's#[^a-z0-9._-]#-#g')
+            VERSION="${BASE_VERSION}-${SAFE_BRANCH}.${GITHUB_RUN_NUMBER}.${SHORT_SHA}"
+            TAG="ci/${SAFE_BRANCH}/${SHORT_SHA}"
+            CREATE_RELEASE="false"
+
+            if ! git rev-parse "$TAG" >/dev/null 2>&1; then
+              git tag "$TAG" "$GITHUB_SHA"
+              git push origin "$TAG"
+            fi
+          fi
+
+          echo "version=$VERSION" >> "$GITHUB_OUTPUT"
+          echo "tag=$TAG" >> "$GITHUB_OUTPUT"
+          echo "create_release=$CREATE_RELEASE" >> "$GITHUB_OUTPUT"
+
+      - name: Build fat jars
+        run: ./gradlew --no-daemon clean lunaticlibPaperFatJar lunaticlibVelocityFatJar lunaticlibWaterfallFatJar -PlunaticlibVersion=${{ steps.version.outputs.version }}
+
+      - name: Publish to GitHub Packages
+        env:
+          GITHUB_ACTOR: ${{ github.actor }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_REPOSITORY: ${{ github.repository }}
+        run: ./gradlew --no-daemon publish -PlunaticlibVersion=${{ steps.version.outputs.version }}
+
+      - name: Create GitHub Release (main only)
+        if: steps.version.outputs.create_release == 'true'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          gh release view "${{ steps.version.outputs.tag }}" >/dev/null 2>&1 || \
+            gh release create "${{ steps.version.outputs.tag }}" build/libs/*.jar \
+              --title "Release ${{ steps.version.outputs.tag }}" \
+              --generate-notes
