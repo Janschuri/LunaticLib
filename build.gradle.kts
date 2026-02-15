@@ -47,6 +47,11 @@ subprojects {
     apply(plugin = "java-library")
     apply(plugin = "maven-publish")
 
+    repositories {
+        mavenLocal()
+        mavenCentral()
+    }
+
     publishing {
         publications {
             create<MavenPublication>("mavenJava") {
