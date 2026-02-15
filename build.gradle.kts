@@ -5,10 +5,12 @@ plugins {
 }
 
 val lunaticlibVersion: String by lazy {
-    val tomlFile = file("gradle/libs.versions.toml")
-    val versionRegex = Regex("""de-janschuri-lunaticlib\s*=\s*"([^"]+)"""")
-    tomlFile.readLines()
-        .firstNotNullOf { versionRegex.find(it)?.groupValues?.get(1) }
+    providers.gradleProperty("lunaticlibVersion").orNull ?: run {
+        val tomlFile = file("gradle/libs.versions.toml")
+        val versionRegex = Regex("""de-janschuri-lunaticlib\s*=\s*"([^"]+)"""")
+        tomlFile.readLines()
+            .firstNotNullOf { versionRegex.find(it)?.groupValues?.get(1) }
+    }
 }
 extra["lunaticlibVersion"] = lunaticlibVersion
 
@@ -18,11 +20,45 @@ version = lunaticlibVersion
 repositories {
     mavenLocal()
     mavenCentral()
+    maven {
+        name = "papermc"
+        url = uri("https://repo.papermc.io/repository/maven-public/")
+    }
+}
+
+fun org.gradle.api.publish.PublishingExtension.configurePublishRepositories() {
+    repositories {
+        mavenLocal()
+
+        val githubActor = System.getenv("GITHUB_ACTOR")
+        val githubToken = System.getenv("GITHUB_TOKEN")
+        val githubRepository = System.getenv("GITHUB_REPOSITORY")
+
+        if (!githubActor.isNullOrBlank() && !githubToken.isNullOrBlank() && !githubRepository.isNullOrBlank()) {
+            maven {
+                name = "GitHubPackages"
+                url = uri("https://maven.pkg.github.com/$githubRepository")
+                credentials {
+                    username = githubActor
+                    password = githubToken
+                }
+            }
+        }
+    }
 }
 
 subprojects {
     apply(plugin = "java-library")
     apply(plugin = "maven-publish")
+
+    repositories {
+        mavenLocal()
+        mavenCentral()
+        maven {
+            name = "papermc"
+            url = uri("https://repo.papermc.io/repository/maven-public/")
+        }
+    }
 
     publishing {
         publications {
@@ -30,10 +66,7 @@ subprojects {
                 from(components["java"])
             }
         }
-
-        repositories {
-            mavenLocal()
-        }
+        configurePublishRepositories()
     }
 }
 
@@ -121,9 +154,7 @@ publishing {
         }
     }
 
-    repositories {
-        mavenLocal()
-    }
+    configurePublishRepositories()
 }
 
 tasks.register("publishAllModulesToMavenLocal") {
