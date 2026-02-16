@@ -1,5 +1,9 @@
 name: workflow.yml
-on:
+on: [push]
+
+permissions:
+  contents: write
+  packages: write
 
 jobs:
   build:
