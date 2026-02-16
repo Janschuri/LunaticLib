@@ -2,6 +2,7 @@ name: workflow.yml
 
 on: [push]
 
+
 permissions:
   contents: write
   packages: write
