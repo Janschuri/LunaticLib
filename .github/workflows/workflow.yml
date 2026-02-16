@@ -22,4 +22,4 @@ jobs:
           DEFAULT_BUMP: minor
           RELEASE_BRANCHES: master
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          PRERELEASE_SUFFIX: "beta-"${{ github.ref_name }}
+          PRERELEASE_SUFFIX: "beta-${{ github.ref_name }}"
