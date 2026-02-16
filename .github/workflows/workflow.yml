@@ -18,6 +18,8 @@ jobs:
       - name: Bump version and push tag
         uses: anothrNick/github-tag-action@1.75.0
         env:
-          PRERELEASE: true
+          WITH_V: true
+          DEFAULT_BUMP: patch
+          RELEASE_BRANCHES: master
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           PRERELEASE_SUFFIX: ${{ github.ref_name }}
