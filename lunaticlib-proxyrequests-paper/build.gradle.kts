@@ -8,7 +8,7 @@ group = "de.janschuri"
 version = "$lunaticlibVersion"
 
 repositories {
-//    mavenLocal()
+    mavenLocal()
     mavenCentral()
     maven {
         url = uri("https://jitpack.io")
