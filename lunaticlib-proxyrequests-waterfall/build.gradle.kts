@@ -10,6 +10,10 @@ version = "$lunaticlibVersion"
 repositories {
     mavenLocal()
     mavenCentral()
+    maven {
+        name = "papermc-repo"
+        url = uri("https://repo.papermc.io/repository/maven-public/")
+    }
 }
 
 dependencies {
