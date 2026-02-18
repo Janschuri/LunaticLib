@@ -8,6 +8,7 @@ group = "de.janschuri"
 version = "$lunaticlibVersion"
 
 repositories {
+    mavenCentral()
     mavenLocal()
 }
 

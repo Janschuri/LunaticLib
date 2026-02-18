@@ -7,6 +7,7 @@ group = "de.janschuri"
 version = "2.0.0"
 
 repositories {
+    mavenLocal()
     mavenCentral()
 }
 
