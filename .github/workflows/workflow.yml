@@ -25,4 +25,6 @@ jobs:
           RELEASE_BRANCHES: master
           PRERELEASE: true
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          PRERELEASE_SUFFIX: "beta-${{ github.ref_name }}"
+          PRERELEASE_SUFFIX: "SNAPSHOT-${{ github.ref_name }}"
+      - name: build gradle
+        run: ./gradlew build
