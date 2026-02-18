@@ -41,9 +41,3 @@ tasks.withType<JavaCompile>().configureEach {
         options.release.set(targetJavaVersion)
     }
 }
-
-publishing {
-    publications.create<MavenPublication>("maven") {
-        from(components["java"])
-    }
-}

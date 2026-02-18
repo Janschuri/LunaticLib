@@ -35,6 +35,14 @@ subprojects {
 
         repositories {
             mavenLocal()
+            maven {
+                name = "GitHubPackages"
+                url = uri("https://maven.pkg.github.com/janschuri/lunaticlib")
+                credentials {
+                    username = System.getenv("GITHUB_ACTOR")
+                    password = System.getenv("GITHUB_TOKEN")
+                }
+            }
         }
     }
 }
@@ -127,10 +135,10 @@ publishing {
         mavenLocal()
         maven {
             name = "GitHubPackages"
-            url = uri("https://maven.pkg.github.com/Janschuri/LunaticLib")
+            url = uri("https://maven.pkg.github.com/janschuri/lunaticlib")
             credentials {
-                username = System.getenv("GITHUB_ACTOR") ?: project.findProperty("gpr.user") as String? ?: ""
-                password = System.getenv("GITHUB_TOKEN") ?: project.findProperty("gpr.token") as String? ?: ""
+                username = System.getenv("GITHUB_ACTOR")
+                password = System.getenv("GITHUB_TOKEN")
             }
         }
     }
@@ -145,6 +153,19 @@ tasks.register("publishAllModulesToMavenLocal") {
                     "publishPaperFatJarPublicationToMavenLocal",
                     "publishVelocityFatJarPublicationToMavenLocal",
                     "publishWaterfallFatJarPublicationToMavenLocal"
+                )
+    )
+}
+
+tasks.register("publishAllModulesToGitHubPackages") {
+    group = "publishing"
+    description = "Publishes all submodules and fat jars to GitHub Packages"
+    dependsOn(
+        subprojects.map { it.path + ":publishAllPublicationsToGitHubPackagesRepository" } +
+                listOf(
+                    "publishPaperFatJarPublicationToGitHubPackagesRepository",
+                    "publishVelocityFatJarPublicationToGitHubPackagesRepository",
+                    "publishWaterfallFatJarPublicationToGitHubPackagesRepository"
                 )
     )
 }
