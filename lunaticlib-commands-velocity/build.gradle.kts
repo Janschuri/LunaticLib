@@ -24,7 +24,7 @@ dependencies {
 }
 
 
-val targetJavaVersion = 17
+val targetJavaVersion: Int by rootProject.extra
 java {
     val javaVersion = JavaVersion.toVersion(targetJavaVersion)
     sourceCompatibility = javaVersion

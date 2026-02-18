@@ -3,6 +3,7 @@ plugins {
     id("maven-publish")
 }
 val lunaticlibVersion: String by rootProject.extra
+val targetJavaVersion: Int by rootProject.extra
 
 group = "de.janschuri"
 version = "$lunaticlibVersion"
@@ -22,8 +23,6 @@ dependencies {
     compileOnly(libs.com.velocitypowered.velocity.api)
 }
 
-
-val targetJavaVersion = 17
 java {
     val javaVersion = JavaVersion.toVersion(targetJavaVersion)
     sourceCompatibility = javaVersion

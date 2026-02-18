@@ -11,6 +11,10 @@ version = "$lunaticlibVersion"
 repositories {
     mavenLocal()
     mavenCentral()
+    maven {
+        name = "papermc-repo"
+        url = uri("https://repo.papermc.io/repository/maven-public/")
+    }
 }
 
 dependencies {
@@ -22,7 +26,7 @@ dependencies {
     compileOnly(libs.com.google.guava.guava)
 }
 
-val targetJavaVersion = 17
+val targetJavaVersion: Int by rootProject.extra
 java {
     val javaVersion = JavaVersion.toVersion(targetJavaVersion)
     sourceCompatibility = javaVersion

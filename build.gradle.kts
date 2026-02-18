@@ -11,6 +11,8 @@ val lunaticlibVersion: String by lazy {
         .firstNotNullOf { versionRegex.find(it)?.groupValues?.get(1) }
 }
 extra["lunaticlibVersion"] = lunaticlibVersion
+val targetJavaVersion = 21
+extra["targetJavaVersion"] = targetJavaVersion
 
 group = "de.janschuri"
 version = lunaticlibVersion

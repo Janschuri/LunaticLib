@@ -24,7 +24,7 @@ dependencies {
     compileOnly(libs.io.github.waterfallmc.waterfall.api)
 }
 
-val targetJavaVersion = 17
+val targetJavaVersion: Int by rootProject.extra
 java {
     val javaVersion = JavaVersion.toVersion(targetJavaVersion)
     sourceCompatibility = javaVersion
