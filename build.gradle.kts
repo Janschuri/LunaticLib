@@ -156,16 +156,3 @@ tasks.register("publishAllModulesToMavenLocal") {
                 )
     )
 }
-
-tasks.register("publishAllModulesToGitHubPackages") {
-    group = "publishing"
-    description = "Publishes all submodules and fat jars to GitHub Packages"
-    dependsOn(
-        subprojects.map { it.path + ":publishAllPublicationsToGitHubPackagesRepository" } +
-                listOf(
-                    "publishPaperFatJarPublicationToGitHubPackagesRepository",
-                    "publishVelocityFatJarPublicationToGitHubPackagesRepository",
-                    "publishWaterfallFatJarPublicationToGitHubPackagesRepository"
-                )
-    )
-}

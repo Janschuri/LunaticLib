@@ -28,10 +28,44 @@ jobs:
           PRERELEASE: true
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           PRERELEASE_SUFFIX: "SNAPSHOT-${{ github.ref_name }}"
+      - name: Use version
+        run: echo "Version is ${{ steps.tag_version.outputs.new_tag }}"
+      - name: Strip v and suffix from version
+        id: strip_version
+        run: |
+          RAW_VERSION="${{ steps.tag_version.outputs.new_tag }}"
+          # Remove leading v and any -<suffix> at the end
+          PACKAGE_VERSION=$(echo "$RAW_VERSION" | sed -E 's/^v//')
+          echo "package_version=$PACKAGE_VERSION" >> $GITHUB_OUTPUT
+          CLEAN_VERSION=$(echo "$RAW_VERSION" | sed -E 's/^v//' | sed -E 's/-SNAPSHOT.*$//; s/-[a-zA-Z0-9]+$//')
+          echo "clean_version=$CLEAN_VERSION" >> $GITHUB_OUTPUT
+      - name: Update version in libs.versions.toml
+        run: |
+          sed -i "s/^de-janschuri-lunaticlib = \".*\"/de-janschuri-lunaticlib = \"${{ steps.strip_version.outputs.clean_version }}\"/" gradle/libs.versions.toml
+      - name: Commit version update if changed
+        run: |
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+          git add gradle/libs.versions.toml
+          if ! git diff --cached --quiet; then
+            git commit -m "chore: update de-janschuri-lunaticlib version in libs.versions.toml"
+            git push
+          fi
       - name: Setup Gradle
         uses: gradle/actions/setup-gradle@v5
+      - name: Cache Gradle build output
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.gradle/caches
+            ~/.gradle/wrapper
+            .gradle
+            build
+          key: gradle-${{ runner.os }}-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
+          restore-keys: |
+            gradle-${{ runner.os }}-
       - name: Publish to GitHub Packages
-        run: ./gradlew publishAllModulesToGitHubPackages
+        run: ./gradlew publish -Pversion=${{ steps.strip_version.outputs.package_version }} --no-daemon
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           GITHUB_ACTOR: ${{ secrets.GITHUB_ACTOR }}
