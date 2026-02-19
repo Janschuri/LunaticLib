@@ -72,4 +72,3 @@ jobs:
         run: ./gradlew publish -PlunaticlibVersion=${{ steps.strip_version.outputs.package_version }} --no-daemon
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          GITHUB_ACTOR: ${{ secrets.GITHUB_ACTOR }}
