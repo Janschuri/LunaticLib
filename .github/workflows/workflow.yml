@@ -29,6 +29,7 @@ jobs:
           PRERELEASE: true
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           PRERELEASE_SUFFIX: "SNAPSHOT-${{ github.ref_name }}"
+          BRANCH_HISTORY: full
       - name: Use version
         run: echo "Version is ${{ steps.tag_version.outputs.new_tag }}"
       - name: Strip v and suffix from version
