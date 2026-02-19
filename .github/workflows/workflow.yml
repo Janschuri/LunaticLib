@@ -38,6 +38,8 @@ jobs:
           # Remove leading v and any -<suffix> at the end
           PACKAGE_VERSION=$(echo "$RAW_VERSION" | sed -E 's/^v//')
           CLEAN_VERSION=$(echo "$PACKAGE_VERSION" | sed -E 's/-SNAPSHOT.*$//; s/-[a-zA-Z0-9]+$//')
+          echo "Extracted package version: $PACKAGE_VERSION"
+          echo "Clean version for libs.versions.toml: $CLEAN_VERSION"
           echo "package_version=$PACKAGE_VERSION" >> $GITHUB_OUTPUT
           echo "clean_version=$CLEAN_VERSION" >> $GITHUB_OUTPUT
       - name: Update version in libs.versions.toml
