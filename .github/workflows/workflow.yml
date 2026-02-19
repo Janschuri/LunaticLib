@@ -20,6 +20,7 @@ jobs:
           java-version: 21
           cache: gradle
       - name: Bump version and push tag
+        id: tag_version
         uses: anothrNick/github-tag-action@1.75.0
         env:
           WITH_V: true
@@ -36,8 +37,8 @@ jobs:
           RAW_VERSION="${{ steps.tag_version.outputs.new_tag }}"
           # Remove leading v and any -<suffix> at the end
           PACKAGE_VERSION=$(echo "$RAW_VERSION" | sed -E 's/^v//')
+          CLEAN_VERSION=$(echo "$PACKAGE_VERSION" | sed -E 's/-SNAPSHOT.*$//; s/-[a-zA-Z0-9]+$//')
           echo "package_version=$PACKAGE_VERSION" >> $GITHUB_OUTPUT
-          CLEAN_VERSION=$(echo "$RAW_VERSION" | sed -E 's/^v//' | sed -E 's/-SNAPSHOT.*$//; s/-[a-zA-Z0-9]+$//')
           echo "clean_version=$CLEAN_VERSION" >> $GITHUB_OUTPUT
       - name: Update version in libs.versions.toml
         run: |
