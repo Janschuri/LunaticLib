@@ -5,10 +5,13 @@ plugins {
 }
 
 val lunaticlibVersion: String by lazy {
-    val tomlFile = file("gradle/libs.versions.toml")
-    val versionRegex = Regex("""de-janschuri-lunaticlib\s*=\s*"([^"]+)"""")
-    tomlFile.readLines()
-        .firstNotNullOf { versionRegex.find(it)?.groupValues?.get(1) }
+    findProperty("lunaticlibVersion") as? String
+        ?: run {
+            val tomlFile = file("gradle/libs.versions.toml")
+            val versionRegex = Regex("""de-janschuri-lunaticlib\s*=\s*"([^"]+)"""")
+            tomlFile.readLines()
+                .firstNotNullOf { versionRegex.find(it)?.groupValues?.get(1) }
+        }
 }
 extra["lunaticlibVersion"] = lunaticlibVersion
 val targetJavaVersion = 21
