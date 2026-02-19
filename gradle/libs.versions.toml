@@ -2,7 +2,7 @@
 # https://docs.gradle.org/current/userguide/platforms.html#sub::toml-dependencies-format
 
 [versions]
-de-janschuri-lunaticlib = "1.4.5"
+de-janschuri-lunaticlib = "2.0.0"
 
 org-slf4j-slf4j-api = "2.0.13"
 de-rapha149-signgui-signgui = "2.5.0"
