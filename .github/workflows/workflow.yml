@@ -28,19 +28,34 @@ jobs:
           RELEASE_BRANCHES: master
           PRERELEASE: true
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          PRERELEASE_SUFFIX: "SNAPSHOT-${{ github.ref_name }}"
+          PRERELEASE_SUFFIX: "beta"
           BRANCH_HISTORY: full
+          DRY_RUN: true
       - name: Use version
         run: echo "Version is ${{ steps.tag_version.outputs.new_tag }}"
       - name: Strip v and suffix from version
         id: strip_version
         run: |
           RAW_VERSION="${{ steps.tag_version.outputs.new_tag }}"
-          # Remove leading v and any -<suffix> at the end
-          PACKAGE_VERSION=$(echo "$RAW_VERSION" | sed -E 's/^v//')
-          CLEAN_VERSION=$(echo "$PACKAGE_VERSION" | sed -E 's/-SNAPSHOT.*$//; s/-[a-zA-Z0-9]+$//')
-          echo "Extracted package version: $PACKAGE_VERSION"
-          echo "Clean version for libs.versions.toml: $CLEAN_VERSION"
+          CLEAN_VERSION=$(echo "$RAW_VERSION" | sed -E 's/^v//; s/-beta$//')
+          PRERELASE_NUMBER=$(echo "$RAW_VERSION" | sed -E 's/^v//; s/.*-beta([0-9]+)$/\1/')
+          
+          // package version should be like that
+          // "1.0.0" for master branch
+          // "1.0.0-SNAPSHOT-1" for develop branch
+          // "1.0.0-SNAPSHOT-branchname-1" for feature branches
+          
+          //check the branch name
+          if [[ "${GITHUB_REF_NAME}" == "main" || "${GITHUB_REF_NAME}" == "master" ]]; then
+            SNAPSHOT_SUFFIX=""
+          elif [[ "${GITHUB_REF_NAME}" == "develop" ]]; then
+            SNAPSHOT_SUFFIX="-SNAPSHOT-${PRERELASE_NUMBER}"
+          else
+            SNAPSHOT_SUFFIX="-SNAPSHOT-$(echo "${GITHUB_REF_NAME}" | tr '/' '-')-${PRERELASE_NUMBER}"
+          fi
+          
+          PACKAGE_VERSION="${CLEAN_VERSION}${SNAPSHOT_SUFFIX}"
+          
           echo "package_version=$PACKAGE_VERSION" >> $GITHUB_OUTPUT
           echo "clean_version=$CLEAN_VERSION" >> $GITHUB_OUTPUT
       - name: Update version in libs.versions.toml
@@ -55,20 +70,20 @@ jobs:
             git commit -m "chore: update de-janschuri-lunaticlib version in libs.versions.toml"
             git push
           fi
-      - name: Setup Gradle
-        uses: gradle/actions/setup-gradle@v5
-      - name: Cache Gradle build output
-        uses: actions/cache@v4
-        with:
-          path: |
-            ~/.gradle/caches
-            ~/.gradle/wrapper
-            .gradle
-            build
-          key: gradle-${{ runner.os }}-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
-          restore-keys: |
-            gradle-${{ runner.os }}-
-      - name: Publish to GitHub Packages
-        run: ./gradlew publish -PlunaticlibVersion=${{ steps.strip_version.outputs.package_version }} --no-daemon
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+#      - name: Setup Gradle
+#        uses: gradle/actions/setup-gradle@v5
+#      - name: Cache Gradle build output
+#        uses: actions/cache@v4
+#        with:
+#          path: |
+#            ~/.gradle/caches
+#            ~/.gradle/wrapper
+#            .gradle
+#            build
+#          key: gradle-${{ runner.os }}-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
+#          restore-keys: |
+#            gradle-${{ runner.os }}-
+#      - name: Publish to GitHub Packages
+#        run: ./gradlew publish -PlunaticlibVersion=${{ steps.strip_version.outputs.package_version }} --no-daemon
+#        env:
+#          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
