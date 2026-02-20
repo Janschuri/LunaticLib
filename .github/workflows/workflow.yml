@@ -37,9 +37,10 @@ jobs:
         id: strip_version
         run: |
           RAW_VERSION="${{ steps.tag_version.outputs.new_tag }}"
-          CLEAN_VERSION=$(echo "$RAW_VERSION" | sed -E 's/^v//; s/-beta$//')
-          PRERELASE_NUMBER=$(echo "$RAW_VERSION" | sed -E 's/^v//; s/.*-beta([0-9]+)$/\1/')
-          
+          CLEAN_VERSION=$(echo "$RAW_VERSION" | sed -E 's/^v//; s/-beta(\.[0-9]+|-?[0-9]+)?$//')
+          PRERELASE_NUMBER=$(echo "$RAW_VERSION" | sed -E 's/^v//; s/.*-beta[.-]?([0-9]+)$/\1/')
+  
+  
           if [[ "${GITHUB_REF_NAME}" == "main" || "${GITHUB_REF_NAME}" == "master" ]]; then
             SNAPSHOT_SUFFIX=""
           elif [[ "${GITHUB_REF_NAME}" == "develop" ]]; then
