@@ -9,7 +9,6 @@ plugins {
 }
 
 scmVersion {
-//    start with "2.0.0" if no tags are found in the repository
     tag {
         tag {
             prefix.set("v")
@@ -27,7 +26,6 @@ group = "de.janschuri"
 version = lunaticlibVersion
 
 repositories {
-    mavenLocal()
     mavenCentral()
 }
 
@@ -173,17 +171,4 @@ publishing {
             }
         }
     }
-}
-
-tasks.register("publishAllModulesToMavenLocal") {
-    group = "publishing"
-    description = "Publishes all submodules and fat jars to Maven Local"
-    dependsOn(
-        subprojects.map { it.path + ":publishToMavenLocal" } +
-                listOf(
-                    "publishPaperFatJarPublicationToMavenLocal",
-                    "publishVelocityFatJarPublicationToMavenLocal",
-                    "publishWaterfallFatJarPublicationToMavenLocal"
-                )
-    )
 }
