@@ -10,6 +10,8 @@ permissions:
 jobs:
   build:
     runs-on: ubuntu-22.04
+    permissions:
+      contents: write
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-java@v4
@@ -53,6 +55,12 @@ jobs:
           fi
           
           PACKAGE_VERSION="${CLEAN_VERSION}${SNAPSHOT_SUFFIX}"
+          
+          echo "Raw version: $RAW_VERSION"
+          echo "Clean version: $CLEAN_VERSION"
+          echo "Pre-release number: $PRERELASE_NUMBER"
+          echo "Snapshot suffix: $SNAPSHOT_SUFFIX"
+          echo "Package version: $PACKAGE_VERSION"
           
           echo "package_version=$PACKAGE_VERSION" >> $GITHUB_OUTPUT
           echo "clean_version=$CLEAN_VERSION" >> $GITHUB_OUTPUT
