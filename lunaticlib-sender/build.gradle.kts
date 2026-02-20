@@ -2,9 +2,10 @@ plugins {
     id("java-library")
     `maven-publish`
 }
+val lunaticlibVersion: String by rootProject.extra
 
 group = "de.janschuri"
-version = "2.0.0"
+version = "$lunaticlibVersion"
 
 repositories {
     mavenLocal()
