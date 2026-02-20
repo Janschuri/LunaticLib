@@ -40,12 +40,6 @@ jobs:
           CLEAN_VERSION=$(echo "$RAW_VERSION" | sed -E 's/^v//; s/-beta$//')
           PRERELASE_NUMBER=$(echo "$RAW_VERSION" | sed -E 's/^v//; s/.*-beta([0-9]+)$/\1/')
           
-          // package version should be like that
-          // "1.0.0" for master branch
-          // "1.0.0-SNAPSHOT-1" for develop branch
-          // "1.0.0-SNAPSHOT-branchname-1" for feature branches
-          
-          //check the branch name
           if [[ "${GITHUB_REF_NAME}" == "main" || "${GITHUB_REF_NAME}" == "master" ]]; then
             SNAPSHOT_SUFFIX=""
           elif [[ "${GITHUB_REF_NAME}" == "develop" ]]; then
