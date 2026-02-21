@@ -216,7 +216,7 @@ public abstract class InventoryGUI implements InventoryHandler {
     public void reloadGui(boolean forceNewInventory) {
         this.buttonMap.clear();
 
-        List<HumanEntity> humanEntities = getInventory().getViewers();
+        List<HumanEntity> humanEntities = new ArrayList<>(getInventory().getViewers());
 
         if (humanEntities.isEmpty()) {
             return;
@@ -227,9 +227,18 @@ public abstract class InventoryGUI implements InventoryHandler {
         }
 
         for (HumanEntity humanEntity : humanEntities) {
-
             if (humanEntity instanceof Player p) {
                 GUIManager.openGUI(this, p);
+            }
+        }
+    }
+
+    public void closeForAllViewers() {
+        List<HumanEntity> humanEntities = new ArrayList<>(getInventory().getViewers());
+
+        for (HumanEntity humanEntity : humanEntities) {
+            if (humanEntity instanceof Player p) {
+                p.closeInventory();
             }
         }
     }
