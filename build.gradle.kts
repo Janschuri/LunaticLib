@@ -20,7 +20,7 @@ scmVersion {
 }
 
 val lunaticlibVersion: String by extra(scmVersion.version)
-val targetJavaVersion: Int by extra(21)
+val targetJavaVersion: Int by extra(17)
 
 group = "de.janschuri"
 version = lunaticlibVersion
